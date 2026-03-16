@@ -1,0 +1,1779 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kian's Daily Journal · 安砚临成长日记</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&family=Noto+Serif+SC:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #FAF7F2;
+    --warm-white: #FDF9F4;
+    --sage: #8FAF8F;
+    --sage-light: #C8DCC8;
+    --sage-dark: #5C7A5C;
+    --blush: #E8C4B0;
+    --blush-light: #F5E4D8;
+    --gold: #C8A96E;
+    --gold-light: #EDD9A3;
+    --charcoal: #2C2C2C;
+    --mid: #6B6560;
+    --light: #A09890;
+    --border: #E8E0D5;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--charcoal);
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  .header {
+    background: var(--charcoal);
+    color: var(--cream);
+    padding: 40px 24px 32px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .header::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    background: var(--sage-dark);
+    opacity: 0.15;
+  }
+
+  .header::after {
+    content: '';
+    position: absolute;
+    bottom: -40px; left: -40px;
+    width: 150px; height: 150px;
+    border-radius: 50%;
+    background: var(--gold);
+    opacity: 0.1;
+  }
+
+  .header-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 36px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    color: var(--cream);
+  }
+
+  .header-name-cn {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 18px;
+    color: var(--gold-light);
+    margin-top: 4px;
+    letter-spacing: 4px;
+  }
+
+  .header-subtitle {
+    font-size: 12px;
+    color: var(--light);
+    margin-top: 8px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .header-stats {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    margin-top: 24px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .stat-item {
+    text-align: center;
+  }
+
+  .stat-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    color: var(--gold-light);
+  }
+
+  .stat-label {
+    font-size: 10px;
+    color: var(--light);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 2px;
+  }
+
+  /* NAV TABS */
+  .nav {
+    background: var(--warm-white);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .nav::-webkit-scrollbar { display: none; }
+
+  .nav-tab {
+    flex: 0 0 auto;
+    padding: 16px 20px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--light);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    white-space: nowrap;
+    letter-spacing: 0.5px;
+  }
+
+  .nav-tab.active {
+    color: var(--sage-dark);
+    border-bottom-color: var(--sage-dark);
+  }
+
+  /* MAIN */
+  .main {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 24px 16px 80px;
+  }
+
+  /* SECTION */
+  .section { display: none; }
+  .section.active { display: block; }
+
+  /* DATE BAR */
+  .date-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+
+  .date-display {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    color: var(--charcoal);
+  }
+
+  .date-cn {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 13px;
+    color: var(--mid);
+    margin-top: 2px;
+  }
+
+  .date-nav {
+    display: flex;
+    gap: 8px;
+  }
+
+  .date-btn {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: white;
+    cursor: pointer;
+    font-size: 16px;
+    color: var(--mid);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+  }
+
+  .date-btn:hover {
+    background: var(--sage-light);
+    border-color: var(--sage);
+    color: var(--sage-dark);
+  }
+
+  /* CARDS */
+  .card {
+    background: white;
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 16px;
+    border: 1px solid var(--border);
+  }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .card-icon {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  .icon-feed { background: var(--blush-light); }
+  .icon-sleep { background: #E8EAF6; }
+  .icon-growth { background: var(--sage-light); }
+  .icon-activity { background: var(--gold-light); }
+  .icon-note { background: #F3E5F5; }
+
+  .card-title {
+    font-weight: 500;
+    font-size: 15px;
+    color: var(--charcoal);
+  }
+
+  .card-title-cn {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 11px;
+    color: var(--light);
+    margin-top: 1px;
+  }
+
+  /* LOG ENTRIES */
+  .log-entry {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .log-entry:last-child { border-bottom: none; }
+
+  .log-time {
+    font-size: 12px;
+    color: var(--light);
+    min-width: 44px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .log-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .dot-feed { background: var(--blush); }
+  .dot-sleep { background: #9FA8DA; }
+  .dot-wake { background: var(--gold); }
+  .dot-activity { background: var(--sage); }
+
+  .log-text {
+    font-size: 14px;
+    color: var(--charcoal);
+    flex: 1;
+  }
+
+  .log-amount {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--sage-dark);
+    background: var(--sage-light);
+    padding: 2px 8px;
+    border-radius: 20px;
+  }
+
+  /* ADD ENTRY */
+  .add-section {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px dashed var(--border);
+  }
+
+  .add-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+  }
+
+  .input-field {
+    flex: 1;
+    min-width: 80px;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    font-size: 13px;
+    font-family: 'DM Sans', sans-serif;
+    color: var(--charcoal);
+    background: var(--cream);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .input-field:focus {
+    border-color: var(--sage);
+  }
+
+  select.input-field {
+    cursor: pointer;
+  }
+
+  .btn-add {
+    padding: 10px 18px;
+    background: var(--sage-dark);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 13px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s;
+    white-space: nowrap;
+  }
+
+  .btn-add:hover { background: var(--sage); }
+
+  /* SUMMARY BOX */
+  .summary-box {
+    background: var(--charcoal);
+    color: var(--cream);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+
+  .summary-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    margin-bottom: 16px;
+    color: var(--gold-light);
+  }
+
+  .summary-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .summary-item {}
+  .summary-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--light);
+    margin-bottom: 4px;
+  }
+
+  .summary-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 24px;
+    color: var(--gold-light);
+  }
+
+  .summary-unit {
+    font-size: 12px;
+    color: var(--mid);
+    margin-left: 4px;
+  }
+
+  /* INSIGHT BOX */
+  .insight-box {
+    background: linear-gradient(135deg, var(--sage-light), var(--blush-light));
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 16px;
+    border: 1px solid var(--border);
+  }
+
+  .insight-title {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--sage-dark);
+    margin-bottom: 8px;
+  }
+
+  .insight-text {
+    font-size: 14px;
+    color: var(--charcoal);
+    line-height: 1.7;
+  }
+
+  /* MILESTONE */
+  .milestone-item {
+    display: flex;
+    gap: 14px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+    align-items: flex-start;
+  }
+
+  .milestone-item:last-child { border-bottom: none; }
+
+  .milestone-icon {
+    font-size: 24px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .milestone-content {}
+
+  .milestone-title {
+    font-weight: 500;
+    font-size: 14px;
+    color: var(--charcoal);
+  }
+
+  .milestone-title-cn {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 12px;
+    color: var(--mid);
+    margin-top: 2px;
+  }
+
+  .milestone-date {
+    font-size: 11px;
+    color: var(--light);
+    margin-top: 4px;
+  }
+
+  .milestone-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 500;
+    margin-top: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .badge-achieved {
+    background: var(--sage-light);
+    color: var(--sage-dark);
+  }
+
+  .badge-upcoming {
+    background: var(--gold-light);
+    color: #8B6914;
+  }
+
+  /* GROWTH CHART */
+  .growth-row {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .growth-input-group {
+    flex: 1;
+  }
+
+  .growth-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--light);
+    margin-bottom: 6px;
+  }
+
+  .growth-history {
+    margin-top: 16px;
+  }
+
+  .growth-entry {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+  }
+
+  .growth-entry:last-child { border-bottom: none; }
+
+  .growth-date { color: var(--mid); }
+  .growth-data { 
+    display: flex; 
+    gap: 16px;
+    color: var(--charcoal);
+    font-weight: 500;
+  }
+
+  /* TEXTAREA */
+  textarea.input-field {
+    width: 100%;
+    min-height: 80px;
+    resize: vertical;
+    line-height: 1.6;
+  }
+
+  /* SECTION HEADERS */
+  .section-header {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    color: var(--charcoal);
+    margin-bottom: 4px;
+  }
+
+  .section-header-cn {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 12px;
+    color: var(--light);
+    margin-bottom: 20px;
+    letter-spacing: 1px;
+  }
+
+  /* WEEKLY */
+  .week-summary-card {
+    background: white;
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 16px;
+    border: 1px solid var(--border);
+  }
+
+  .week-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    color: var(--charcoal);
+    margin-bottom: 4px;
+  }
+
+  .week-dates {
+    font-size: 12px;
+    color: var(--light);
+    margin-bottom: 16px;
+  }
+
+  .week-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .week-stat {
+    text-align: center;
+    background: var(--cream);
+    border-radius: 12px;
+    padding: 12px 8px;
+  }
+
+  .week-stat-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    color: var(--sage-dark);
+  }
+
+  .week-stat-label {
+    font-size: 10px;
+    color: var(--light);
+    margin-top: 2px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .week-insight {
+    font-size: 13px;
+    color: var(--mid);
+    line-height: 1.7;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+  }
+
+  /* DELETE BTN */
+  .btn-delete {
+    background: none;
+    border: none;
+    color: var(--light);
+    cursor: pointer;
+    font-size: 16px;
+    padding: 4px;
+    transition: color 0.2s;
+  }
+  .btn-delete:hover { color: #E57373; }
+
+  /* EMPTY STATE */
+  .empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--light);
+  }
+
+  .empty-icon { font-size: 40px; margin-bottom: 12px; }
+  .empty-text { font-size: 14px; }
+  .empty-text-cn { 
+    font-family: 'Noto Serif SC', serif;
+    font-size: 12px;
+    margin-top: 4px;
+  }
+
+  /* RESPONSIVE */
+  @media (min-width: 480px) {
+    .main { padding: 28px 24px 80px; }
+    .header-name { font-size: 42px; }
+  }
+
+  .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:3px}
+  .cal-dow{text-align:center;font-size:10px;color:var(--light);text-transform:uppercase;padding:4px 0 6px}
+  .cal-day{border-radius:8px;padding:5px 3px;min-height:58px;cursor:pointer;border:1px solid transparent;transition:all .15s;position:relative}
+  .cal-day:hover{border-color:var(--sage)}
+  .cal-day.has-data{background:var(--sage-light)}
+  .cal-day.is-today{background:var(--gold-light);border-color:var(--gold)}
+  .cal-day.is-selected{border-color:var(--sage-dark);border-width:2px}
+  .cal-day.other-month{opacity:.25;pointer-events:none}
+  .cal-day-num{font-size:12px;font-weight:500;color:var(--charcoal);margin-bottom:3px}
+  .cal-day.is-today .cal-day-num{color:var(--sage-dark);font-weight:700}
+  .cal-day-info{font-size:9px;color:var(--mid);line-height:1.4}
+  .cal-milestone-dot{position:absolute;top:3px;right:3px;font-size:9px}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-name">Kian Aurelius</div>
+  <div class="header-name-cn">安 砚 临</div>
+  <div class="header-subtitle">Daily Growth Journal · 成长日记</div>
+  <div class="header-stats">
+    <div class="stat-item">
+      <div class="stat-value" id="age-display">104</div>
+      <div class="stat-label">Days Old · 天</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-value" id="weight-display">6.6</div>
+      <div class="stat-label">kg · 体重</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-value" id="height-display">60</div>
+      <div class="stat-label">cm · 身高</div>
+    </div>
+  </div>
+  <div style="margin-top:12px">
+    <button onclick="resetData()" style="background:none;border:1px solid rgba(255,255,255,0.2);color:var(--light);padding:4px 12px;border-radius:20px;font-size:11px;cursor:pointer;font-family:'DM Sans',sans-serif;">↺ Reset Data</button>
+  </div>
+</div>
+
+<nav class="nav">
+  <div class="nav-tab active" onclick="switchTab('daily')">📅 Today · 今日</div>
+  <div class="nav-tab" onclick="switchTab('calendar')">🗓 Calendar · 日历</div>
+  <div class="nav-tab" onclick="switchTab('weekly')">📊 Week · 本周</div>
+  <div class="nav-tab" onclick="switchTab('milestones')">🌟 Milestones · 里程碑</div>
+  <div class="nav-tab" onclick="switchTab('growth')">📏 Growth · 成长</div>
+  <div class="nav-tab" onclick="switchTab('notes')">📝 Notes · 备注</div>
+</nav>
+
+<div class="main">
+
+  <!-- DAILY TAB -->
+  <div class="section active" id="tab-daily">
+    <div class="date-bar">
+      <div>
+        <div class="date-display" id="current-date-display"></div>
+        <div class="date-cn" id="current-date-cn"></div>
+      </div>
+      <div class="date-nav">
+        <button class="date-btn" onclick="changeDate(-1)">←</button>
+        <button class="date-btn" onclick="changeDate(0)">今</button>
+        <button class="date-btn" onclick="changeDate(1)">→</button>
+      </div>
+    </div>
+
+    <!-- DAILY SUMMARY -->
+    <div class="summary-box">
+      <div class="summary-title">Today at a Glance · 今日概览</div>
+      <div class="summary-grid">
+        <div class="summary-item">
+          <div class="summary-label">Total Formula · 总奶量</div>
+          <div class="summary-value" id="total-feed">—<span class="summary-unit">ml</span></div>
+        </div>
+        <div class="summary-item">
+          <div class="summary-label">Feedings · 喂奶次数</div>
+          <div class="summary-value" id="total-feeds-count">—<span class="summary-unit">次</span></div>
+        </div>
+        <div class="summary-item">
+          <div class="summary-label">Naps · 小觉</div>
+          <div class="summary-value" id="total-naps">—<span class="summary-unit">次</span></div>
+        </div>
+        <div class="summary-item">
+          <div class="summary-label">Night Sleep · 夜间</div>
+          <div class="summary-value" id="night-sleep">—<span class="summary-unit">hrs</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- INSIGHT -->
+    <div class="insight-box" id="daily-insight" style="display:none">
+      <div class="insight-title">💡 Today's Insight · 今日观察</div>
+      <div class="insight-text" id="insight-text"></div>
+    </div>
+
+    <!-- FEEDS -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon icon-feed">🍼</div>
+        <div>
+          <div class="card-title">Feedings · 喂奶记录</div>
+          <div class="card-title-cn">Formula intake log</div>
+        </div>
+      </div>
+      <div id="feed-log"></div>
+      <div class="add-section">
+        <div class="add-row">
+          <input type="time" class="input-field" id="feed-time" style="max-width:120px">
+          <input type="number" class="input-field" id="feed-amount" placeholder="ml" min="0" max="300" style="max-width:80px">
+          <select class="input-field" id="feed-type">
+            <option value="Formula">Formula 配方奶</option>
+            <option value="Dream Feed">Dream Feed 梦中喂</option>
+            <option value="Night Feed">Night Feed 夜间</option>
+          </select>
+        </div>
+        <button class="btn-add" onclick="addFeed()">+ Add Feed · 添加</button>
+      </div>
+    </div>
+
+    <!-- SLEEP -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon icon-sleep">😴</div>
+        <div>
+          <div class="card-title">Sleep Log · 睡眠记录</div>
+          <div class="card-title-cn">Naps and night sleep</div>
+        </div>
+      </div>
+      <div id="sleep-log"></div>
+      <div class="add-section">
+        <div class="add-row">
+          <input type="time" class="input-field" id="sleep-start" placeholder="Start 开始" style="max-width:120px">
+          <input type="time" class="input-field" id="sleep-end" placeholder="End 结束" style="max-width:120px">
+          <select class="input-field" id="sleep-type">
+            <option value="Nap">Nap 小觉</option>
+            <option value="Night">Night 夜间</option>
+            <option value="Catnap">Catnap</option>
+          </select>
+        </div>
+        <button class="btn-add" onclick="addSleep()">+ Add Sleep · 添加</button>
+      </div>
+    </div>
+
+    <!-- ACTIVITIES -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon icon-activity">🎯</div>
+        <div>
+          <div class="card-title">Activities · 活动记录</div>
+          <div class="card-title-cn">Play, tummy time, outings</div>
+        </div>
+      </div>
+      <div id="activity-log"></div>
+      <div class="add-section">
+        <div class="add-row">
+          <input type="time" class="input-field" id="activity-time" style="max-width:120px">
+          <select class="input-field" id="activity-type">
+            <option value="Tummy Time 趴趴时间">Tummy Time 趴趴时间</option>
+            <option value="Outing 外出">Outing 外出</option>
+            <option value="Swimming 游泳">Swimming 游泳</option>
+            <option value="Play 玩耍">Play 玩耍</option>
+            <option value="Bath 洗澡">Bath 洗澡</option>
+            <option value="Massage 抚触">Massage 抚触</option>
+          </select>
+        </div>
+        <input type="text" class="input-field" id="activity-note" placeholder="Notes · 备注 (optional)" style="width:100%; margin-bottom:8px">
+        <button class="btn-add" onclick="addActivity()">+ Add Activity · 添加</button>
+      </div>
+    </div>
+
+    <!-- DAILY NOTE -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon icon-note">💬</div>
+        <div>
+          <div class="card-title">Daily Note · 今日备注</div>
+          <div class="card-title-cn">Observations and thoughts</div>
+        </div>
+      </div>
+      <textarea class="input-field" id="daily-note" placeholder="How was today? Any new things you noticed about Kian?&#10;今天怎么样？有没有观察到什么新的变化？"></textarea>
+      <button class="btn-add" onclick="saveDailyNote()" style="margin-top:10px">Save · 保存</button>
+    </div>
+  </div>
+
+  <!-- WEEKLY TAB -->
+  <div class="section" id="tab-weekly">
+    <div class="section-header">Weekly Summary</div>
+    <div class="section-header-cn">每周总结</div>
+
+    <div id="weekly-content"></div>
+  </div>
+
+  <!-- MILESTONES TAB -->
+  <div class="section" id="tab-milestones">
+    <div class="section-header">Milestones</div>
+    <div class="section-header-cn">发育里程碑</div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon icon-activity">✅</div>
+        <div>
+          <div class="card-title">Achieved · 已达成</div>
+          <div class="card-title-cn">Kian's milestones so far</div>
+        </div>
+      </div>
+      <div id="achieved-milestones"></div>
+      <div class="add-section">
+        <div class="add-row">
+          <input type="text" class="input-field" id="milestone-title" placeholder="Milestone · 里程碑">
+          <input type="date" class="input-field" id="milestone-date" style="max-width:150px">
+        </div>
+        <input type="text" class="input-field" id="milestone-title-cn" placeholder="中文描述 (optional)" style="width:100%; margin-bottom:8px">
+        <button class="btn-add" onclick="addMilestone()">+ Add Milestone · 添加</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon icon-sleep">🔜</div>
+        <div>
+          <div class="card-title">Coming Up · 即将到来</div>
+          <div class="card-title-cn">Next milestones to watch for</div>
+        </div>
+      </div>
+      <div id="upcoming-milestones"></div>
+    </div>
+  </div>
+
+  <!-- GROWTH TAB -->
+  <div class="section" id="tab-growth">
+    <div class="section-header">Growth Tracking</div>
+    <div class="section-header-cn">生长记录</div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon icon-growth">📏</div>
+        <div>
+          <div class="card-title">Add Measurement · 添加数据</div>
+        </div>
+      </div>
+      <div class="add-row">
+        <div class="growth-input-group">
+          <div class="growth-label">Date · 日期</div>
+          <input type="date" class="input-field" id="growth-date">
+        </div>
+      </div>
+      <div class="growth-row">
+        <div class="growth-input-group">
+          <div class="growth-label">Weight · 体重 (kg)</div>
+          <input type="number" class="input-field" id="growth-weight" placeholder="6.6" step="0.1">
+        </div>
+        <div class="growth-input-group">
+          <div class="growth-label">Height · 身高 (cm)</div>
+          <input type="number" class="input-field" id="growth-height" placeholder="60" step="0.5">
+        </div>
+        <div class="growth-input-group">
+          <div class="growth-label">Head · 头围 (cm)</div>
+          <input type="number" class="input-field" id="growth-head" placeholder="40" step="0.5">
+        </div>
+      </div>
+      <button class="btn-add" onclick="addGrowth()">+ Save · 保存</button>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon icon-growth">📈</div>
+        <div>
+          <div class="card-title">Growth History · 成长历史</div>
+        </div>
+      </div>
+      <div id="growth-history"></div>
+    </div>
+
+    <div class="insight-box">
+      <div class="insight-title">📊 WHO Reference · 世卫参考值 (3个月男宝)</div>
+      <div class="insight-text">
+        体重 Weight: 5.1 – 7.9 kg (avg 6.4 kg)<br>
+        身高 Height: 57 – 65 cm (avg 61 cm)<br>
+        头围 Head: 38 – 43 cm (avg 40 cm)
+      </div>
+    </div>
+  </div>
+
+  <!-- NOTES TAB -->
+  <div class="section" id="tab-notes">
+    <div class="section-header">Journal Notes</div>
+    <div class="section-header-cn">日记备忘</div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon icon-note">✍️</div>
+        <div>
+          <div class="card-title">New Note · 新建备忘</div>
+        </div>
+      </div>
+      <div class="add-row">
+        <input type="date" class="input-field" id="note-date" style="max-width:160px">
+        <select class="input-field" id="note-category">
+          <option value="🌟 Observation">🌟 Observation 观察</option>
+          <option value="💡 Insight">💡 Insight 洞察</option>
+          <option value="❤️ Memory">❤️ Memory 记忆</option>
+          <option value="⚠️ Concern">⚠️ Concern 注意</option>
+          <option value="🎉 Celebration">🎉 Celebration 庆祝</option>
+        </select>
+      </div>
+      <textarea class="input-field" id="note-content" placeholder="Write your note here...&#10;在这里写下你的备忘..." style="margin-bottom:10px"></textarea>
+      <button class="btn-add" onclick="addNote()">+ Save Note · 保存</button>
+    </div>
+
+    <div id="notes-list"></div>
+  </div>
+
+  <!-- CALENDAR TAB -->
+  <div class="section" id="tab-calendar">
+    <div class="section-header">Calendar View</div>
+    <div class="section-header-cn">月历总览</div>
+    <div class="card" style="padding:16px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+        <button class="date-btn" onclick="changeCalMonth(-1)">&larr;</button>
+        <div style="text-align:center">
+          <div style="font-family:'Playfair Display',serif;font-size:20px" id="cal-month-title"></div>
+          <div style="font-family:'Noto Serif SC',serif;font-size:12px;color:var(--light);margin-top:2px" id="cal-month-cn"></div>
+        </div>
+        <button class="date-btn" onclick="changeCalMonth(1)">&rarr;</button>
+      </div>
+      <div class="cal-grid">
+        <div class="cal-dow">Sun</div><div class="cal-dow">Mon</div><div class="cal-dow">Tue</div>
+        <div class="cal-dow">Wed</div><div class="cal-dow">Thu</div><div class="cal-dow">Fri</div><div class="cal-dow">Sat</div>
+      </div>
+      <div class="cal-grid" id="cal-days"></div>
+    </div>
+    <div class="card">
+      <div style="font-size:12px;font-weight:500;color:var(--mid);margin-bottom:10px">Legend &middot; 图例</div>
+      <div style="display:flex;flex-wrap:wrap;gap:10px;font-size:11px;color:var(--mid)">
+        <span>Feed = ml total</span><span>Naps = count</span><span>&#11088; = milestone</span>
+        <span><span style="display:inline-block;width:10px;height:10px;background:var(--sage-light);border-radius:2px;vertical-align:middle"></span> has data</span>
+        <span><span style="display:inline-block;width:10px;height:10px;background:var(--gold-light);border-radius:2px;vertical-align:middle"></span> today</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- IMPORT TAB -->
+  <div class="section" id="tab-import">
+    <div class="section-header">Quick Import</div>
+    <div class="section-header-cn">快速导入</div>
+    <div class="insight-box">
+      <div class="insight-title">How to use &middot; 使用方法</div>
+      <div class="insight-text">
+        Paste data one entry per line &middot; 每行一条记录<br><br>
+        <strong>Format:</strong><br>
+        FEED 14:30 180ml Formula<br>
+        SLEEP 11:00 12:00 Nap<br>
+        ACTIVITY 16:00 Outing 去公园<br>
+        NOTE 今天Kian很开心
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon icon-feed">&#128203;</div>
+        <div><div class="card-title">Paste Update &middot; 粘贴更新</div></div>
+      </div>
+      <div style="margin-bottom:10px">
+        <div class="growth-label">Date &middot; 日期</div>
+        <input type="date" class="input-field" id="import-date" style="max-width:180px">
+      </div>
+      <textarea class="input-field" id="import-text" placeholder="FEED 10:30 165ml Formula&#10;SLEEP 11:30 12:20 Nap&#10;ACTIVITY 16:00 Outing &#25955;&#27493;&#10;NOTE &#20ज&#22825;&#24456;&#24320;&#24515;" style="min-height:130px;margin-bottom:12px;font-family:monospace;font-size:12px"></textarea>
+      <button class="btn-add" onclick="importData()">Import &middot; 导入</button>
+      <div id="import-result" style="margin-top:10px;font-size:13px;color:var(--sage-dark)"></div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon icon-note">&#9889;</div>
+        <div><div class="card-title">Quick Single Entry &middot; 快速单条</div></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div class="add-row">
+          <select class="input-field" id="quick-type" onchange="updateQuickForm()">
+            <option value="feed">Feed 喂奶</option>
+            <option value="sleep">Sleep 睡眠</option>
+            <option value="activity">Activity 活动</option>
+          </select>
+          <input type="date" class="input-field" id="quick-date" style="max-width:150px">
+        </div>
+        <div id="quick-feed-form">
+          <div class="add-row">
+            <input type="time" class="input-field" id="quick-time" style="max-width:110px">
+            <input type="number" class="input-field" id="quick-amount" placeholder="ml" style="max-width:80px">
+            <select class="input-field" id="quick-feed-type"><option>Formula</option><option>Night Feed</option><option>Dream Feed</option></select>
+          </div>
+        </div>
+        <div id="quick-sleep-form" style="display:none">
+          <div class="add-row">
+            <input type="time" class="input-field" id="quick-sleep-start" style="max-width:110px">
+            <input type="time" class="input-field" id="quick-sleep-end" style="max-width:110px">
+            <select class="input-field" id="quick-sleep-type"><option>Nap</option><option>Night</option><option>Catnap</option></select>
+          </div>
+        </div>
+        <div id="quick-activity-form" style="display:none">
+          <div class="add-row">
+            <input type="time" class="input-field" id="quick-act-time" style="max-width:110px">
+            <input type="text" class="input-field" id="quick-act-note" placeholder="Description 描述">
+          </div>
+        </div>
+        <button class="btn-add" onclick="quickAdd()">+ Add 添加</button>
+      </div>
+    </div>
+  </div>
+
+
+</div>
+
+<script>
+// ── STATE ──────────────────────────────────────────────
+let currentDate = new Date();
+currentDate.setHours(0,0,0,0);
+
+const STORAGE_KEY = 'kian_journal_v1';
+
+const DEFAULT_DATA = {
+  feeds: {
+    '2026-03-14': [
+      { time: '00:25', amount: 210, type: 'Night Feed', id: 1 },
+      { time: '05:25', amount: 210, type: 'Night Feed', id: 2 },
+      { time: '10:30', amount: 165, type: 'Formula', id: 3 },
+      { time: '14:16', amount: 170, type: 'Formula', id: 4 },
+      { time: '18:05', amount: 180, type: 'Formula', id: 5 },
+      { time: '23:40', amount: 210, type: 'Dream Feed', id: 6 },
+    ],
+    '2026-03-15': [
+      { time: '05:45', amount: 120, type: 'Night Feed', id: 7 },
+      { time: '09:15', amount: 130, type: 'Formula', id: 8 },
+      { time: '11:40', amount: 150, type: 'Formula', id: 9 },
+      { time: '15:50', amount: 210, type: 'Formula', id: 10 },
+      { time: '18:05', amount: 180, type: 'Formula', id: 11 },
+      { time: '23:40', amount: 210, type: 'Dream Feed', id: 12 },
+    ],
+    '2026-03-16': [
+      { time: '05:45', amount: 120, type: 'Night Feed', id: 13 },
+      { time: '08:20', amount: 150, type: 'Formula', id: 14 },
+    ],
+  },
+  sleeps: {
+    '2026-03-14': [
+      { start: '11:30', end: '12:20', type: 'Nap', duration: '50m', id: 101 },
+      { start: '14:50', end: '15:30', type: 'Nap', duration: '40m', id: 102 },
+      { start: '17:00', end: '17:45', type: 'Catnap', duration: '45m', id: 103 },
+      { start: '19:20', end: '23:59', type: 'Night', duration: '4h 39m', id: 104 },
+    ],
+    '2026-03-15': [
+      { start: '09:45', end: '11:10', type: 'Nap', duration: '1h 25m', id: 105 },
+      { start: '13:50', end: '15:00', type: 'Nap', duration: '1h 10m', id: 106 },
+      { start: '16:30', end: '17:45', type: 'Catnap', duration: '1h 15m', id: 107 },
+      { start: '19:00', end: '23:59', type: 'Night', duration: '4h 59m', id: 108 },
+    ],
+    '2026-03-16': [
+      { start: '07:00', end: '08:45', type: 'Nap', duration: '1h 45m', id: 109 },
+      { start: '09:50', end: '11:10', type: 'Nap', duration: '1h 20m', id: 110 },
+    ],
+  },
+  activities: {
+    '2026-03-14': [
+      { time: '09:30', type: 'Play 玩耍', note: 'Mobile play, cooing and vocalizing · 看mobile，咿呀发声', id: 201 },
+      { time: '16:00', type: 'Outing 外出', note: 'Walk in Flatiron area · 在Flatiron散步', id: 202 },
+      { time: '18:15', type: 'Swimming 游泳', note: 'Bath swim with neck ring · 颈圈游泳', id: 203 },
+    ],
+    '2026-03-15': [
+      { time: '10:30', type: 'Play 玩耍', note: 'Intentional grasping on gym bar! · 第一次有意识抓健身架！', id: 204 },
+      { time: '12:50', type: 'Outing 外出', note: 'Brunch outing · 外出吃brunch', id: 205 },
+      { time: '17:30', type: 'Play 玩耍', note: 'Tummy time with mirror · 趴着照镜子，想往前爬', id: 206 },
+    ],
+    '2026-03-16': [
+      { time: '09:00', type: 'Play 玩耍', note: 'Mobile play, mirror interest · 看mobile，对镜子感兴趣', id: 207 },
+    ],
+  },
+  dailyNotes: {
+    '2026-03-14': 'First day tracking! Kian went for a walk in Flatiron — very happy and alert outside. First dream feed tonight. · 第一天记录！Kian去Flatiron散步，户外很开心活跃。今晚第一次dream feed。',
+    '2026-03-15': 'Big milestone: intentional grasping on gym bar! Also trying to "crawl" toward mirror during tummy time. Dream feed working well — second sleep stretch was 6hrs+. · 重大里程碑：有意识抓健身架！趴着照镜子时想往前爬。Dream feed效果很好，第二段夜间睡了6小时以上。',
+    '2026-03-16': 'Kian communicating more and more — gestures for pacifier and more milk. Makes a funny "哎" sound after sneezing. Very socially engaged today. · Kian越来越会表达——用肢体语言要奶嘴和奶。打喷嚏后会发出有趣的"哎"声。今天社交互动很积极。',
+  },
+  milestones: {
+    achieved: [
+      { title: "Social Smile", titleCn: "社交微笑", date: "2026-01-15", icon: "😊" },
+      { title: "Holds Head Up During Tummy Time", titleCn: "俯卧时能抬头", date: "2026-01-20", icon: "💪" },
+      { title: "Tracks Moving Objects", titleCn: "追视移动物体", date: "2026-01-28", icon: "👁️" },
+      { title: "Vocalizing / Cooing", titleCn: "咿呀发声", date: "2026-02-01", icon: "🗣️" },
+      { title: "Self-Soothing to Sleep", titleCn: "自主入睡", date: "2026-02-10", icon: "😴" },
+      { title: "Interested in Mirror", titleCn: "对镜子感兴趣", date: "2026-03-10", icon: "🪞" },
+      { title: "Communicates with Gestures", titleCn: "用肢体语言表达需求", date: "2026-03-14", icon: "🤲" },
+      { title: "Intentional Grasping", titleCn: "有意识地抓握", date: "2026-03-15", icon: "✋" },
+      { title: "First Dream Feed Success", titleCn: "第一次成功Dream Feed", date: "2026-03-15", icon: "🌙" },
+    ]
+  },
+  growth: [
+    { date: "2025-12-02", weight: 2.59, height: 47, head: null, note: "Birth · 出生 (37w+1d)" },
+    { date: "2026-03-15", weight: 6.6, height: 60, head: null, note: "3 months · 3个月 (104 days)" },
+  ],
+  notes: [
+    { date: '2026-03-16', category: '💡 Insight', content: 'Kian says "哎" after sneezing — startled by his own sneeze, then vocalizes. Also uses fake cough to get attention. Very communicative for 3 months. · Kian打喷嚏后说"哎"——被自己的喷嚏吓到了，然后发声。也会用假咳嗽吸引注意力。3个月能有这样的表达能力很厉害。', id: 301 },
+    { date: '2026-03-15', category: '🌟 Observation', content: 'During tummy time, Kian actively tries to move toward the mirror — early goal-directed movement. Also intentionally grasped the gym bar handle. Bone structure already visible in profile shots — good nasal bridge definition. · 趴着的时候，Kian会主动尝试往镜子方向移动——早期目标导向行为。也有意识地抓了健身架把手。侧脸照片已经可以看出骨相——鼻梁轮廓很好。', id: 302 },
+    { date: '2026-03-14', category: '❤️ Memory', content: 'Kian loves looking at mom and lights up every single time. When mom enters his field of view he smiles immediately and starts "talking." Today outside he was alert and happy the whole time. · Kian喜欢看妈妈，每次看到都会立刻发光。妈妈进入视野他马上笑并开始"说话"。今天外出全程都很警觉开心。', id: 303 },
+  ]
+};
+
+// ── STORAGE ────────────────────────────────────────────
+function saveData() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  } catch(e) {
+    console.warn('Storage save failed:', e);
+  }
+}
+
+function loadData() {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      Object.assign(data, parsed);
+      return true;
+    }
+  } catch(e) {
+    console.warn('Storage load failed:', e);
+  }
+  return false;
+}
+
+function resetData() {
+  if (confirm('Reset all data to defaults? · 确定要重置所有数据吗？')) {
+    localStorage.removeItem(STORAGE_KEY);
+    Object.assign(data, JSON.parse(JSON.stringify(DEFAULT_DATA)));
+    saveData();
+    renderAll();
+  }
+}
+
+let data = JSON.parse(JSON.stringify(DEFAULT_DATA));
+
+const BIRTH_DATE = new Date('2025-12-02');
+
+// ── HELPERS ────────────────────────────────────────────
+function dateKey(d) {
+  return d.toISOString().split('T')[0];
+}
+
+function formatDate(d) {
+  return d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+}
+
+function formatDateCn(d) {
+  return d.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' });
+}
+
+function getDayAge() {
+  return Math.floor((new Date() - BIRTH_DATE) / 86400000);
+}
+
+function calcSleepDuration(start, end) {
+  const [sh, sm] = start.split(':').map(Number);
+  let [eh, em] = end.split(':').map(Number);
+  let startMin = sh * 60 + sm;
+  let endMin = eh * 60 + em;
+  if (endMin <= startMin) endMin += 24 * 60;
+  const diff = endMin - startMin;
+  const h = Math.floor(diff / 60);
+  const m = diff % 60;
+  return h > 0 ? `${h}h ${m}m` : `${m}m`;
+}
+
+// ── INIT ───────────────────────────────────────────────
+function init() {
+  loadData();
+  document.getElementById('age-display').textContent = getDayAge();
+  updateDateDisplay();
+  renderAll();
+}
+
+function updateDateDisplay() {
+  document.getElementById('current-date-display').textContent = formatDate(currentDate);
+  document.getElementById('current-date-cn').textContent = formatDateCn(currentDate);
+}
+
+function renderAll() {
+  renderFeedLog();
+  renderSleepLog();
+  renderActivityLog();
+  renderDailySummary();
+  renderInsight();
+  renderDailyNote();
+  renderMilestones();
+  renderGrowthHistory();
+  renderWeekly();
+  renderNotes();
+  renderCalendar();
+}
+
+// ── DATE NAV ───────────────────────────────────────────
+function changeDate(dir) {
+  if (dir === 0) {
+    currentDate = new Date();
+    currentDate.setHours(0,0,0,0);
+  } else {
+    currentDate.setDate(currentDate.getDate() + dir);
+  }
+  updateDateDisplay();
+  renderAll();
+}
+
+// ── FEEDS ──────────────────────────────────────────────
+function addFeed() {
+  const time = document.getElementById('feed-time').value;
+  const amount = parseInt(document.getElementById('feed-amount').value);
+  const type = document.getElementById('feed-type').value;
+  if (!time || !amount) return;
+  const key = dateKey(currentDate);
+  if (!data.feeds[key]) data.feeds[key] = [];
+  data.feeds[key].push({ time, amount, type, id: Date.now() });
+  data.feeds[key].sort((a, b) => a.time.localeCompare(b.time));
+  document.getElementById('feed-amount').value = '';
+  saveData();
+  renderFeedLog();
+  renderDailySummary();
+  renderInsight();
+}
+
+function deleteFeed(key, id) {
+  data.feeds[key] = data.feeds[key].filter(f => f.id !== id);
+  saveData();
+  renderFeedLog();
+  renderDailySummary();
+  renderInsight();
+}
+
+function renderFeedLog() {
+  const key = dateKey(currentDate);
+  const feeds = data.feeds[key] || [];
+  const el = document.getElementById('feed-log');
+  if (!feeds.length) {
+    el.innerHTML = '<div class="empty-state"><div class="empty-icon">🍼</div><div class="empty-text">No feeds logged yet</div><div class="empty-text-cn">还没有喂奶记录</div></div>';
+    return;
+  }
+  el.innerHTML = feeds.map(f => `
+    <div class="log-entry">
+      <span class="log-time">${f.time}</span>
+      <span class="log-dot dot-feed"></span>
+      <span class="log-text">${f.type}</span>
+      <span class="log-amount">${f.amount}ml</span>
+      <button class="btn-delete" onclick="deleteFeed('${key}', ${f.id})">×</button>
+    </div>
+  `).join('');
+}
+
+// ── SLEEP ──────────────────────────────────────────────
+function addSleep() {
+  const start = document.getElementById('sleep-start').value;
+  const end = document.getElementById('sleep-end').value;
+  const type = document.getElementById('sleep-type').value;
+  if (!start || !end) return;
+  const key = dateKey(currentDate);
+  if (!data.sleeps[key]) data.sleeps[key] = [];
+  const duration = calcSleepDuration(start, end);
+  data.sleeps[key].push({ start, end, type, duration, id: Date.now() });
+  data.sleeps[key].sort((a, b) => a.start.localeCompare(b.start));
+  saveData();
+  renderSleepLog();
+  renderDailySummary();
+}
+
+function deleteSleep(key, id) {
+  data.sleeps[key] = data.sleeps[key].filter(s => s.id !== id);
+  saveData();
+  renderSleepLog();
+  renderDailySummary();
+}
+
+function renderSleepLog() {
+  const key = dateKey(currentDate);
+  const sleeps = data.sleeps[key] || [];
+  const el = document.getElementById('sleep-log');
+  if (!sleeps.length) {
+    el.innerHTML = '<div class="empty-state"><div class="empty-icon">😴</div><div class="empty-text">No sleep logged yet</div><div class="empty-text-cn">还没有睡眠记录</div></div>';
+    return;
+  }
+  el.innerHTML = sleeps.map(s => `
+    <div class="log-entry">
+      <span class="log-time">${s.start}</span>
+      <span class="log-dot dot-sleep"></span>
+      <span class="log-text">${s.type} · ${s.duration}</span>
+      <span class="log-amount" style="background:#E8EAF6; color:#5C6BC0">${s.end}</span>
+      <button class="btn-delete" onclick="deleteSleep('${key}', ${s.id})">×</button>
+    </div>
+  `).join('');
+}
+
+// ── ACTIVITIES ─────────────────────────────────────────
+function addActivity() {
+  const time = document.getElementById('activity-time').value;
+  const type = document.getElementById('activity-type').value;
+  const note = document.getElementById('activity-note').value;
+  if (!time) return;
+  const key = dateKey(currentDate);
+  if (!data.activities[key]) data.activities[key] = [];
+  data.activities[key].push({ time, type, note, id: Date.now() });
+  data.activities[key].sort((a, b) => a.time.localeCompare(b.time));
+  document.getElementById('activity-note').value = '';
+  saveData();
+  renderActivityLog();
+}
+
+function deleteActivity(key, id) {
+  data.activities[key] = data.activities[key].filter(a => a.id !== id);
+  saveData();
+  renderActivityLog();
+}
+
+function renderActivityLog() {
+  const key = dateKey(currentDate);
+  const acts = data.activities[key] || [];
+  const el = document.getElementById('activity-log');
+  if (!acts.length) {
+    el.innerHTML = '<div class="empty-state"><div class="empty-icon">🎯</div><div class="empty-text">No activities logged yet</div><div class="empty-text-cn">还没有活动记录</div></div>';
+    return;
+  }
+  el.innerHTML = acts.map(a => `
+    <div class="log-entry">
+      <span class="log-time">${a.time}</span>
+      <span class="log-dot dot-activity"></span>
+      <span class="log-text">${a.type}${a.note ? ' · ' + a.note : ''}</span>
+      <button class="btn-delete" onclick="deleteActivity('${key}', ${a.id})">×</button>
+    </div>
+  `).join('');
+}
+
+// ── SUMMARY ────────────────────────────────────────────
+function renderDailySummary() {
+  const key = dateKey(currentDate);
+  const feeds = data.feeds[key] || [];
+  const sleeps = data.sleeps[key] || [];
+  const total = feeds.reduce((s, f) => s + f.amount, 0);
+  const naps = sleeps.filter(s => s.type === 'Nap' || s.type === 'Catnap').length;
+  const nightSleep = sleeps.filter(s => s.type === 'Night');
+
+  document.getElementById('total-feed').innerHTML = total ? `${total}<span class="summary-unit">ml</span>` : `—<span class="summary-unit">ml</span>`;
+  document.getElementById('total-feeds-count').innerHTML = feeds.length ? `${feeds.length}<span class="summary-unit">次</span>` : `—<span class="summary-unit">次</span>`;
+  document.getElementById('total-naps').innerHTML = naps ? `${naps}<span class="summary-unit">次</span>` : `—<span class="summary-unit">次</span>`;
+
+  if (nightSleep.length) {
+    const ns = nightSleep[0];
+    document.getElementById('night-sleep').innerHTML = `${ns.duration}<span class="summary-unit"></span>`;
+  } else {
+    document.getElementById('night-sleep').innerHTML = `—<span class="summary-unit">hrs</span>`;
+  }
+}
+
+// ── INSIGHT ────────────────────────────────────────────
+function renderInsight() {
+  const key = dateKey(currentDate);
+  const feeds = data.feeds[key] || [];
+  const total = feeds.reduce((s, f) => s + f.amount, 0);
+  const insights = [];
+
+  if (total > 0 && total < 700) insights.push("Total formula is below 700ml today. Consider offering feeds more frequently. · 今日总奶量偏低，可以适当增加喂奶次数。");
+  if (total >= 700 && total <= 950) insights.push("Feeding amount looks great today! · 今日奶量很理想！");
+  if (total > 950) insights.push("Total formula is above 950ml. This is on the higher end — watch for signs of overfeeding. · 今日奶量偏高，注意观察是否有过度喂养的迹象。");
+
+  const avgFeed = feeds.length ? Math.round(total / feeds.length) : 0;
+  if (avgFeed > 0 && avgFeed < 150) insights.push("Average feed size is small. Kian may be distracted during feeds — try feeding in a quieter environment. · 单次奶量偏少，Kian可能在吃奶时分心，尝试在更安静的环境喂奶。");
+
+  const el = document.getElementById('daily-insight');
+  const textEl = document.getElementById('insight-text');
+  if (insights.length) {
+    el.style.display = 'block';
+    textEl.textContent = insights.join(' ');
+  } else {
+    el.style.display = 'none';
+  }
+}
+
+// ── DAILY NOTE ─────────────────────────────────────────
+function saveDailyNote() {
+  const key = dateKey(currentDate);
+  data.dailyNotes[key] = document.getElementById('daily-note').value;
+  saveData();
+  alert('Saved! · 已保存！');
+}
+
+function renderDailyNote() {
+  const key = dateKey(currentDate);
+  document.getElementById('daily-note').value = data.dailyNotes[key] || '';
+}
+
+// ── MILESTONES ─────────────────────────────────────────
+const upcomingMilestones = [
+  { title: "Laughs Out Loud", titleCn: "大声笑出来", icon: "😂", eta: "4 months · 4个月" },
+  { title: "Recognizes Own Name", titleCn: "对自己名字有反应", icon: "👂", eta: "5-6 months · 5-6个月" },
+  { title: "Babbling (ba, ma, da)", titleCn: "开始发辅音", icon: "🗣️", eta: "4-6 months · 4-6个月" },
+  { title: "Stranger Anxiety", titleCn: "认生期", icon: "😬", eta: "6-8 months · 6-8个月" },
+  { title: "Sitting with Support", titleCn: "辅助坐立", icon: "🪑", eta: "4-6 months · 4-6个月" },
+  { title: "First Words (mama/baba)", titleCn: "有意义叫妈妈/爸爸", icon: "💬", eta: "7-10 months · 7-10个月" },
+];
+
+function addMilestone() {
+  const title = document.getElementById('milestone-title').value;
+  const titleCn = document.getElementById('milestone-title-cn').value;
+  const date = document.getElementById('milestone-date').value;
+  if (!title || !date) return;
+  data.milestones.achieved.push({ title, titleCn, date, icon: "⭐" });
+  data.milestones.achieved.sort((a, b) => a.date.localeCompare(b.date));
+  document.getElementById('milestone-title').value = '';
+  document.getElementById('milestone-title-cn').value = '';
+  saveData();
+  renderMilestones();
+}
+
+function deleteMilestone(idx) {
+  data.milestones.achieved.splice(idx, 1);
+  saveData();
+  renderMilestones();
+}
+
+function renderMilestones() {
+  const el = document.getElementById('achieved-milestones');
+  el.innerHTML = data.milestones.achieved.map((m, i) => `
+    <div class="milestone-item">
+      <div class="milestone-icon">${m.icon}</div>
+      <div class="milestone-content">
+        <div class="milestone-title">${m.title}</div>
+        ${m.titleCn ? `<div class="milestone-title-cn">${m.titleCn}</div>` : ''}
+        <div class="milestone-date">📅 ${m.date}</div>
+        <span class="milestone-badge badge-achieved">Achieved · 已达成</span>
+      </div>
+      <button class="btn-delete" onclick="deleteMilestone(${i})">×</button>
+    </div>
+  `).join('');
+
+  const upEl = document.getElementById('upcoming-milestones');
+  upEl.innerHTML = upcomingMilestones.map(m => `
+    <div class="milestone-item">
+      <div class="milestone-icon">${m.icon}</div>
+      <div class="milestone-content">
+        <div class="milestone-title">${m.title}</div>
+        <div class="milestone-title-cn">${m.titleCn}</div>
+        <div class="milestone-date">⏱️ ${m.eta}</div>
+        <span class="milestone-badge badge-upcoming">Coming Soon · 即将到来</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ── GROWTH ─────────────────────────────────────────────
+function addGrowth() {
+  const date = document.getElementById('growth-date').value;
+  const weight = parseFloat(document.getElementById('growth-weight').value);
+  const height = parseFloat(document.getElementById('growth-height').value);
+  const head = parseFloat(document.getElementById('growth-head').value);
+  if (!date) return;
+  data.growth.push({ date, weight: weight || null, height: height || null, head: head || null });
+  data.growth.sort((a, b) => a.date.localeCompare(b.date));
+  if (weight) document.getElementById('weight-display').textContent = weight;
+  if (height) document.getElementById('height-display').textContent = height;
+  document.getElementById('growth-weight').value = '';
+  document.getElementById('growth-height').value = '';
+  document.getElementById('growth-head').value = '';
+  saveData();
+  renderGrowthHistory();
+}
+
+function renderGrowthHistory() {
+  const el = document.getElementById('growth-history');
+  if (!data.growth.length) {
+    el.innerHTML = '<div class="empty-state"><div class="empty-icon">📏</div><div class="empty-text">No measurements yet</div></div>';
+    return;
+  }
+  el.innerHTML = [...data.growth].reverse().map(g => `
+    <div class="growth-entry">
+      <span class="growth-date">${g.date}${g.note ? ' · ' + g.note : ''}</span>
+      <span class="growth-data">
+        ${g.weight ? `⚖️ ${g.weight}kg` : ''}
+        ${g.height ? `📏 ${g.height}cm` : ''}
+        ${g.head ? `⭕ ${g.head}cm` : ''}
+      </span>
+    </div>
+  `).join('');
+}
+
+// ── WEEKLY ─────────────────────────────────────────────
+function renderWeekly() {
+  const today = new Date();
+  const dayOfWeek = today.getDay();
+  const weekStart = new Date(today);
+  weekStart.setDate(today.getDate() - dayOfWeek);
+  weekStart.setHours(0,0,0,0);
+  const weekEnd = new Date(weekStart);
+  weekEnd.setDate(weekStart.getDate() + 6);
+
+  let totalFeeds = 0, totalAmount = 0, feedDays = 0;
+  let weeklyObs = [];
+
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(weekStart);
+    d.setDate(weekStart.getDate() + i);
+    const key = dateKey(d);
+    const feeds = data.feeds[key] || [];
+    if (feeds.length) {
+      feedDays++;
+      totalFeeds += feeds.length;
+      totalAmount += feeds.reduce((s, f) => s + f.amount, 0);
+    }
+    const note = data.dailyNotes[key];
+    if (note) weeklyObs.push({ date: key, note });
+  }
+
+  const avgDailyAmount = feedDays ? Math.round(totalAmount / feedDays) : 0;
+  const avgFeedsPerDay = feedDays ? Math.round(totalFeeds / feedDays) : 0;
+
+  const el = document.getElementById('weekly-content');
+  el.innerHTML = `
+    <div class="week-summary-card">
+      <div class="week-title">This Week · 本周</div>
+      <div class="week-dates">${weekStart.toLocaleDateString('en-US', {month:'short',day:'numeric'})} – ${weekEnd.toLocaleDateString('en-US', {month:'short',day:'numeric'})}</div>
+      <div class="week-stats">
+        <div class="week-stat">
+          <div class="week-stat-value">${avgDailyAmount || '—'}</div>
+          <div class="week-stat-label">Avg ml/day · 日均奶量</div>
+        </div>
+        <div class="week-stat">
+          <div class="week-stat-value">${avgFeedsPerDay || '—'}</div>
+          <div class="week-stat-label">Feeds/day · 每日喂奶</div>
+        </div>
+        <div class="week-stat">
+          <div class="week-stat-value">${feedDays}</div>
+          <div class="week-stat-label">Days logged · 记录天数</div>
+        </div>
+      </div>
+      ${weeklyObs.length ? `
+        <div class="week-insight">
+          <strong>This week's notes · 本周备注：</strong><br>
+          ${weeklyObs.map(o => `<br><em>${o.date}:</em> ${o.note}`).join('')}
+        </div>
+      ` : '<div class="week-insight">Add daily notes to see your weekly journal here. · 添加每日备注以查看每周日记。</div>'}
+    </div>
+
+    <div class="insight-box">
+      <div class="insight-title">💡 Weekly Insight · 本周洞察</div>
+      <div class="insight-text">
+        ${avgDailyAmount >= 700 && avgDailyAmount <= 950
+          ? "Kian's feeding volume is in the ideal range this week. Keep it up! · 本周奶量在理想范围内，继续保持！"
+          : avgDailyAmount > 0
+            ? "Consider tracking more consistently to get better weekly insights. · 持续记录有助于获得更准确的每周洞察。"
+            : "Start logging feeds to see weekly insights here. · 开始记录喂奶数据以查看每周洞察。"
+        }
+      </div>
+    </div>
+  `;
+}
+
+// ── NOTES ──────────────────────────────────────────────
+function addNote() {
+  const date = document.getElementById('note-date').value;
+  const category = document.getElementById('note-category').value;
+  const content = document.getElementById('note-content').value;
+  if (!content) return;
+  data.notes.unshift({ date: date || dateKey(currentDate), category, content, id: Date.now() });
+  document.getElementById('note-content').value = '';
+  saveData();
+  renderNotes();
+}
+
+function deleteNote(id) {
+  data.notes = data.notes.filter(n => n.id !== id);
+  saveData();
+  renderNotes();
+}
+
+function renderNotes() {
+  const el = document.getElementById('notes-list');
+  if (!data.notes.length) {
+    el.innerHTML = '<div class="empty-state"><div class="empty-icon">📝</div><div class="empty-text">No notes yet</div><div class="empty-text-cn">还没有备注</div></div>';
+    return;
+  }
+  el.innerHTML = data.notes.map(n => `
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px">
+        <div>
+          <div style="font-size:13px; font-weight:500; color:var(--charcoal)">${n.category}</div>
+          <div style="font-size:11px; color:var(--light); margin-top:2px">${n.date}</div>
+        </div>
+        <button class="btn-delete" onclick="deleteNote(${n.id})">×</button>
+      </div>
+      <div style="font-size:14px; color:var(--mid); line-height:1.7">${n.content}</div>
+    </div>
+  `).join('');
+}
+
+// ── TABS ───────────────────────────────────────────────
+
+// CALENDAR
+var calYear = new Date().getFullYear();
+var calMonth = new Date().getMonth();
+
+function changeCalMonth(dir) {
+  calMonth += dir;
+  if (calMonth > 11) { calMonth = 0; calYear++; }
+  if (calMonth < 0) { calMonth = 11; calYear--; }
+  renderCalendar();
+}
+
+function renderCalendar() {
+  var mN=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  var mC=['一月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月'];
+  var titleEl=document.getElementById('cal-month-title');
+  var cnEl=document.getElementById('cal-month-cn');
+  if(!titleEl) return;
+  titleEl.textContent=mN[calMonth]+' '+calYear;
+  cnEl.textContent=calYear+'年 '+mC[calMonth];
+  var today=new Date(); today.setHours(0,0,0,0);
+  var firstDay=new Date(calYear,calMonth,1);
+  var lastDay=new Date(calYear,calMonth+1,0);
+  var startDow=firstDay.getDay();
+  var mDates=new Set(data.milestones.achieved.map(function(m){return m.date;}));
+  var html='';
+  for(var i=0;i<startDow;i++){
+    var pd=new Date(calYear,calMonth,-startDow+i+1);
+    html+='<div class="cal-day other-month"><div class="cal-day-num">'+pd.getDate()+'</div></div>';
+  }
+  for(var d=1;d<=lastDay.getDate();d++){
+    var td=new Date(calYear,calMonth,d);
+    var key=dateKey(td);
+    var feeds=data.feeds[key]||[];
+    var sleeps=data.sleeps[key]||[];
+    var totalMl=feeds.reduce(function(s,f){return s+f.amount;},0);
+    var naps=sleeps.filter(function(s){return s.type==='Nap'||s.type==='Catnap';}).length;
+    var hasData=feeds.length>0||sleeps.length>0;
+    var isToday=td.getTime()===today.getTime();
+    var isSel=dateKey(currentDate)===key;
+    var hasMile=mDates.has(key);
+    var cls='cal-day'+(hasData?' has-data':'')+(isToday?' is-today':'')+(isSel?' is-selected':'');
+    var info=(totalMl?'Feed:'+totalMl+'ml':'')+(naps?(totalMl?'<br>':'')+'Naps:'+naps:'');
+    html+='<div class="'+cls+'" onclick="jumpToDate(\''+key+'\')">'+
+      (hasMile?'<div class="cal-milestone-dot">*</div>':'')+
+      '<div class="cal-day-num">'+d+'</div>'+
+      '<div class="cal-day-info">'+info+'</div></div>';
+  }
+  var rem=(7-(startDow+lastDay.getDate())%7)%7;
+  for(var j=1;j<=rem;j++){
+    html+='<div class="cal-day other-month"><div class="cal-day-num">'+j+'</div></div>';
+  }
+  document.getElementById('cal-days').innerHTML=html;
+}
+
+function jumpToDate(key) {
+  currentDate=new Date(key+'T00:00:00');
+  updateDateDisplay();
+  renderAll();
+  document.querySelectorAll('.section').forEach(function(s){s.classList.remove('active');});
+  document.querySelectorAll('.nav-tab').forEach(function(t){t.classList.remove('active');});
+  document.getElementById('tab-daily').classList.add('active');
+  document.querySelectorAll('.nav-tab')[0].classList.add('active');
+}
+
+// IMPORT
+function importData() {
+  var dateVal=document.getElementById('import-date').value;
+  var text=document.getElementById('import-text').value.trim();
+  if(!dateVal||!text){document.getElementById('import-result').textContent='Please fill date and data';return;}
+  var lines=text.split('\n').filter(function(l){return l.trim();});
+  var fc=0,sc=0,ac=0,nc=0;
+  if(!data.feeds[dateVal])data.feeds[dateVal]=[];
+  if(!data.sleeps[dateVal])data.sleeps[dateVal]=[];
+  if(!data.activities[dateVal])data.activities[dateVal]=[];
+  lines.forEach(function(line){
+    var parts=line.trim().split(' ');
+    var cmd=parts[0].toUpperCase();
+    if(cmd==='FEED'&&parts.length>=3){
+      var t=parts[1],amt=parseInt(parts[2]),typ=parts.slice(3).join(' ')||'Formula';
+      if(t&&amt){data.feeds[dateVal].push({time:t,amount:amt,type:typ,id:Date.now()+Math.random()});fc++;}
+    } else if(cmd==='SLEEP'&&parts.length>=4){
+      var st=parts[1],en=parts[2],sty=parts.slice(3).join(' ')||'Nap';
+      data.sleeps[dateVal].push({start:st,end:en,type:sty,duration:calcSleepDuration(st,en),id:Date.now()+Math.random()});sc++;
+    } else if(cmd==='ACTIVITY'&&parts.length>=3){
+      var at=parts[1],an=parts.slice(2).join(' ');
+      data.activities[dateVal].push({time:at,type:'Activity',note:an,id:Date.now()+Math.random()});ac++;
+    } else if(cmd==='NOTE'){
+      var nc2=parts.slice(1).join(' ');
+      if(nc2){data.notes.unshift({date:dateVal,category:'Observation',content:nc2,id:Date.now()+Math.random()});nc++;}
+    }
+  });
+  if(data.feeds[dateVal])data.feeds[dateVal].sort(function(a,b){return a.time.localeCompare(b.time);});
+  if(data.sleeps[dateVal])data.sleeps[dateVal].sort(function(a,b){return a.start.localeCompare(b.start);});
+  saveData();renderAll();
+  document.getElementById('import-result').textContent='Imported: '+fc+' feeds, '+sc+' sleeps, '+ac+' activities, '+nc+' notes';
+  document.getElementById('import-text').value='';
+}
+
+function updateQuickForm(){
+  var type=document.getElementById('quick-type').value;
+  document.getElementById('quick-feed-form').style.display=type==='feed'?'block':'none';
+  document.getElementById('quick-sleep-form').style.display=type==='sleep'?'block':'none';
+  document.getElementById('quick-activity-form').style.display=type==='activity'?'block':'none';
+}
+
+function quickAdd(){
+  var type=document.getElementById('quick-type').value;
+  var dateVal=document.getElementById('quick-date').value||dateKey(new Date());
+  if(!data.feeds[dateVal])data.feeds[dateVal]=[];
+  if(!data.sleeps[dateVal])data.sleeps[dateVal]=[];
+  if(!data.activities[dateVal])data.activities[dateVal]=[];
+  if(type==='feed'){
+    var time=document.getElementById('quick-time').value;
+    var amount=parseInt(document.getElementById('quick-amount').value);
+    var ft=document.getElementById('quick-feed-type').value;
+    if(!time||!amount)return;
+    data.feeds[dateVal].push({time:time,amount:amount,type:ft,id:Date.now()});
+    data.feeds[dateVal].sort(function(a,b){return a.time.localeCompare(b.time);});
+    document.getElementById('quick-amount').value='';
+  } else if(type==='sleep'){
+    var ss=document.getElementById('quick-sleep-start').value;
+    var se=document.getElementById('quick-sleep-end').value;
+    var sty=document.getElementById('quick-sleep-type').value;
+    if(!ss||!se)return;
+    data.sleeps[dateVal].push({start:ss,end:se,type:sty,duration:calcSleepDuration(ss,se),id:Date.now()});
+    data.sleeps[dateVal].sort(function(a,b){return a.start.localeCompare(b.start);});
+  } else if(type==='activity'){
+    var at=document.getElementById('quick-act-time').value;
+    var an=document.getElementById('quick-act-note').value;
+    if(!at)return;
+    data.activities[dateVal].push({time:at,type:'Activity',note:an,id:Date.now()});
+    document.getElementById('quick-act-note').value='';
+  }
+  saveData();renderAll();
+  alert('Added to '+dateVal);
+}
+
+function switchTab(tab) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// ── SET DEFAULT DATES ──────────────────────────────────
+function setDefaultDates() {
+  const today = dateKey(new Date());
+  document.getElementById('feed-time').value = new Date().toTimeString().slice(0,5);
+  document.getElementById('sleep-start').value = new Date().toTimeString().slice(0,5);
+  document.getElementById('activity-time').value = new Date().toTimeString().slice(0,5);
+  document.getElementById('growth-date').value = today;
+  document.getElementById('note-date').value = today;
+  document.getElementById('milestone-date').value = today;
+  if(document.getElementById('import-date')) document.getElementById('import-date').value = today;
+  if(document.getElementById('quick-date')) document.getElementById('quick-date').value = today;
+}
+
+// ── START ──────────────────────────────────────────────
+init();
+setDefaultDates();
+</script>
+</body>
+</html>
