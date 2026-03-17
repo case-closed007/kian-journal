@@ -1045,12 +1045,17 @@ async function callGemini(prompt) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       contents: [{ parts: [{ text: prompt }] }],
-      generationConfig: { temperature: 0.4, maxOutputTokens: 1024 }
+      generationConfig: { temperature: 0.4, maxOutputTokens: 2048 }
     })
   });
-  if (!res.ok) throw new Error('Gemini error ' + res.status);
+  if (!res.ok) {
+    const errBody = await res.json().catch(() => ({}));
+    throw new Error('Gemini error ' + res.status + ': ' + (errBody?.error?.message || ''));
+  }
   const json = await res.json();
-  return json.candidates?.[0]?.content?.parts?.[0]?.text || '';
+  // gemini-2.5-flash may include thought parts; find actual text part
+  const parts = json.candidates?.[0]?.content?.parts || [];
+  return (parts.find(p => !p.thought) || parts[0])?.text || '';
 }
 
 // ── I18N ───────────────────────────────────────────────
@@ -1567,8 +1572,8 @@ Return ONLY a JSON object (no markdown, no extra text):
 {"zh":"1. [中文建议1]\n2. [中文建议2]\n3. [中文建议3]","en":"1. [English point 1]\n2. [English point 2]\n3. [English point 3]"}`;
 
     const result = await callGemini(prompt);
-    const jsonMatch = result.match(/\{[\s\S]*?\}/);
-    if (!jsonMatch) throw new Error('No JSON');
+    const jsonMatch = result.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) throw new Error('No JSON in: ' + result.slice(0, 100));
     const parsed = JSON.parse(jsonMatch[0]);
 
     if (!data.aiInsights) data.aiInsights = {};
@@ -1590,6 +1595,8 @@ Return ONLY a JSON object (no markdown, no extra text):
     else if (total2 > 0) msg = currentLang === 'zh' ? `今日总奶量 ${total2}ml。` : `Total formula today: ${total2}ml.`;
     if (msg && textEl) textEl.textContent = msg;
     else if (el) el.style.display = 'none';
+    // Retry after 8s in case of temporary error
+    setTimeout(renderInsight, 8000);
   } finally {
     _aiInsightPending = false;
   }
@@ -1625,8 +1632,12 @@ function renderPredictions() {
     }
     const last = todayFeeds[todayFeeds.length - 1];
     const [lh, lm] = last.time.split(':').map(Number);
-    const nextMin = (lh * 60 + lm + avgInterval) % (24 * 60);
-    feedTimeEl.textContent = String(Math.floor(nextMin / 60)).padStart(2, '0') + ':' + String(nextMin % 60).padStart(2, '0');
+    const nowMin = new Date().getHours() * 60 + new Date().getMinutes();
+    let nextMin = lh * 60 + lm + avgInterval;
+    // Advance until strictly in the future (compare absolute minutes, no modulo)
+    while (nextMin <= nowMin) nextMin += avgInterval;
+    const nextMinWrapped = nextMin % (24 * 60);
+    feedTimeEl.textContent = String(Math.floor(nextMinWrapped / 60)).padStart(2, '0') + ':' + String(nextMinWrapped % 60).padStart(2, '0');
     feedItem.style.display = 'flex';
     hasPred = true;
   } else {
@@ -1637,8 +1648,11 @@ function renderPredictions() {
   if (todaySleeps.length >= 1) {
     const last = todaySleeps[todaySleeps.length - 1];
     const [lh, lm] = last.end.split(':').map(Number);
-    const nextMin = (lh * 60 + lm + 105) % (24 * 60);
-    sleepTimeEl.textContent = '~' + String(Math.floor(nextMin / 60)).padStart(2, '0') + ':' + String(nextMin % 60).padStart(2, '0');
+    const nowMinS = new Date().getHours() * 60 + new Date().getMinutes();
+    let nextMinS = lh * 60 + lm + 105;
+    while (nextMinS <= nowMinS) nextMinS += 105;
+    const nextMinSWrapped = nextMinS % (24 * 60);
+    sleepTimeEl.textContent = '~' + String(Math.floor(nextMinSWrapped / 60)).padStart(2, '0') + ':' + String(nextMinSWrapped % 60).padStart(2, '0');
     sleepItem.style.display = 'flex';
     hasPred = true;
   } else {
