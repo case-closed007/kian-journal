@@ -221,7 +221,7 @@ select.input-field { cursor: pointer; }
 /* ── SWIPE DELETE ── */
 .tl-wrap { position: relative; overflow: hidden; border-bottom: 1px solid var(--border); }
 .tl-wrap:last-child { border-bottom: none; }
-.tl-wrap .timeline-entry { border-bottom: none; background: white; transition: transform 0.2s ease; touch-action: pan-y; }
+.tl-wrap .timeline-entry { border-bottom: none; background: white; transition: transform 0.2s ease; touch-action: pan-y; position: relative; z-index: 1; }
 .tl-swipe-bg {
   position: absolute; right: 0; top: 0; bottom: 0; width: 72px;
   background: #EF5350; display: flex; align-items: center;
