@@ -1205,8 +1205,7 @@ function resetData() {
 }
 
 function openSettings() {
-  if (confirm('Reset all data to defaults?
-确定要重置所有数据吗？')) resetData();
+  if (confirm('Reset all data to defaults?\n确定要重置所有数据吗？')) resetData();
 }
 
 let data = JSON.parse(JSON.stringify(DEFAULT_DATA));
