@@ -31,133 +31,172 @@
     min-height: 100vh;
   }
 
-  /* HEADER */
-  .header {
+  /* ── COMPACT TOPBAR ── */
+  .topbar {
+    height: 60px;
     background: var(--charcoal);
-    color: var(--cream);
-    padding: 40px 24px 32px;
-    text-align: center;
-    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .topbar-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .topbar-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--sage-dark);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: 700;
+    font-family: 'Playfair Display', serif;
+    flex-shrink: 0;
+    border: 2px solid rgba(255,255,255,0.15);
     overflow: hidden;
   }
 
-  .header::before {
-    content: '';
-    position: absolute;
-    top: -60px; right: -60px;
-    width: 200px; height: 200px;
-    border-radius: 50%;
-    background: var(--sage-dark);
-    opacity: 0.15;
-  }
-
-  .header::after {
-    content: '';
-    position: absolute;
-    bottom: -40px; left: -40px;
-    width: 150px; height: 150px;
-    border-radius: 50%;
-    background: var(--gold);
-    opacity: 0.1;
-  }
-
-  .header-name {
+  .topbar-name {
     font-family: 'Playfair Display', serif;
-    font-size: 36px;
+    font-size: 17px;
     font-weight: 600;
-    letter-spacing: 1px;
     color: var(--cream);
+    letter-spacing: 0.3px;
   }
 
-  .header-name-cn {
-    font-family: 'Noto Serif SC', serif;
-    font-size: 18px;
-    color: var(--gold-light);
-    margin-top: 4px;
-    letter-spacing: 4px;
-  }
-
-  .header-subtitle {
-    font-size: 12px;
-    color: var(--light);
-    margin-top: 8px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-  }
-
-  .header-stats {
-    display: flex;
-    justify-content: center;
-    gap: 32px;
-    margin-top: 24px;
-    padding-top: 24px;
-    border-top: 1px solid rgba(255,255,255,0.1);
-  }
-
-  .stat-item {
-    text-align: center;
-  }
-
-  .stat-value {
-    font-family: 'Playfair Display', serif;
-    font-size: 22px;
-    color: var(--gold-light);
-  }
-
-  .stat-label {
-    font-size: 10px;
-    color: var(--light);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-top: 2px;
-  }
-
-  /* NAV TABS */
-  .nav {
-    background: var(--warm-white);
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    overflow-x: auto;
-    scrollbar-width: none;
-  }
-
-  .nav::-webkit-scrollbar { display: none; }
-
-  .nav-tab {
-    flex: 0 0 auto;
-    padding: 16px 20px;
+  .topbar-age {
     font-size: 13px;
+    color: var(--gold-light);
+  }
+
+  .topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .topbar-langbtn {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: var(--cream);
+    padding: 5px 11px;
+    border-radius: 16px;
+    font-size: 12px;
     font-weight: 500;
-    color: var(--light);
     cursor: pointer;
-    border-bottom: 2px solid transparent;
-    transition: all 0.2s;
-    white-space: nowrap;
+    font-family: 'DM Sans', sans-serif;
+    transition: background 0.2s;
     letter-spacing: 0.5px;
   }
 
-  .nav-tab.active {
-    color: var(--sage-dark);
-    border-bottom-color: var(--sage-dark);
+  .topbar-langbtn:hover { background: rgba(255,255,255,0.2); }
+
+  .topbar-iconbtn {
+    background: none;
+    border: none;
+    color: var(--light);
+    font-size: 19px;
+    cursor: pointer;
+    padding: 4px;
+    line-height: 1;
   }
 
-  /* MAIN */
+  /* ── BOTTOM TAB BAR ── */
+  .bottom-tabbar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 64px;
+    background: white;
+    border-top: 1px solid var(--border);
+    display: flex;
+    z-index: 100;
+    box-shadow: 0 -4px 16px rgba(0,0,0,0.06);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  .tab-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    cursor: pointer;
+    color: var(--light);
+    transition: color 0.2s;
+    padding: 8px 4px;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .tab-item.active { color: var(--sage-dark); }
+
+  .tab-icon { font-size: 20px; line-height: 1; }
+
+  .tab-label {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+  }
+
+  /* ── ADD FORM TABS ── */
+  .add-form-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+
+  .add-tab-btn {
+    flex: 1;
+    padding: 8px 4px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--cream);
+    font-size: 12px;
+    font-family: 'DM Sans', sans-serif;
+    color: var(--mid);
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.2s;
+    font-weight: 500;
+  }
+
+  .add-tab-btn.active {
+    background: var(--sage-dark);
+    color: white;
+    border-color: var(--sage-dark);
+  }
+
+  /* ── MAIN ── */
   .main {
     max-width: 680px;
     margin: 0 auto;
-    padding: 24px 16px 80px;
+    padding: 16px 16px 84px;
   }
 
-  /* SECTION */
+  /* ── SECTION ── */
   .section { display: none; }
   .section.active { display: block; }
 
-  /* DATE BAR */
+  /* ── DATE BAR ── */
   .date-bar {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 20px;
+    margin-bottom: 16px;
   }
 
   .date-display {
@@ -173,10 +212,7 @@
     margin-top: 2px;
   }
 
-  .date-nav {
-    display: flex;
-    gap: 8px;
-  }
+  .date-nav { display: flex; gap: 8px; }
 
   .date-btn {
     width: 36px; height: 36px;
@@ -198,7 +234,7 @@
     color: var(--sage-dark);
   }
 
-  /* CARDS */
+  /* ── CARDS ── */
   .card {
     background: white;
     border-radius: 16px;
@@ -230,11 +266,7 @@
   .icon-activity { background: var(--gold-light); }
   .icon-note { background: #F3E5F5; }
 
-  .card-title {
-    font-weight: 500;
-    font-size: 15px;
-    color: var(--charcoal);
-  }
+  .card-title { font-weight: 500; font-size: 15px; color: var(--charcoal); }
 
   .card-title-cn {
     font-family: 'Noto Serif SC', serif;
@@ -243,51 +275,68 @@
     margin-top: 1px;
   }
 
-  /* LOG ENTRIES */
-  .log-entry {
+  /* ── MIXED TIMELINE ── */
+  .timeline-entry {
     display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 10px 0;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 11px 0;
     border-bottom: 1px solid var(--border);
   }
 
-  .log-entry:last-child { border-bottom: none; }
+  .timeline-entry:last-child { border-bottom: none; }
 
-  .log-time {
+  .timeline-emoji {
+    font-size: 18px;
+    flex-shrink: 0;
+    width: 26px;
+    text-align: center;
+    margin-top: 1px;
+  }
+
+  .timeline-time {
     font-size: 12px;
     color: var(--light);
-    min-width: 44px;
+    min-width: 40px;
     font-variant-numeric: tabular-nums;
-  }
-
-  .log-dot {
-    width: 8px; height: 8px;
-    border-radius: 50%;
     flex-shrink: 0;
+    margin-top: 2px;
   }
 
-  .dot-feed { background: var(--blush); }
-  .dot-sleep { background: #9FA8DA; }
-  .dot-wake { background: var(--gold); }
-  .dot-activity { background: var(--sage); }
+  .timeline-body { flex: 1; min-width: 0; }
 
-  .log-text {
+  .timeline-main {
     font-size: 14px;
     color: var(--charcoal);
-    flex: 1;
-  }
-
-  .log-amount {
-    font-size: 13px;
     font-weight: 500;
-    color: var(--sage-dark);
-    background: var(--sage-light);
-    padding: 2px 8px;
-    border-radius: 20px;
+    line-height: 1.4;
   }
 
-  /* ADD ENTRY */
+  .timeline-sub {
+    font-size: 12px;
+    color: var(--mid);
+    margin-top: 2px;
+    line-height: 1.5;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .timeline-badge {
+    display: inline-block;
+    padding: 1px 7px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    margin-left: 6px;
+    vertical-align: middle;
+  }
+
+  .badge-feed { background: var(--blush-light); color: #B5572A; }
+  .badge-sleep { background: #E8EAF6; color: #5C6BC0; }
+  .badge-activity { background: var(--gold-light); color: #8B6914; }
+
+  /* ── ADD ENTRY ── */
   .add-section {
     margin-top: 12px;
     padding-top: 12px;
@@ -315,13 +364,8 @@
     transition: border-color 0.2s;
   }
 
-  .input-field:focus {
-    border-color: var(--sage);
-  }
-
-  select.input-field {
-    cursor: pointer;
-  }
+  .input-field:focus { border-color: var(--sage); }
+  select.input-field { cursor: pointer; }
 
   .btn-add {
     padding: 10px 18px;
@@ -339,7 +383,7 @@
 
   .btn-add:hover { background: var(--sage); }
 
-  /* SUMMARY BOX */
+  /* ── SUMMARY BOX ── */
   .summary-box {
     background: var(--charcoal);
     color: var(--cream);
@@ -361,7 +405,6 @@
     gap: 16px;
   }
 
-  .summary-item {}
   .summary-label {
     font-size: 10px;
     text-transform: uppercase;
@@ -376,13 +419,9 @@
     color: var(--gold-light);
   }
 
-  .summary-unit {
-    font-size: 12px;
-    color: var(--mid);
-    margin-left: 4px;
-  }
+  .summary-unit { font-size: 12px; color: var(--mid); margin-left: 4px; }
 
-  /* INSIGHT BOX */
+  /* ── INSIGHT BOX ── */
   .insight-box {
     background: linear-gradient(135deg, var(--sage-light), var(--blush-light));
     border-radius: 16px;
@@ -399,13 +438,9 @@
     margin-bottom: 8px;
   }
 
-  .insight-text {
-    font-size: 14px;
-    color: var(--charcoal);
-    line-height: 1.7;
-  }
+  .insight-text { font-size: 14px; color: var(--charcoal); line-height: 1.7; }
 
-  /* MILESTONE */
+  /* ── MILESTONE ── */
   .milestone-item {
     display: flex;
     gap: 14px;
@@ -415,20 +450,9 @@
   }
 
   .milestone-item:last-child { border-bottom: none; }
+  .milestone-icon { font-size: 24px; flex-shrink: 0; margin-top: 2px; }
 
-  .milestone-icon {
-    font-size: 24px;
-    flex-shrink: 0;
-    margin-top: 2px;
-  }
-
-  .milestone-content {}
-
-  .milestone-title {
-    font-weight: 500;
-    font-size: 14px;
-    color: var(--charcoal);
-  }
+  .milestone-title { font-weight: 500; font-size: 14px; color: var(--charcoal); }
 
   .milestone-title-cn {
     font-family: 'Noto Serif SC', serif;
@@ -437,11 +461,7 @@
     margin-top: 2px;
   }
 
-  .milestone-date {
-    font-size: 11px;
-    color: var(--light);
-    margin-top: 4px;
-  }
+  .milestone-date { font-size: 11px; color: var(--light); margin-top: 4px; }
 
   .milestone-badge {
     display: inline-block;
@@ -454,26 +474,12 @@
     letter-spacing: 0.5px;
   }
 
-  .badge-achieved {
-    background: var(--sage-light);
-    color: var(--sage-dark);
-  }
+  .badge-achieved { background: var(--sage-light); color: var(--sage-dark); }
+  .badge-upcoming { background: var(--gold-light); color: #8B6914; }
 
-  .badge-upcoming {
-    background: var(--gold-light);
-    color: #8B6914;
-  }
-
-  /* GROWTH CHART */
-  .growth-row {
-    display: flex;
-    gap: 12px;
-    margin-bottom: 12px;
-  }
-
-  .growth-input-group {
-    flex: 1;
-  }
+  /* ── GROWTH ── */
+  .growth-row { display: flex; gap: 12px; margin-bottom: 12px; }
+  .growth-input-group { flex: 1; }
 
   .growth-label {
     font-size: 11px;
@@ -481,10 +487,6 @@
     letter-spacing: 1px;
     color: var(--light);
     margin-bottom: 6px;
-  }
-
-  .growth-history {
-    margin-top: 16px;
   }
 
   .growth-entry {
@@ -497,24 +499,13 @@
   }
 
   .growth-entry:last-child { border-bottom: none; }
-
   .growth-date { color: var(--mid); }
-  .growth-data { 
-    display: flex; 
-    gap: 16px;
-    color: var(--charcoal);
-    font-weight: 500;
-  }
+  .growth-data { display: flex; gap: 16px; color: var(--charcoal); font-weight: 500; }
 
-  /* TEXTAREA */
-  textarea.input-field {
-    width: 100%;
-    min-height: 80px;
-    resize: vertical;
-    line-height: 1.6;
-  }
+  /* ── TEXTAREA ── */
+  textarea.input-field { width: 100%; min-height: 80px; resize: vertical; line-height: 1.6; }
 
-  /* SECTION HEADERS */
+  /* ── SECTION HEADERS ── */
   .section-header {
     font-family: 'Playfair Display', serif;
     font-size: 18px;
@@ -530,7 +521,7 @@
     letter-spacing: 1px;
   }
 
-  /* WEEKLY */
+  /* ── WEEKLY ── */
   .week-summary-card {
     background: white;
     border-radius: 16px;
@@ -539,25 +530,10 @@
     border: 1px solid var(--border);
   }
 
-  .week-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 16px;
-    color: var(--charcoal);
-    margin-bottom: 4px;
-  }
+  .week-title { font-family: 'Playfair Display', serif; font-size: 16px; color: var(--charcoal); margin-bottom: 4px; }
+  .week-dates { font-size: 12px; color: var(--light); margin-bottom: 16px; }
 
-  .week-dates {
-    font-size: 12px;
-    color: var(--light);
-    margin-bottom: 16px;
-  }
-
-  .week-stats {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-    margin-bottom: 16px;
-  }
+  .week-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px; }
 
   .week-stat {
     text-align: center;
@@ -566,19 +542,8 @@
     padding: 12px 8px;
   }
 
-  .week-stat-value {
-    font-family: 'Playfair Display', serif;
-    font-size: 20px;
-    color: var(--sage-dark);
-  }
-
-  .week-stat-label {
-    font-size: 10px;
-    color: var(--light);
-    margin-top: 2px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
+  .week-stat-value { font-family: 'Playfair Display', serif; font-size: 20px; color: var(--sage-dark); }
+  .week-stat-label { font-size: 10px; color: var(--light); margin-top: 2px; text-transform: uppercase; letter-spacing: 0.5px; }
 
   .week-insight {
     font-size: 13px;
@@ -588,7 +553,7 @@
     border-top: 1px solid var(--border);
   }
 
-  /* DELETE BTN */
+  /* ── DELETE BTN ── */
   .btn-delete {
     background: none;
     border: none;
@@ -597,30 +562,20 @@
     font-size: 16px;
     padding: 4px;
     transition: color 0.2s;
+    flex-shrink: 0;
   }
   .btn-delete:hover { color: #E57373; }
 
-  /* EMPTY STATE */
-  .empty-state {
-    text-align: center;
-    padding: 40px 20px;
-    color: var(--light);
-  }
-
-  .empty-icon { font-size: 40px; margin-bottom: 12px; }
+  /* ── EMPTY STATE ── */
+  .empty-state { text-align: center; padding: 32px 20px; color: var(--light); }
+  .empty-icon { font-size: 36px; margin-bottom: 10px; }
   .empty-text { font-size: 14px; }
-  .empty-text-cn { 
-    font-family: 'Noto Serif SC', serif;
-    font-size: 12px;
-    margin-top: 4px;
-  }
+  .empty-text-cn { font-family: 'Noto Serif SC', serif; font-size: 12px; margin-top: 4px; }
 
-  /* RESPONSIVE */
-  @media (min-width: 480px) {
-    .main { padding: 28px 24px 80px; }
-    .header-name { font-size: 42px; }
-  }
+  /* ── RESPONSIVE ── */
+  @media (min-width: 480px) { .main { padding: 20px 24px 84px; } }
 
+  /* ── CALENDAR ── */
   .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:3px}
   .cal-dow{text-align:center;font-size:10px;color:var(--light);text-transform:uppercase;padding:4px 0 6px}
   .cal-day{border-radius:8px;padding:5px 3px;min-height:58px;cursor:pointer;border:1px solid transparent;transition:all .15s;position:relative}
@@ -634,16 +589,17 @@
   .cal-day-info{font-size:9px;color:var(--mid);line-height:1.4}
   .cal-milestone-dot{position:absolute;top:3px;right:3px;font-size:9px}
 
+  /* ── SYNC STATUS ── */
   .sync-status {
     position: fixed;
-    bottom: 20px;
-    right: 20px;
+    bottom: 72px;
+    right: 16px;
     padding: 8px 16px;
     border-radius: 20px;
     font-size: 12px;
     font-family: 'DM Sans', sans-serif;
     font-weight: 500;
-    z-index: 1000;
+    z-index: 200;
     transition: all 0.3s;
     opacity: 0;
   }
@@ -665,18 +621,15 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    // Expose to global scope
     window.fbSet = (path, val) => set(ref(db, path), val);
     window.fbGet = (path) => get(ref(db, path)).then(snap => snap.val());
     window.fbListen = (path, cb) => onValue(ref(db, 'kian_data'), snap => cb(snap.val()));
     window.firebaseReady = true;
 
-    // Load data from Firebase on startup
     window.addEventListener('load', () => {
       get(ref(db, 'kian_data')).then(snap => {
         const val = snap.val();
         if (val) {
-          // Merge with defaults (keep defaults for milestones/growth if not in Firebase)
           if (val.feeds) data.feeds = val.feeds;
           if (val.sleeps) data.sleeps = val.sleeps;
           if (val.activities) data.activities = val.activities;
@@ -687,15 +640,10 @@
           renderAll();
           showSyncStatus('synced');
         } else {
-          // First time - save default data to Firebase
           window.fbSet('kian_data', {
-            feeds: data.feeds,
-            sleeps: data.sleeps,
-            activities: data.activities,
-            dailyNotes: data.dailyNotes,
-            milestones: data.milestones,
-            growth: data.growth,
-            notes: data.notes
+            feeds: data.feeds, sleeps: data.sleeps, activities: data.activities,
+            dailyNotes: data.dailyNotes, milestones: data.milestones,
+            growth: data.growth, notes: data.notes
           }).then(() => showSyncStatus('synced'));
         }
       }).catch(err => {
@@ -709,41 +657,24 @@
 
 <div id="sync-status" class="sync-status"></div>
 
-<div class="header">
-  <div class="header-name">Kian Aurelius</div>
-  <div class="header-name-cn">安 砚 临</div>
-  <div class="header-subtitle">Daily Growth Journal · 成长日记</div>
-  <div class="header-stats">
-    <div class="stat-item">
-      <div class="stat-value" id="age-display">104</div>
-      <div class="stat-label">Days Old · 天</div>
-    </div>
-    <div class="stat-item">
-      <div class="stat-value" id="weight-display">6.6</div>
-      <div class="stat-label">kg · 体重</div>
-    </div>
-    <div class="stat-item">
-      <div class="stat-value" id="height-display">60</div>
-      <div class="stat-label">cm · 身高</div>
+<!-- ── COMPACT TOPBAR ── -->
+<header class="topbar">
+  <div class="topbar-left">
+    <div class="topbar-avatar">K</div>
+    <div>
+      <span class="topbar-name">Kian</span>
+      <span class="topbar-age">&nbsp;·&nbsp;<span id="topbar-age-num">—</span><span id="topbar-age-unit">天</span></span>
     </div>
   </div>
-  <div style="margin-top:12px">
-    <button onclick="resetData()" style="background:none;border:1px solid rgba(255,255,255,0.2);color:var(--light);padding:4px 12px;border-radius:20px;font-size:11px;cursor:pointer;font-family:'DM Sans',sans-serif;">↺ Reset Data</button>
+  <div class="topbar-right">
+    <button class="topbar-langbtn" onclick="toggleLang()" id="lang-btn">EN</button>
+    <button class="topbar-iconbtn" onclick="openSettings()" title="Settings">⚙️</button>
   </div>
-</div>
-
-<nav class="nav">
-  <div class="nav-tab active" onclick="switchTab('daily')">📅 Today · 今日</div>
-  <div class="nav-tab" onclick="switchTab('calendar')">🗓 Calendar · 日历</div>
-  <div class="nav-tab" onclick="switchTab('weekly')">📊 Week · 本周</div>
-  <div class="nav-tab" onclick="switchTab('milestones')">🌟 Milestones · 里程碑</div>
-  <div class="nav-tab" onclick="switchTab('growth')">📏 Growth · 成长</div>
-  <div class="nav-tab" onclick="switchTab('notes')">📝 Notes · 备注</div>
-</nav>
+</header>
 
 <div class="main">
 
-  <!-- DAILY TAB -->
+  <!-- ── DAILY TAB ── -->
   <div class="section active" id="tab-daily">
     <div class="date-bar">
       <div>
@@ -752,29 +683,29 @@
       </div>
       <div class="date-nav">
         <button class="date-btn" onclick="changeDate(-1)">←</button>
-        <button class="date-btn" onclick="changeDate(0)">今</button>
+        <button class="date-btn" onclick="changeDate(0)" id="btn-today">今</button>
         <button class="date-btn" onclick="changeDate(1)">→</button>
       </div>
     </div>
 
     <!-- DAILY SUMMARY -->
     <div class="summary-box">
-      <div class="summary-title">Today at a Glance · 今日概览</div>
+      <div class="summary-title" id="summary-title-text">今日概览</div>
       <div class="summary-grid">
         <div class="summary-item">
-          <div class="summary-label">Total Formula · 总奶量</div>
+          <div class="summary-label" id="label-total-feed">总奶量</div>
           <div class="summary-value" id="total-feed">—<span class="summary-unit">ml</span></div>
         </div>
         <div class="summary-item">
-          <div class="summary-label">Feedings · 喂奶次数</div>
+          <div class="summary-label" id="label-feedings">喂奶次数</div>
           <div class="summary-value" id="total-feeds-count">—<span class="summary-unit">次</span></div>
         </div>
         <div class="summary-item">
-          <div class="summary-label">Naps · 小觉</div>
+          <div class="summary-label" id="label-naps">小觉</div>
           <div class="summary-value" id="total-naps">—<span class="summary-unit">次</span></div>
         </div>
         <div class="summary-item">
-          <div class="summary-label">Night Sleep · 夜间</div>
+          <div class="summary-label" id="label-night">夜间</div>
           <div class="summary-value" id="night-sleep">—<span class="summary-unit">hrs</span></div>
         </div>
       </div>
@@ -782,69 +713,60 @@
 
     <!-- INSIGHT -->
     <div class="insight-box" id="daily-insight" style="display:none">
-      <div class="insight-title">💡 Today's Insight · 今日观察</div>
+      <div class="insight-title" id="insight-title-text">💡 今日观察</div>
       <div class="insight-text" id="insight-text"></div>
     </div>
 
-    <!-- FEEDS -->
+    <!-- ── MIXED TIMELINE ── -->
     <div class="card">
       <div class="card-header">
-        <div class="card-icon icon-feed">🍼</div>
+        <div class="card-icon icon-feed" style="font-size:20px">📋</div>
         <div>
-          <div class="card-title">Feedings · 喂奶记录</div>
-          <div class="card-title-cn">Formula intake log</div>
+          <div class="card-title" id="timeline-title-text">今日时间线</div>
+          <div class="card-title-cn" id="timeline-sub-text">喂奶 · 睡眠 · 活动</div>
         </div>
       </div>
-      <div id="feed-log"></div>
-      <div class="add-section">
+      <div id="mixed-timeline"></div>
+    </div>
+
+    <!-- ── TABBED ADD FORMS ── -->
+    <div class="card">
+      <div class="add-form-tabs">
+        <button class="add-tab-btn active" onclick="showAddForm('feed',this)" id="tab-btn-feed">🍼 喂奶</button>
+        <button class="add-tab-btn" onclick="showAddForm('sleep',this)" id="tab-btn-sleep">😴 睡眠</button>
+        <button class="add-tab-btn" onclick="showAddForm('activity',this)" id="tab-btn-activity">🎯 活动</button>
+      </div>
+
+      <!-- Feed form -->
+      <div id="add-form-feed">
         <div class="add-row">
           <input type="time" class="input-field" id="feed-time" style="max-width:120px">
           <input type="number" class="input-field" id="feed-amount" placeholder="ml" min="0" max="300" style="max-width:80px">
           <select class="input-field" id="feed-type">
-            <option value="Formula">Formula 配方奶</option>
-            <option value="Dream Feed">Dream Feed 梦中喂</option>
-            <option value="Night Feed">Night Feed 夜间</option>
+            <option value="Formula">配方奶 Formula</option>
+            <option value="Dream Feed">梦中喂 Dream Feed</option>
+            <option value="Night Feed">夜间喂 Night Feed</option>
           </select>
         </div>
-        <button class="btn-add" onclick="addFeed()">+ Add Feed · 添加</button>
+        <button class="btn-add" onclick="addFeed()" id="btn-add-feed">+ 添加喂奶</button>
       </div>
-    </div>
 
-    <!-- SLEEP -->
-    <div class="card">
-      <div class="card-header">
-        <div class="card-icon icon-sleep">😴</div>
-        <div>
-          <div class="card-title">Sleep Log · 睡眠记录</div>
-          <div class="card-title-cn">Naps and night sleep</div>
-        </div>
-      </div>
-      <div id="sleep-log"></div>
-      <div class="add-section">
+      <!-- Sleep form -->
+      <div id="add-form-sleep" style="display:none">
         <div class="add-row">
-          <input type="time" class="input-field" id="sleep-start" placeholder="Start 开始" style="max-width:120px">
-          <input type="time" class="input-field" id="sleep-end" placeholder="End 结束" style="max-width:120px">
+          <input type="time" class="input-field" id="sleep-start" style="max-width:120px">
+          <input type="time" class="input-field" id="sleep-end" style="max-width:120px">
           <select class="input-field" id="sleep-type">
-            <option value="Nap">Nap 小觉</option>
-            <option value="Night">Night 夜间</option>
-            <option value="Catnap">Catnap</option>
+            <option value="Nap">小觉 Nap</option>
+            <option value="Night">夜间 Night</option>
+            <option value="Catnap">打盹 Catnap</option>
           </select>
         </div>
-        <button class="btn-add" onclick="addSleep()">+ Add Sleep · 添加</button>
+        <button class="btn-add" onclick="addSleep()" id="btn-add-sleep">+ 添加睡眠</button>
       </div>
-    </div>
 
-    <!-- ACTIVITIES -->
-    <div class="card">
-      <div class="card-header">
-        <div class="card-icon icon-activity">🎯</div>
-        <div>
-          <div class="card-title">Activities · 活动记录</div>
-          <div class="card-title-cn">Play, tummy time, outings</div>
-        </div>
-      </div>
-      <div id="activity-log"></div>
-      <div class="add-section">
+      <!-- Activity form -->
+      <div id="add-form-activity" style="display:none">
         <div class="add-row">
           <input type="time" class="input-field" id="activity-time" style="max-width:120px">
           <select class="input-field" id="activity-type">
@@ -856,8 +778,8 @@
             <option value="Massage 抚触">Massage 抚触</option>
           </select>
         </div>
-        <input type="text" class="input-field" id="activity-note" placeholder="Notes · 备注 (optional)" style="width:100%; margin-bottom:8px">
-        <button class="btn-add" onclick="addActivity()">+ Add Activity · 添加</button>
+        <input type="text" class="input-field" id="activity-note" placeholder="备注 Notes (optional)" style="width:100%;margin-bottom:8px">
+        <button class="btn-add" onclick="addActivity()" id="btn-add-activity">+ 添加活动</button>
       </div>
     </div>
 
@@ -866,146 +788,18 @@
       <div class="card-header">
         <div class="card-icon icon-note">💬</div>
         <div>
-          <div class="card-title">Daily Note · 今日备注</div>
+          <div class="card-title" id="daily-note-title">今日备注</div>
           <div class="card-title-cn">Observations and thoughts</div>
         </div>
       </div>
-      <textarea class="input-field" id="daily-note" placeholder="How was today? Any new things you noticed about Kian?&#10;今天怎么样？有没有观察到什么新的变化？"></textarea>
-      <button class="btn-add" onclick="saveDailyNote()" style="margin-top:10px">Save · 保存</button>
+      <textarea class="input-field" id="daily-note" placeholder="今天怎么样？有没有观察到什么新的变化？"></textarea>
+      <button class="btn-add" onclick="saveDailyNote()" style="margin-top:10px" id="btn-save-note">保存</button>
     </div>
   </div>
 
-  <!-- WEEKLY TAB -->
-  <div class="section" id="tab-weekly">
-    <div class="section-header">Weekly Summary</div>
-    <div class="section-header-cn">每周总结</div>
-
-    <div id="weekly-content"></div>
-  </div>
-
-  <!-- MILESTONES TAB -->
-  <div class="section" id="tab-milestones">
-    <div class="section-header">Milestones</div>
-    <div class="section-header-cn">发育里程碑</div>
-
-    <div class="card">
-      <div class="card-header">
-        <div class="card-icon icon-activity">✅</div>
-        <div>
-          <div class="card-title">Achieved · 已达成</div>
-          <div class="card-title-cn">Kian's milestones so far</div>
-        </div>
-      </div>
-      <div id="achieved-milestones"></div>
-      <div class="add-section">
-        <div class="add-row">
-          <input type="text" class="input-field" id="milestone-title" placeholder="Milestone · 里程碑">
-          <input type="date" class="input-field" id="milestone-date" style="max-width:150px">
-        </div>
-        <input type="text" class="input-field" id="milestone-title-cn" placeholder="中文描述 (optional)" style="width:100%; margin-bottom:8px">
-        <button class="btn-add" onclick="addMilestone()">+ Add Milestone · 添加</button>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-header">
-        <div class="card-icon icon-sleep">🔜</div>
-        <div>
-          <div class="card-title">Coming Up · 即将到来</div>
-          <div class="card-title-cn">Next milestones to watch for</div>
-        </div>
-      </div>
-      <div id="upcoming-milestones"></div>
-    </div>
-  </div>
-
-  <!-- GROWTH TAB -->
-  <div class="section" id="tab-growth">
-    <div class="section-header">Growth Tracking</div>
-    <div class="section-header-cn">生长记录</div>
-
-    <div class="card">
-      <div class="card-header">
-        <div class="card-icon icon-growth">📏</div>
-        <div>
-          <div class="card-title">Add Measurement · 添加数据</div>
-        </div>
-      </div>
-      <div class="add-row">
-        <div class="growth-input-group">
-          <div class="growth-label">Date · 日期</div>
-          <input type="date" class="input-field" id="growth-date">
-        </div>
-      </div>
-      <div class="growth-row">
-        <div class="growth-input-group">
-          <div class="growth-label">Weight · 体重 (kg)</div>
-          <input type="number" class="input-field" id="growth-weight" placeholder="6.6" step="0.1">
-        </div>
-        <div class="growth-input-group">
-          <div class="growth-label">Height · 身高 (cm)</div>
-          <input type="number" class="input-field" id="growth-height" placeholder="60" step="0.5">
-        </div>
-        <div class="growth-input-group">
-          <div class="growth-label">Head · 头围 (cm)</div>
-          <input type="number" class="input-field" id="growth-head" placeholder="40" step="0.5">
-        </div>
-      </div>
-      <button class="btn-add" onclick="addGrowth()">+ Save · 保存</button>
-    </div>
-
-    <div class="card">
-      <div class="card-header">
-        <div class="card-icon icon-growth">📈</div>
-        <div>
-          <div class="card-title">Growth History · 成长历史</div>
-        </div>
-      </div>
-      <div id="growth-history"></div>
-    </div>
-
-    <div class="insight-box">
-      <div class="insight-title">📊 WHO Reference · 世卫参考值 (3个月男宝)</div>
-      <div class="insight-text">
-        体重 Weight: 5.1 – 7.9 kg (avg 6.4 kg)<br>
-        身高 Height: 57 – 65 cm (avg 61 cm)<br>
-        头围 Head: 38 – 43 cm (avg 40 cm)
-      </div>
-    </div>
-  </div>
-
-  <!-- NOTES TAB -->
-  <div class="section" id="tab-notes">
-    <div class="section-header">Journal Notes</div>
-    <div class="section-header-cn">日记备忘</div>
-
-    <div class="card">
-      <div class="card-header">
-        <div class="card-icon icon-note">✍️</div>
-        <div>
-          <div class="card-title">New Note · 新建备忘</div>
-        </div>
-      </div>
-      <div class="add-row">
-        <input type="date" class="input-field" id="note-date" style="max-width:160px">
-        <select class="input-field" id="note-category">
-          <option value="🌟 Observation">🌟 Observation 观察</option>
-          <option value="💡 Insight">💡 Insight 洞察</option>
-          <option value="❤️ Memory">❤️ Memory 记忆</option>
-          <option value="⚠️ Concern">⚠️ Concern 注意</option>
-          <option value="🎉 Celebration">🎉 Celebration 庆祝</option>
-        </select>
-      </div>
-      <textarea class="input-field" id="note-content" placeholder="Write your note here...&#10;在这里写下你的备忘..." style="margin-bottom:10px"></textarea>
-      <button class="btn-add" onclick="addNote()">+ Save Note · 保存</button>
-    </div>
-
-    <div id="notes-list"></div>
-  </div>
-
-  <!-- CALENDAR TAB -->
+  <!-- ── CALENDAR TAB ── -->
   <div class="section" id="tab-calendar">
-    <div class="section-header">Calendar View</div>
+    <div class="section-header" id="cal-header-text">Calendar View</div>
     <div class="section-header-cn">月历总览</div>
     <div class="card" style="padding:16px">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
@@ -1032,82 +826,257 @@
     </div>
   </div>
 
-  <!-- IMPORT TAB -->
-  <div class="section" id="tab-import">
-    <div class="section-header">Quick Import</div>
-    <div class="section-header-cn">快速导入</div>
-    <div class="insight-box">
-      <div class="insight-title">How to use &middot; 使用方法</div>
-      <div class="insight-text">
-        Paste data one entry per line &middot; 每行一条记录<br><br>
-        <strong>Format:</strong><br>
-        FEED 14:30 180ml Formula<br>
-        SLEEP 11:00 12:00 Nap<br>
-        ACTIVITY 16:00 Outing 去公园<br>
-        NOTE 今天Kian很开心
-      </div>
-    </div>
+  <!-- ── MILESTONES TAB ── -->
+  <div class="section" id="tab-milestones">
+    <div class="section-header" id="milestone-header-text">Milestones</div>
+    <div class="section-header-cn">发育里程碑</div>
+
     <div class="card">
       <div class="card-header">
-        <div class="card-icon icon-feed">&#128203;</div>
-        <div><div class="card-title">Paste Update &middot; 粘贴更新</div></div>
+        <div class="card-icon icon-activity">✅</div>
+        <div>
+          <div class="card-title" id="milestone-achieved-title">已达成</div>
+          <div class="card-title-cn">Kian's milestones so far</div>
+        </div>
       </div>
-      <div style="margin-bottom:10px">
-        <div class="growth-label">Date &middot; 日期</div>
-        <input type="date" class="input-field" id="import-date" style="max-width:180px">
-      </div>
-      <textarea class="input-field" id="import-text" placeholder="FEED 10:30 165ml Formula&#10;SLEEP 11:30 12:20 Nap&#10;ACTIVITY 16:00 Outing &#25955;&#27493;&#10;NOTE &#20ज&#22825;&#24456;&#24320;&#24515;" style="min-height:130px;margin-bottom:12px;font-family:monospace;font-size:12px"></textarea>
-      <button class="btn-add" onclick="importData()">Import &middot; 导入</button>
-      <div id="import-result" style="margin-top:10px;font-size:13px;color:var(--sage-dark)"></div>
-    </div>
-    <div class="card">
-      <div class="card-header">
-        <div class="card-icon icon-note">&#9889;</div>
-        <div><div class="card-title">Quick Single Entry &middot; 快速单条</div></div>
-      </div>
-      <div style="display:flex;flex-direction:column;gap:10px">
+      <div id="achieved-milestones"></div>
+      <div class="add-section">
         <div class="add-row">
-          <select class="input-field" id="quick-type" onchange="updateQuickForm()">
-            <option value="feed">Feed 喂奶</option>
-            <option value="sleep">Sleep 睡眠</option>
-            <option value="activity">Activity 活动</option>
-          </select>
-          <input type="date" class="input-field" id="quick-date" style="max-width:150px">
+          <input type="text" class="input-field" id="milestone-title" placeholder="Milestone · 里程碑">
+          <input type="date" class="input-field" id="milestone-date" style="max-width:150px">
         </div>
-        <div id="quick-feed-form">
-          <div class="add-row">
-            <input type="time" class="input-field" id="quick-time" style="max-width:110px">
-            <input type="number" class="input-field" id="quick-amount" placeholder="ml" style="max-width:80px">
-            <select class="input-field" id="quick-feed-type"><option>Formula</option><option>Night Feed</option><option>Dream Feed</option></select>
-          </div>
+        <input type="text" class="input-field" id="milestone-title-cn" placeholder="中文描述 (optional)" style="width:100%;margin-bottom:8px">
+        <button class="btn-add" onclick="addMilestone()">+ 添加里程碑</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon icon-sleep">🔜</div>
+        <div>
+          <div class="card-title" id="milestone-upcoming-title">即将到来</div>
+          <div class="card-title-cn">Next milestones to watch for</div>
         </div>
-        <div id="quick-sleep-form" style="display:none">
-          <div class="add-row">
-            <input type="time" class="input-field" id="quick-sleep-start" style="max-width:110px">
-            <input type="time" class="input-field" id="quick-sleep-end" style="max-width:110px">
-            <select class="input-field" id="quick-sleep-type"><option>Nap</option><option>Night</option><option>Catnap</option></select>
-          </div>
+      </div>
+      <div id="upcoming-milestones"></div>
+    </div>
+  </div>
+
+  <!-- ── GROWTH TAB ── -->
+  <div class="section" id="tab-growth">
+    <div class="section-header" id="growth-header-text">Growth Tracking</div>
+    <div class="section-header-cn">生长记录</div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon icon-growth">📏</div>
+        <div>
+          <div class="card-title" id="growth-add-title">添加数据</div>
         </div>
-        <div id="quick-activity-form" style="display:none">
-          <div class="add-row">
-            <input type="time" class="input-field" id="quick-act-time" style="max-width:110px">
-            <input type="text" class="input-field" id="quick-act-note" placeholder="Description 描述">
-          </div>
+      </div>
+      <div class="add-row">
+        <div class="growth-input-group">
+          <div class="growth-label" id="growth-date-label">日期</div>
+          <input type="date" class="input-field" id="growth-date">
         </div>
-        <button class="btn-add" onclick="quickAdd()">+ Add 添加</button>
+      </div>
+      <div class="growth-row">
+        <div class="growth-input-group">
+          <div class="growth-label">体重 Weight (kg)</div>
+          <input type="number" class="input-field" id="growth-weight" placeholder="6.6" step="0.1">
+        </div>
+        <div class="growth-input-group">
+          <div class="growth-label">身高 Height (cm)</div>
+          <input type="number" class="input-field" id="growth-height" placeholder="60" step="0.5">
+        </div>
+        <div class="growth-input-group">
+          <div class="growth-label">头围 Head (cm)</div>
+          <input type="number" class="input-field" id="growth-head" placeholder="40" step="0.5">
+        </div>
+      </div>
+      <button class="btn-add" onclick="addGrowth()">+ 保存</button>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon icon-growth">📈</div>
+        <div>
+          <div class="card-title" id="growth-history-title">成长历史</div>
+        </div>
+      </div>
+      <div id="growth-history"></div>
+    </div>
+
+    <div class="insight-box">
+      <div class="insight-title">📊 WHO Reference · 世卫参考值 (3个月男宝)</div>
+      <div class="insight-text">
+        体重 Weight: 5.1 – 7.9 kg (avg 6.4 kg)<br>
+        身高 Height: 57 – 65 cm (avg 61 cm)<br>
+        头围 Head: 38 – 43 cm (avg 40 cm)
       </div>
     </div>
   </div>
 
+  <!-- ── NOTES TAB ── -->
+  <div class="section" id="tab-notes">
+    <div class="section-header" id="notes-header-text">Journal Notes</div>
+    <div class="section-header-cn">日记备忘</div>
 
-</div>
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon icon-note">✍️</div>
+        <div>
+          <div class="card-title" id="notes-new-title">新建备忘</div>
+        </div>
+      </div>
+      <div class="add-row">
+        <input type="date" class="input-field" id="note-date" style="max-width:160px">
+        <select class="input-field" id="note-category">
+          <option value="🌟 Observation">🌟 Observation 观察</option>
+          <option value="💡 Insight">💡 Insight 洞察</option>
+          <option value="❤️ Memory">❤️ Memory 记忆</option>
+          <option value="⚠️ Concern">⚠️ Concern 注意</option>
+          <option value="🎉 Celebration">🎉 Celebration 庆祝</option>
+        </select>
+      </div>
+      <textarea class="input-field" id="note-content" placeholder="在这里写下你的备忘..." style="margin-bottom:10px"></textarea>
+      <button class="btn-add" onclick="addNote()" id="btn-save-note2">+ 保存备忘</button>
+    </div>
+
+    <div id="notes-list"></div>
+  </div>
+
+  <!-- ── WEEKLY TAB (hidden, accessible via calendar) ── -->
+  <div class="section" id="tab-weekly">
+    <div class="section-header">Weekly Summary</div>
+    <div class="section-header-cn">每周总结</div>
+    <div id="weekly-content"></div>
+  </div>
+
+</div><!-- end .main -->
+
+<!-- ── BOTTOM TAB BAR ── -->
+<nav class="bottom-tabbar">
+  <div class="tab-item active" onclick="switchTab('daily',this)" data-tab="daily">
+    <span class="tab-icon">📅</span>
+    <span class="tab-label" id="tab-label-daily">今日</span>
+  </div>
+  <div class="tab-item" onclick="switchTab('calendar',this)" data-tab="calendar">
+    <span class="tab-icon">🗓</span>
+    <span class="tab-label" id="tab-label-calendar">日历</span>
+  </div>
+  <div class="tab-item" onclick="switchTab('milestones',this)" data-tab="milestones">
+    <span class="tab-icon">🌟</span>
+    <span class="tab-label" id="tab-label-milestones">里程碑</span>
+  </div>
+  <div class="tab-item" onclick="switchTab('growth',this)" data-tab="growth">
+    <span class="tab-icon">📏</span>
+    <span class="tab-label" id="tab-label-growth">成长</span>
+  </div>
+  <div class="tab-item" onclick="switchTab('notes',this)" data-tab="notes">
+    <span class="tab-icon">📝</span>
+    <span class="tab-label" id="tab-label-notes">笔记</span>
+  </div>
+</nav>
 
 <script>
+// ── I18N ───────────────────────────────────────────────
+let currentLang = 'zh';
+
+const i18n = {
+  zh: {
+    'topbar-age-unit': '天',
+    'tab-daily': '今日', 'tab-calendar': '日历', 'tab-milestones': '里程碑', 'tab-growth': '成长', 'tab-notes': '笔记',
+    'summary-title': '今日概览', 'label-total-feed': '总奶量', 'label-feedings': '喂奶次数', 'label-naps': '小觉', 'label-night': '夜间',
+    'insight-title': '💡 今日观察',
+    'timeline-title': '今日时间线', 'timeline-sub': '喂奶 · 睡眠 · 活动',
+    'tab-btn-feed': '🍼 喂奶', 'tab-btn-sleep': '😴 睡眠', 'tab-btn-activity': '🎯 活动',
+    'btn-add-feed': '+ 添加喂奶', 'btn-add-sleep': '+ 添加睡眠', 'btn-add-activity': '+ 添加活动',
+    'daily-note-title': '今日备注', 'btn-save-note': '保存', 'btn-today': '今',
+    'cal-header': '日历视图', 'milestone-header': '里程碑', 'milestone-achieved': '已达成', 'milestone-upcoming': '即将到来',
+    'growth-header': '成长记录', 'growth-add': '添加数据', 'growth-date-label': '日期', 'growth-history': '成长历史',
+    'notes-header': '日记备忘', 'notes-new': '新建备忘', 'btn-save-note2': '+ 保存备忘',
+    'empty-timeline': '今日暂无记录，快来添加吧 ↑',
+    'feed-type-Formula': '配方奶', 'feed-type-Dream Feed': '梦中喂', 'feed-type-Night Feed': '夜间喂',
+    'sleep-type-Nap': '小觉', 'sleep-type-Night': '夜间', 'sleep-type-Catnap': '打盹',
+    'count-unit': '次', 'feeds-unit': '次',
+    'milestone-badge-achieved': '已达成', 'milestone-badge-upcoming': '即将到来',
+  },
+  en: {
+    'topbar-age-unit': ' days',
+    'tab-daily': 'Today', 'tab-calendar': 'Calendar', 'tab-milestones': 'Milestones', 'tab-growth': 'Growth', 'tab-notes': 'Notes',
+    'summary-title': "Today's Overview", 'label-total-feed': 'Total Formula', 'label-feedings': 'Feedings', 'label-naps': 'Naps', 'label-night': 'Night Sleep',
+    'insight-title': "💡 Today's Insight",
+    'timeline-title': 'Daily Timeline', 'timeline-sub': 'Feeds · Sleep · Activities',
+    'tab-btn-feed': '🍼 Feed', 'tab-btn-sleep': '😴 Sleep', 'tab-btn-activity': '🎯 Activity',
+    'btn-add-feed': '+ Add Feed', 'btn-add-sleep': '+ Add Sleep', 'btn-add-activity': '+ Add Activity',
+    'daily-note-title': 'Daily Note', 'btn-save-note': 'Save', 'btn-today': 'Now',
+    'cal-header': 'Calendar View', 'milestone-header': 'Milestones', 'milestone-achieved': 'Achieved', 'milestone-upcoming': 'Coming Up',
+    'growth-header': 'Growth Tracking', 'growth-add': 'Add Measurement', 'growth-date-label': 'Date', 'growth-history': 'Growth History',
+    'notes-header': 'Journal Notes', 'notes-new': 'New Note', 'btn-save-note2': '+ Save Note',
+    'empty-timeline': 'No entries today. Start logging! ↑',
+    'feed-type-Formula': 'Formula', 'feed-type-Dream Feed': 'Dream Feed', 'feed-type-Night Feed': 'Night Feed',
+    'sleep-type-Nap': 'Nap', 'sleep-type-Night': 'Night', 'sleep-type-Catnap': 'Catnap',
+    'count-unit': '', 'feeds-unit': 'x',
+    'milestone-badge-achieved': 'Achieved', 'milestone-badge-upcoming': 'Coming Soon',
+  }
+};
+
+function t(key) {
+  return (i18n[currentLang] && i18n[currentLang][key] !== undefined) ? i18n[currentLang][key] : key;
+}
+
+function toggleLang() {
+  currentLang = currentLang === 'zh' ? 'en' : 'zh';
+  applyLang();
+}
+
+function applyLang() {
+  const btn = document.getElementById('lang-btn');
+  if (btn) btn.textContent = currentLang === 'zh' ? 'EN' : '中';
+
+  // Static elements
+  const map = {
+    'topbar-age-unit': 'topbar-age-unit',
+    'tab-daily': 'tab-label-daily', 'tab-calendar': 'tab-label-calendar',
+    'tab-milestones': 'tab-label-milestones', 'tab-growth': 'tab-label-growth', 'tab-notes': 'tab-label-notes',
+    'summary-title': 'summary-title-text', 'label-total-feed': 'label-total-feed',
+    'label-feedings': 'label-feedings', 'label-naps': 'label-naps', 'label-night': 'label-night',
+    'insight-title': 'insight-title-text',
+    'timeline-title': 'timeline-title-text', 'timeline-sub': 'timeline-sub-text',
+    'tab-btn-feed': 'tab-btn-feed', 'tab-btn-sleep': 'tab-btn-sleep', 'tab-btn-activity': 'tab-btn-activity',
+    'btn-add-feed': 'btn-add-feed', 'btn-add-sleep': 'btn-add-sleep', 'btn-add-activity': 'btn-add-activity',
+    'daily-note-title': 'daily-note-title', 'btn-save-note': 'btn-save-note',
+    'btn-today': 'btn-today',
+    'cal-header': 'cal-header-text', 'milestone-header': 'milestone-header-text',
+    'milestone-achieved': 'milestone-achieved-title', 'milestone-upcoming': 'milestone-upcoming-title',
+    'growth-header': 'growth-header-text', 'growth-add': 'growth-add-title',
+    'growth-date-label': 'growth-date-label', 'growth-history': 'growth-history-title',
+    'notes-header': 'notes-header-text', 'notes-new': 'notes-new-title', 'btn-save-note2': 'btn-save-note2',
+  };
+  Object.entries(map).forEach(([key, id]) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = t(key);
+  });
+
+  // Daily note placeholder
+  const noteEl = document.getElementById('daily-note');
+  if (noteEl) noteEl.placeholder = currentLang === 'zh' ? '今天怎么样？有没有观察到什么新的变化？' : "How was today? Any new things you noticed about Kian?";
+  const noteContentEl = document.getElementById('note-content');
+  if (noteContentEl) noteContentEl.placeholder = currentLang === 'zh' ? '在这里写下你的备忘...' : 'Write your note here...';
+
+  // Re-render dynamic content
+  renderTimeline();
+  renderDailySummary();
+  renderMilestones();
+}
+
 // ── STATE ──────────────────────────────────────────────
 let currentDate = new Date();
 currentDate.setHours(0,0,0,0);
 
 const STORAGE_KEY = 'kian_journal_v1';
+const BIRTH_DATE = new Date('2025-12-02');
 
 const DEFAULT_DATA = {
   feeds: {
@@ -1196,25 +1165,14 @@ const DEFAULT_DATA = {
 
 // ── STORAGE ────────────────────────────────────────────
 function saveData() {
-  // Always save to localStorage as backup
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-  } catch(e) {}
-
-  // Save to Firebase if available
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch(e) {}
   if (window.firebaseReady) {
     showSyncStatus('syncing');
     window.fbSet('kian_data', {
-      feeds: data.feeds,
-      sleeps: data.sleeps,
-      activities: data.activities,
-      dailyNotes: data.dailyNotes,
-      milestones: data.milestones,
-      growth: data.growth,
-      notes: data.notes
-    }).then(() => {
-      showSyncStatus('synced');
-    }).catch(err => {
+      feeds: data.feeds, sleeps: data.sleeps, activities: data.activities,
+      dailyNotes: data.dailyNotes, milestones: data.milestones,
+      growth: data.growth, notes: data.notes
+    }).then(() => showSyncStatus('synced')).catch(err => {
       console.warn('Firebase save failed:', err);
       showSyncStatus('offline');
     });
@@ -1225,78 +1183,59 @@ function showSyncStatus(status) {
   const el = document.getElementById('sync-status');
   if (!el) return;
   el.className = 'sync-status show ' + status;
-  const msgs = {
-    syncing: '☁️ Saving...',
-    synced: '✅ Saved to cloud',
-    offline: '⚠️ Offline - saved locally'
-  };
+  const msgs = { syncing: '☁️ Saving...', synced: '✅ Saved', offline: '⚠️ Offline' };
   el.textContent = msgs[status] || '';
   clearTimeout(window._syncTimer);
-  if (status === 'synced') {
-    window._syncTimer = setTimeout(() => { el.classList.remove('show'); }, 2000);
-  }
+  if (status === 'synced') window._syncTimer = setTimeout(() => el.classList.remove('show'), 2000);
 }
 
 function loadData() {
   try {
     const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) {
-      const parsed = JSON.parse(saved);
-      Object.assign(data, parsed);
-      return true;
-    }
-  } catch(e) {
-    console.warn('Storage load failed:', e);
-  }
+    if (saved) { Object.assign(data, JSON.parse(saved)); return true; }
+  } catch(e) {}
   return false;
 }
 
 function resetData() {
-  if (confirm('Reset all data to defaults? · 确定要重置所有数据吗？')) {
-    localStorage.removeItem(STORAGE_KEY);
-    Object.assign(data, JSON.parse(JSON.stringify(DEFAULT_DATA)));
-    saveData();
-    renderAll();
-  }
+  localStorage.removeItem(STORAGE_KEY);
+  Object.assign(data, JSON.parse(JSON.stringify(DEFAULT_DATA)));
+  saveData();
+  renderAll();
+}
+
+function openSettings() {
+  if (confirm('Reset all data to defaults?
+确定要重置所有数据吗？')) resetData();
 }
 
 let data = JSON.parse(JSON.stringify(DEFAULT_DATA));
 
-const BIRTH_DATE = new Date('2025-12-02');
-
 // ── HELPERS ────────────────────────────────────────────
-function dateKey(d) {
-  return d.toISOString().split('T')[0];
-}
+function dateKey(d) { return d.toISOString().split('T')[0]; }
 
-function formatDate(d) {
-  return d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
-}
+function formatDate(d) { return d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }); }
 
-function formatDateCn(d) {
-  return d.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' });
-}
+function formatDateCn(d) { return d.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' }); }
 
-function getDayAge() {
-  return Math.floor((new Date() - BIRTH_DATE) / 86400000);
-}
+function getDayAge() { return Math.floor((new Date() - BIRTH_DATE) / 86400000); }
 
 function calcSleepDuration(start, end) {
   const [sh, sm] = start.split(':').map(Number);
   let [eh, em] = end.split(':').map(Number);
-  let startMin = sh * 60 + sm;
-  let endMin = eh * 60 + em;
+  let startMin = sh * 60 + sm, endMin = eh * 60 + em;
   if (endMin <= startMin) endMin += 24 * 60;
   const diff = endMin - startMin;
-  const h = Math.floor(diff / 60);
-  const m = diff % 60;
+  const h = Math.floor(diff / 60), m = diff % 60;
   return h > 0 ? `${h}h ${m}m` : `${m}m`;
 }
 
 // ── INIT ───────────────────────────────────────────────
 function init() {
   loadData();
-  document.getElementById('age-display').textContent = getDayAge();
+  const age = getDayAge();
+  const ageEl = document.getElementById('topbar-age-num');
+  if (ageEl) ageEl.textContent = age;
   updateDateDisplay();
   renderAll();
 }
@@ -1307,9 +1246,7 @@ function updateDateDisplay() {
 }
 
 function renderAll() {
-  renderFeedLog();
-  renderSleepLog();
-  renderActivityLog();
+  renderTimeline();
   renderDailySummary();
   renderInsight();
   renderDailyNote();
@@ -1322,14 +1259,72 @@ function renderAll() {
 
 // ── DATE NAV ───────────────────────────────────────────
 function changeDate(dir) {
-  if (dir === 0) {
-    currentDate = new Date();
-    currentDate.setHours(0,0,0,0);
-  } else {
-    currentDate.setDate(currentDate.getDate() + dir);
-  }
+  if (dir === 0) { currentDate = new Date(); currentDate.setHours(0,0,0,0); }
+  else currentDate.setDate(currentDate.getDate() + dir);
   updateDateDisplay();
   renderAll();
+}
+
+// ── MIXED TIMELINE ─────────────────────────────────────
+function renderTimeline() {
+  const key = dateKey(currentDate);
+  const feeds = (data.feeds[key] || []).map(f => ({ sortTime: f.time, kind: 'feed', id: f.id, data: f }));
+  const sleeps = (data.sleeps[key] || []).map(s => ({ sortTime: s.start, kind: 'sleep', id: s.id, data: s }));
+  const acts = (data.activities[key] || []).map(a => ({ sortTime: a.time, kind: 'activity', id: a.id, data: a }));
+  const all = [...feeds, ...sleeps, ...acts].sort((a, b) => a.sortTime.localeCompare(b.sortTime));
+
+  const el = document.getElementById('mixed-timeline');
+  if (!el) return;
+
+  if (!all.length) {
+    el.innerHTML = `<div class="empty-state"><div class="empty-icon">📋</div><div class="empty-text">${t('empty-timeline')}</div></div>`;
+    return;
+  }
+
+  el.innerHTML = all.map(entry => {
+    const { kind, data: d } = entry;
+    if (kind === 'feed') {
+      const typeLabel = t('feed-type-' + d.type) || d.type;
+      return `<div class="timeline-entry">
+        <span class="timeline-emoji">🍼</span>
+        <span class="timeline-time">${d.time}</span>
+        <div class="timeline-body">
+          <div class="timeline-main">${typeLabel}<span class="timeline-badge badge-feed">${d.amount}ml</span></div>
+        </div>
+        <button class="btn-delete" onclick="deleteFeed('${key}', ${d.id})">×</button>
+      </div>`;
+    } else if (kind === 'sleep') {
+      const typeLabel = t('sleep-type-' + d.type) || d.type;
+      return `<div class="timeline-entry">
+        <span class="timeline-emoji">😴</span>
+        <span class="timeline-time">${d.start}</span>
+        <div class="timeline-body">
+          <div class="timeline-main">${typeLabel}<span class="timeline-badge badge-sleep">${d.duration}</span></div>
+          <div class="timeline-sub">${d.start} → ${d.end}</div>
+        </div>
+        <button class="btn-delete" onclick="deleteSleep('${key}', ${d.id})">×</button>
+      </div>`;
+    } else {
+      return `<div class="timeline-entry">
+        <span class="timeline-emoji">🎯</span>
+        <span class="timeline-time">${d.time}</span>
+        <div class="timeline-body">
+          <div class="timeline-main">${d.type}</div>
+          ${d.note ? `<div class="timeline-sub">${d.note}</div>` : ''}
+        </div>
+        <button class="btn-delete" onclick="deleteActivity('${key}', ${d.id})">×</button>
+      </div>`;
+    }
+  }).join('');
+}
+
+// ── ADD FORM TABS ───────────────────────────────────────
+function showAddForm(type, btn) {
+  ['feed', 'sleep', 'activity'].forEach(t => {
+    document.getElementById('add-form-' + t).style.display = t === type ? 'block' : 'none';
+  });
+  document.querySelectorAll('.add-tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
 }
 
 // ── FEEDS ──────────────────────────────────────────────
@@ -1344,7 +1339,7 @@ function addFeed() {
   data.feeds[key].sort((a, b) => a.time.localeCompare(b.time));
   document.getElementById('feed-amount').value = '';
   saveData();
-  renderFeedLog();
+  renderTimeline();
   renderDailySummary();
   renderInsight();
 }
@@ -1352,28 +1347,9 @@ function addFeed() {
 function deleteFeed(key, id) {
   data.feeds[key] = data.feeds[key].filter(f => f.id !== id);
   saveData();
-  renderFeedLog();
+  renderTimeline();
   renderDailySummary();
   renderInsight();
-}
-
-function renderFeedLog() {
-  const key = dateKey(currentDate);
-  const feeds = data.feeds[key] || [];
-  const el = document.getElementById('feed-log');
-  if (!feeds.length) {
-    el.innerHTML = '<div class="empty-state"><div class="empty-icon">🍼</div><div class="empty-text">No feeds logged yet</div><div class="empty-text-cn">还没有喂奶记录</div></div>';
-    return;
-  }
-  el.innerHTML = feeds.map(f => `
-    <div class="log-entry">
-      <span class="log-time">${f.time}</span>
-      <span class="log-dot dot-feed"></span>
-      <span class="log-text">${f.type}</span>
-      <span class="log-amount">${f.amount}ml</span>
-      <button class="btn-delete" onclick="deleteFeed('${key}', ${f.id})">×</button>
-    </div>
-  `).join('');
 }
 
 // ── SLEEP ──────────────────────────────────────────────
@@ -1384,38 +1360,18 @@ function addSleep() {
   if (!start || !end) return;
   const key = dateKey(currentDate);
   if (!data.sleeps[key]) data.sleeps[key] = [];
-  const duration = calcSleepDuration(start, end);
-  data.sleeps[key].push({ start, end, type, duration, id: Date.now() });
+  data.sleeps[key].push({ start, end, type, duration: calcSleepDuration(start, end), id: Date.now() });
   data.sleeps[key].sort((a, b) => a.start.localeCompare(b.start));
   saveData();
-  renderSleepLog();
+  renderTimeline();
   renderDailySummary();
 }
 
 function deleteSleep(key, id) {
   data.sleeps[key] = data.sleeps[key].filter(s => s.id !== id);
   saveData();
-  renderSleepLog();
+  renderTimeline();
   renderDailySummary();
-}
-
-function renderSleepLog() {
-  const key = dateKey(currentDate);
-  const sleeps = data.sleeps[key] || [];
-  const el = document.getElementById('sleep-log');
-  if (!sleeps.length) {
-    el.innerHTML = '<div class="empty-state"><div class="empty-icon">😴</div><div class="empty-text">No sleep logged yet</div><div class="empty-text-cn">还没有睡眠记录</div></div>';
-    return;
-  }
-  el.innerHTML = sleeps.map(s => `
-    <div class="log-entry">
-      <span class="log-time">${s.start}</span>
-      <span class="log-dot dot-sleep"></span>
-      <span class="log-text">${s.type} · ${s.duration}</span>
-      <span class="log-amount" style="background:#E8EAF6; color:#5C6BC0">${s.end}</span>
-      <button class="btn-delete" onclick="deleteSleep('${key}', ${s.id})">×</button>
-    </div>
-  `).join('');
 }
 
 // ── ACTIVITIES ─────────────────────────────────────────
@@ -1430,31 +1386,13 @@ function addActivity() {
   data.activities[key].sort((a, b) => a.time.localeCompare(b.time));
   document.getElementById('activity-note').value = '';
   saveData();
-  renderActivityLog();
+  renderTimeline();
 }
 
 function deleteActivity(key, id) {
   data.activities[key] = data.activities[key].filter(a => a.id !== id);
   saveData();
-  renderActivityLog();
-}
-
-function renderActivityLog() {
-  const key = dateKey(currentDate);
-  const acts = data.activities[key] || [];
-  const el = document.getElementById('activity-log');
-  if (!acts.length) {
-    el.innerHTML = '<div class="empty-state"><div class="empty-icon">🎯</div><div class="empty-text">No activities logged yet</div><div class="empty-text-cn">还没有活动记录</div></div>';
-    return;
-  }
-  el.innerHTML = acts.map(a => `
-    <div class="log-entry">
-      <span class="log-time">${a.time}</span>
-      <span class="log-dot dot-activity"></span>
-      <span class="log-text">${a.type}${a.note ? ' · ' + a.note : ''}</span>
-      <button class="btn-delete" onclick="deleteActivity('${key}', ${a.id})">×</button>
-    </div>
-  `).join('');
+  renderTimeline();
 }
 
 // ── SUMMARY ────────────────────────────────────────────
@@ -1465,14 +1403,13 @@ function renderDailySummary() {
   const total = feeds.reduce((s, f) => s + f.amount, 0);
   const naps = sleeps.filter(s => s.type === 'Nap' || s.type === 'Catnap').length;
   const nightSleep = sleeps.filter(s => s.type === 'Night');
+  const unit = t('count-unit');
 
   document.getElementById('total-feed').innerHTML = total ? `${total}<span class="summary-unit">ml</span>` : `—<span class="summary-unit">ml</span>`;
-  document.getElementById('total-feeds-count').innerHTML = feeds.length ? `${feeds.length}<span class="summary-unit">次</span>` : `—<span class="summary-unit">次</span>`;
-  document.getElementById('total-naps').innerHTML = naps ? `${naps}<span class="summary-unit">次</span>` : `—<span class="summary-unit">次</span>`;
-
+  document.getElementById('total-feeds-count').innerHTML = feeds.length ? `${feeds.length}<span class="summary-unit">${unit}</span>` : `—<span class="summary-unit">${unit}</span>`;
+  document.getElementById('total-naps').innerHTML = naps ? `${naps}<span class="summary-unit">${unit}</span>` : `—<span class="summary-unit">${unit}</span>`;
   if (nightSleep.length) {
-    const ns = nightSleep[0];
-    document.getElementById('night-sleep').innerHTML = `${ns.duration}<span class="summary-unit"></span>`;
+    document.getElementById('night-sleep').innerHTML = `${nightSleep[0].duration}<span class="summary-unit"></span>`;
   } else {
     document.getElementById('night-sleep').innerHTML = `—<span class="summary-unit">hrs</span>`;
   }
@@ -1484,22 +1421,15 @@ function renderInsight() {
   const feeds = data.feeds[key] || [];
   const total = feeds.reduce((s, f) => s + f.amount, 0);
   const insights = [];
-
-  if (total > 0 && total < 700) insights.push("Total formula is below 700ml today. Consider offering feeds more frequently. · 今日总奶量偏低，可以适当增加喂奶次数。");
-  if (total >= 700 && total <= 950) insights.push("Feeding amount looks great today! · 今日奶量很理想！");
-  if (total > 950) insights.push("Total formula is above 950ml. This is on the higher end — watch for signs of overfeeding. · 今日奶量偏高，注意观察是否有过度喂养的迹象。");
-
+  if (total > 0 && total < 700) insights.push(currentLang === 'zh' ? '今日总奶量偏低，可以适当增加喂奶次数。' : 'Total formula is below 700ml. Consider offering feeds more frequently.');
+  if (total >= 700 && total <= 950) insights.push(currentLang === 'zh' ? '今日奶量很理想！' : 'Feeding amount looks great today!');
+  if (total > 950) insights.push(currentLang === 'zh' ? '今日奶量偏高，注意观察是否有过度喂养的迹象。' : 'Total formula is above 950ml — watch for signs of overfeeding.');
   const avgFeed = feeds.length ? Math.round(total / feeds.length) : 0;
-  if (avgFeed > 0 && avgFeed < 150) insights.push("Average feed size is small. Kian may be distracted during feeds — try feeding in a quieter environment. · 单次奶量偏少，Kian可能在吃奶时分心，尝试在更安静的环境喂奶。");
-
+  if (avgFeed > 0 && avgFeed < 150) insights.push(currentLang === 'zh' ? '单次奶量偏少，可尝试在更安静的环境喂奶。' : 'Average feed size is small. Try feeding in a quieter environment.');
   const el = document.getElementById('daily-insight');
   const textEl = document.getElementById('insight-text');
-  if (insights.length) {
-    el.style.display = 'block';
-    textEl.textContent = insights.join(' ');
-  } else {
-    el.style.display = 'none';
-  }
+  if (insights.length) { el.style.display = 'block'; textEl.textContent = insights.join(' '); }
+  else el.style.display = 'none';
 }
 
 // ── DAILY NOTE ─────────────────────────────────────────
@@ -1507,7 +1437,7 @@ function saveDailyNote() {
   const key = dateKey(currentDate);
   data.dailyNotes[key] = document.getElementById('daily-note').value;
   saveData();
-  alert('Saved! · 已保存！');
+  showSyncStatus('synced');
 }
 
 function renderDailyNote() {
@@ -1545,6 +1475,8 @@ function deleteMilestone(idx) {
 }
 
 function renderMilestones() {
+  const achievedBadge = t('milestone-badge-achieved');
+  const upcomingBadge = t('milestone-badge-upcoming');
   const el = document.getElementById('achieved-milestones');
   el.innerHTML = data.milestones.achieved.map((m, i) => `
     <div class="milestone-item">
@@ -1553,7 +1485,7 @@ function renderMilestones() {
         <div class="milestone-title">${m.title}</div>
         ${m.titleCn ? `<div class="milestone-title-cn">${m.titleCn}</div>` : ''}
         <div class="milestone-date">📅 ${m.date}</div>
-        <span class="milestone-badge badge-achieved">Achieved · 已达成</span>
+        <span class="milestone-badge badge-achieved">${achievedBadge}</span>
       </div>
       <button class="btn-delete" onclick="deleteMilestone(${i})">×</button>
     </div>
@@ -1567,7 +1499,7 @@ function renderMilestones() {
         <div class="milestone-title">${m.title}</div>
         <div class="milestone-title-cn">${m.titleCn}</div>
         <div class="milestone-date">⏱️ ${m.eta}</div>
-        <span class="milestone-badge badge-upcoming">Coming Soon · 即将到来</span>
+        <span class="milestone-badge badge-upcoming">${upcomingBadge}</span>
       </div>
     </div>
   `).join('');
@@ -1582,8 +1514,6 @@ function addGrowth() {
   if (!date) return;
   data.growth.push({ date, weight: weight || null, height: height || null, head: head || null });
   data.growth.sort((a, b) => a.date.localeCompare(b.date));
-  if (weight) document.getElementById('weight-display').textContent = weight;
-  if (height) document.getElementById('height-display').textContent = height;
   document.getElementById('growth-weight').value = '';
   document.getElementById('growth-height').value = '';
   document.getElementById('growth-head').value = '';
@@ -1612,15 +1542,13 @@ function renderGrowthHistory() {
 // ── WEEKLY ─────────────────────────────────────────────
 function renderWeekly() {
   const today = new Date();
-  const dayOfWeek = today.getDay();
   const weekStart = new Date(today);
-  weekStart.setDate(today.getDate() - dayOfWeek);
+  weekStart.setDate(today.getDate() - today.getDay());
   weekStart.setHours(0,0,0,0);
   const weekEnd = new Date(weekStart);
   weekEnd.setDate(weekStart.getDate() + 6);
 
-  let totalFeeds = 0, totalAmount = 0, feedDays = 0;
-  let weeklyObs = [];
+  let totalFeeds = 0, totalAmount = 0, feedDays = 0, weeklyObs = [];
 
   for (let i = 0; i < 7; i++) {
     const d = new Date(weekStart);
@@ -1647,35 +1575,22 @@ function renderWeekly() {
       <div class="week-stats">
         <div class="week-stat">
           <div class="week-stat-value">${avgDailyAmount || '—'}</div>
-          <div class="week-stat-label">Avg ml/day · 日均奶量</div>
+          <div class="week-stat-label">Avg ml/day</div>
         </div>
         <div class="week-stat">
           <div class="week-stat-value">${avgFeedsPerDay || '—'}</div>
-          <div class="week-stat-label">Feeds/day · 每日喂奶</div>
+          <div class="week-stat-label">Feeds/day</div>
         </div>
         <div class="week-stat">
           <div class="week-stat-value">${feedDays}</div>
-          <div class="week-stat-label">Days logged · 记录天数</div>
+          <div class="week-stat-label">Days logged</div>
         </div>
       </div>
-      ${weeklyObs.length ? `
-        <div class="week-insight">
-          <strong>This week's notes · 本周备注：</strong><br>
-          ${weeklyObs.map(o => `<br><em>${o.date}:</em> ${o.note}`).join('')}
-        </div>
-      ` : '<div class="week-insight">Add daily notes to see your weekly journal here. · 添加每日备注以查看每周日记。</div>'}
+      ${weeklyObs.length ? `<div class="week-insight"><strong>Notes this week:</strong><br>${weeklyObs.map(o => `<br><em>${o.date}:</em> ${o.note}`).join('')}</div>` : '<div class="week-insight">Add daily notes to see your weekly journal here.</div>'}
     </div>
-
     <div class="insight-box">
-      <div class="insight-title">💡 Weekly Insight · 本周洞察</div>
-      <div class="insight-text">
-        ${avgDailyAmount >= 700 && avgDailyAmount <= 950
-          ? "Kian's feeding volume is in the ideal range this week. Keep it up! · 本周奶量在理想范围内，继续保持！"
-          : avgDailyAmount > 0
-            ? "Consider tracking more consistently to get better weekly insights. · 持续记录有助于获得更准确的每周洞察。"
-            : "Start logging feeds to see weekly insights here. · 开始记录喂奶数据以查看每周洞察。"
-        }
-      </div>
+      <div class="insight-title">💡 Weekly Insight</div>
+      <div class="insight-text">${avgDailyAmount >= 700 && avgDailyAmount <= 950 ? "Kian's feeding volume is in the ideal range this week!" : avgDailyAmount > 0 ? "Consider tracking more consistently for better insights." : "Start logging feeds to see weekly insights."}</div>
     </div>
   `;
 }
@@ -1701,26 +1616,33 @@ function deleteNote(id) {
 function renderNotes() {
   const el = document.getElementById('notes-list');
   if (!data.notes.length) {
-    el.innerHTML = '<div class="empty-state"><div class="empty-icon">📝</div><div class="empty-text">No notes yet</div><div class="empty-text-cn">还没有备注</div></div>';
+    el.innerHTML = '<div class="empty-state"><div class="empty-icon">📝</div><div class="empty-text">No notes yet · 还没有备注</div></div>';
     return;
   }
   el.innerHTML = data.notes.map(n => `
     <div class="card">
-      <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
         <div>
-          <div style="font-size:13px; font-weight:500; color:var(--charcoal)">${n.category}</div>
-          <div style="font-size:11px; color:var(--light); margin-top:2px">${n.date}</div>
+          <div style="font-size:13px;font-weight:500;color:var(--charcoal)">${n.category}</div>
+          <div style="font-size:11px;color:var(--light);margin-top:2px">${n.date}</div>
         </div>
         <button class="btn-delete" onclick="deleteNote(${n.id})">×</button>
       </div>
-      <div style="font-size:14px; color:var(--mid); line-height:1.7">${n.content}</div>
+      <div style="font-size:14px;color:var(--mid);line-height:1.7">${n.content}</div>
     </div>
   `).join('');
 }
 
 // ── TABS ───────────────────────────────────────────────
+function switchTab(tab, el) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  const tabEl = el || document.querySelector(`[data-tab="${tab}"]`);
+  if (tabEl) tabEl.classList.add('active');
+}
 
-// CALENDAR
+// ── CALENDAR ───────────────────────────────────────────
 var calYear = new Date().getFullYear();
 var calMonth = new Date().getMonth();
 
@@ -1732,149 +1654,63 @@ function changeCalMonth(dir) {
 }
 
 function renderCalendar() {
-  var mN=['January','February','March','April','May','June','July','August','September','October','November','December'];
-  var mC=['一月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月'];
-  var titleEl=document.getElementById('cal-month-title');
-  var cnEl=document.getElementById('cal-month-cn');
-  if(!titleEl) return;
-  titleEl.textContent=mN[calMonth]+' '+calYear;
-  cnEl.textContent=calYear+'年 '+mC[calMonth];
-  var today=new Date(); today.setHours(0,0,0,0);
-  var firstDay=new Date(calYear,calMonth,1);
-  var lastDay=new Date(calYear,calMonth+1,0);
-  var startDow=firstDay.getDay();
-  var mDates=new Set(data.milestones.achieved.map(function(m){return m.date;}));
-  var html='';
-  for(var i=0;i<startDow;i++){
-    var pd=new Date(calYear,calMonth,-startDow+i+1);
-    html+='<div class="cal-day other-month"><div class="cal-day-num">'+pd.getDate()+'</div></div>';
+  var mN = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  var mC = ['一月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月'];
+  var titleEl = document.getElementById('cal-month-title');
+  var cnEl = document.getElementById('cal-month-cn');
+  if (!titleEl) return;
+  titleEl.textContent = mN[calMonth] + ' ' + calYear;
+  cnEl.textContent = calYear + '年 ' + mC[calMonth];
+  var today = new Date(); today.setHours(0,0,0,0);
+  var firstDay = new Date(calYear, calMonth, 1);
+  var lastDay = new Date(calYear, calMonth + 1, 0);
+  var startDow = firstDay.getDay();
+  var mDates = new Set(data.milestones.achieved.map(m => m.date));
+  var html = '';
+  for (var i = 0; i < startDow; i++) {
+    var pd = new Date(calYear, calMonth, -startDow + i + 1);
+    html += '<div class="cal-day other-month"><div class="cal-day-num">' + pd.getDate() + '</div></div>';
   }
-  for(var d=1;d<=lastDay.getDate();d++){
-    var td=new Date(calYear,calMonth,d);
-    var key=dateKey(td);
-    var feeds=data.feeds[key]||[];
-    var sleeps=data.sleeps[key]||[];
-    var totalMl=feeds.reduce(function(s,f){return s+f.amount;},0);
-    var naps=sleeps.filter(function(s){return s.type==='Nap'||s.type==='Catnap';}).length;
-    var hasData=feeds.length>0||sleeps.length>0;
-    var isToday=td.getTime()===today.getTime();
-    var isSel=dateKey(currentDate)===key;
-    var hasMile=mDates.has(key);
-    var cls='cal-day'+(hasData?' has-data':'')+(isToday?' is-today':'')+(isSel?' is-selected':'');
-    var info=(totalMl?'Feed:'+totalMl+'ml':'')+(naps?(totalMl?'<br>':'')+'Naps:'+naps:'');
-    html+='<div class="'+cls+'" onclick="jumpToDate(\''+key+'\')">'+
-      (hasMile?'<div class="cal-milestone-dot">*</div>':'')+
-      '<div class="cal-day-num">'+d+'</div>'+
-      '<div class="cal-day-info">'+info+'</div></div>';
+  for (var d = 1; d <= lastDay.getDate(); d++) {
+    var td = new Date(calYear, calMonth, d);
+    var key = dateKey(td);
+    var feeds = data.feeds[key] || [];
+    var slps = data.sleeps[key] || [];
+    var totalMl = feeds.reduce((s, f) => s + f.amount, 0);
+    var naps = slps.filter(s => s.type === 'Nap' || s.type === 'Catnap').length;
+    var hasData = feeds.length > 0 || slps.length > 0;
+    var isToday = td.getTime() === today.getTime();
+    var isSel = dateKey(currentDate) === key;
+    var hasMile = mDates.has(key);
+    var cls = 'cal-day' + (hasData ? ' has-data' : '') + (isToday ? ' is-today' : '') + (isSel ? ' is-selected' : '');
+    var info = (totalMl ? 'Feed:' + totalMl + 'ml' : '') + (naps ? (totalMl ? '<br>' : '') + 'Naps:' + naps : '');
+    html += '<div class="' + cls + '" onclick="jumpToDate(\'' + key + '\')">' +
+      (hasMile ? '<div class="cal-milestone-dot">⭐</div>' : '') +
+      '<div class="cal-day-num">' + d + '</div>' +
+      '<div class="cal-day-info">' + info + '</div></div>';
   }
-  var rem=(7-(startDow+lastDay.getDate())%7)%7;
-  for(var j=1;j<=rem;j++){
-    html+='<div class="cal-day other-month"><div class="cal-day-num">'+j+'</div></div>';
-  }
-  document.getElementById('cal-days').innerHTML=html;
+  var rem = (7 - (startDow + lastDay.getDate()) % 7) % 7;
+  for (var j = 1; j <= rem; j++) html += '<div class="cal-day other-month"><div class="cal-day-num">' + j + '</div></div>';
+  document.getElementById('cal-days').innerHTML = html;
 }
 
 function jumpToDate(key) {
-  currentDate=new Date(key+'T00:00:00');
+  currentDate = new Date(key + 'T00:00:00');
   updateDateDisplay();
   renderAll();
-  document.querySelectorAll('.section').forEach(function(s){s.classList.remove('active');});
-  document.querySelectorAll('.nav-tab').forEach(function(t){t.classList.remove('active');});
-  document.getElementById('tab-daily').classList.add('active');
-  document.querySelectorAll('.nav-tab')[0].classList.add('active');
-}
-
-// IMPORT
-function importData() {
-  var dateVal=document.getElementById('import-date').value;
-  var text=document.getElementById('import-text').value.trim();
-  if(!dateVal||!text){document.getElementById('import-result').textContent='Please fill date and data';return;}
-  var lines=text.split('\n').filter(function(l){return l.trim();});
-  var fc=0,sc=0,ac=0,nc=0;
-  if(!data.feeds[dateVal])data.feeds[dateVal]=[];
-  if(!data.sleeps[dateVal])data.sleeps[dateVal]=[];
-  if(!data.activities[dateVal])data.activities[dateVal]=[];
-  lines.forEach(function(line){
-    var parts=line.trim().split(' ');
-    var cmd=parts[0].toUpperCase();
-    if(cmd==='FEED'&&parts.length>=3){
-      var t=parts[1],amt=parseInt(parts[2]),typ=parts.slice(3).join(' ')||'Formula';
-      if(t&&amt){data.feeds[dateVal].push({time:t,amount:amt,type:typ,id:Date.now()+Math.random()});fc++;}
-    } else if(cmd==='SLEEP'&&parts.length>=4){
-      var st=parts[1],en=parts[2],sty=parts.slice(3).join(' ')||'Nap';
-      data.sleeps[dateVal].push({start:st,end:en,type:sty,duration:calcSleepDuration(st,en),id:Date.now()+Math.random()});sc++;
-    } else if(cmd==='ACTIVITY'&&parts.length>=3){
-      var at=parts[1],an=parts.slice(2).join(' ');
-      data.activities[dateVal].push({time:at,type:'Activity',note:an,id:Date.now()+Math.random()});ac++;
-    } else if(cmd==='NOTE'){
-      var nc2=parts.slice(1).join(' ');
-      if(nc2){data.notes.unshift({date:dateVal,category:'Observation',content:nc2,id:Date.now()+Math.random()});nc++;}
-    }
-  });
-  if(data.feeds[dateVal])data.feeds[dateVal].sort(function(a,b){return a.time.localeCompare(b.time);});
-  if(data.sleeps[dateVal])data.sleeps[dateVal].sort(function(a,b){return a.start.localeCompare(b.start);});
-  saveData();renderAll();
-  document.getElementById('import-result').textContent='Imported: '+fc+' feeds, '+sc+' sleeps, '+ac+' activities, '+nc+' notes';
-  document.getElementById('import-text').value='';
-}
-
-function updateQuickForm(){
-  var type=document.getElementById('quick-type').value;
-  document.getElementById('quick-feed-form').style.display=type==='feed'?'block':'none';
-  document.getElementById('quick-sleep-form').style.display=type==='sleep'?'block':'none';
-  document.getElementById('quick-activity-form').style.display=type==='activity'?'block':'none';
-}
-
-function quickAdd(){
-  var type=document.getElementById('quick-type').value;
-  var dateVal=document.getElementById('quick-date').value||dateKey(new Date());
-  if(!data.feeds[dateVal])data.feeds[dateVal]=[];
-  if(!data.sleeps[dateVal])data.sleeps[dateVal]=[];
-  if(!data.activities[dateVal])data.activities[dateVal]=[];
-  if(type==='feed'){
-    var time=document.getElementById('quick-time').value;
-    var amount=parseInt(document.getElementById('quick-amount').value);
-    var ft=document.getElementById('quick-feed-type').value;
-    if(!time||!amount)return;
-    data.feeds[dateVal].push({time:time,amount:amount,type:ft,id:Date.now()});
-    data.feeds[dateVal].sort(function(a,b){return a.time.localeCompare(b.time);});
-    document.getElementById('quick-amount').value='';
-  } else if(type==='sleep'){
-    var ss=document.getElementById('quick-sleep-start').value;
-    var se=document.getElementById('quick-sleep-end').value;
-    var sty=document.getElementById('quick-sleep-type').value;
-    if(!ss||!se)return;
-    data.sleeps[dateVal].push({start:ss,end:se,type:sty,duration:calcSleepDuration(ss,se),id:Date.now()});
-    data.sleeps[dateVal].sort(function(a,b){return a.start.localeCompare(b.start);});
-  } else if(type==='activity'){
-    var at=document.getElementById('quick-act-time').value;
-    var an=document.getElementById('quick-act-note').value;
-    if(!at)return;
-    data.activities[dateVal].push({time:at,type:'Activity',note:an,id:Date.now()});
-    document.getElementById('quick-act-note').value='';
-  }
-  saveData();renderAll();
-  alert('Added to '+dateVal);
-}
-
-function switchTab(tab) {
-  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-  document.getElementById('tab-' + tab).classList.add('active');
-  event.target.classList.add('active');
+  switchTab('daily');
 }
 
 // ── SET DEFAULT DATES ──────────────────────────────────
 function setDefaultDates() {
   const today = dateKey(new Date());
-  document.getElementById('feed-time').value = new Date().toTimeString().slice(0,5);
-  document.getElementById('sleep-start').value = new Date().toTimeString().slice(0,5);
-  document.getElementById('activity-time').value = new Date().toTimeString().slice(0,5);
+  const now = new Date().toTimeString().slice(0, 5);
+  document.getElementById('feed-time').value = now;
+  document.getElementById('sleep-start').value = now;
+  document.getElementById('activity-time').value = now;
   document.getElementById('growth-date').value = today;
   document.getElementById('note-date').value = today;
   document.getElementById('milestone-date').value = today;
-  if(document.getElementById('import-date')) document.getElementById('import-date').value = today;
-  if(document.getElementById('quick-date')) document.getElementById('quick-date').value = today;
 }
 
 // ── START ──────────────────────────────────────────────
