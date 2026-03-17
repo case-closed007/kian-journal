@@ -607,6 +607,33 @@
   .sync-status.syncing { background: var(--gold-light); color: #8B6914; }
   .sync-status.synced { background: var(--sage-light); color: var(--sage-dark); }
   .sync-status.offline { background: #FFE0E0; color: #C62828; }
+
+  /* ── AI INPUT ── */
+  .ai-input-card { border: 1px solid var(--sage-light); }
+  .ai-send-btn {
+    background: linear-gradient(135deg, var(--sage-dark), var(--sage));
+    color: white; border: none; padding: 9px 18px;
+    border-radius: 8px; font-size: 13px; font-weight: 500;
+    cursor: pointer; font-family: 'DM Sans', sans-serif;
+    transition: opacity 0.2s; flex: 1;
+  }
+  .ai-send-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+  .ai-feedback { margin-top: 8px; font-size: 13px; color: var(--mid); display: none; }
+  .insight-loading { color: var(--light); font-style: italic; }
+
+  /* ── PREDICTIONS ── */
+  .prediction-row {
+    display: flex; gap: 8px; flex-wrap: wrap;
+    margin-top: 10px; padding-top: 10px;
+    border-top: 1px dashed var(--border);
+  }
+  .prediction-item {
+    display: flex; flex-direction: column; align-items: center;
+    background: var(--blush-light); border-radius: 8px;
+    padding: 5px 10px; min-width: 90px;
+  }
+  .pred-label { font-size: 10px; color: var(--mid); font-weight: 500; }
+  .pred-time { font-size: 15px; font-weight: 600; color: var(--charcoal); margin-top: 1px; }
 </style>
 
   <!-- Firebase SDK -->
@@ -637,13 +664,14 @@
           if (val.milestones) data.milestones = val.milestones;
           if (val.growth) data.growth = val.growth;
           if (val.notes) data.notes = val.notes;
+          if (val.aiInsights) data.aiInsights = val.aiInsights;
           renderAll();
           showSyncStatus('synced');
         } else {
           window.fbSet('kian_data', {
             feeds: data.feeds, sleeps: data.sleeps, activities: data.activities,
             dailyNotes: data.dailyNotes, milestones: data.milestones,
-            growth: data.growth, notes: data.notes
+            growth: data.growth, notes: data.notes, aiInsights: data.aiInsights || {}
           }).then(() => showSyncStatus('synced'));
         }
       }).catch(err => {
@@ -709,6 +737,18 @@
           <div class="summary-value" id="night-sleep">—<span class="summary-unit">hrs</span></div>
         </div>
       </div>
+
+      <!-- PREDICTIONS -->
+      <div class="prediction-row" id="prediction-row" style="display:none">
+        <div class="prediction-item" id="pred-feed-item" style="display:none">
+          <span class="pred-label" id="pred-feed-label">下次喂奶</span>
+          <span class="pred-time" id="pred-feed-time">—</span>
+        </div>
+        <div class="prediction-item" id="pred-sleep-item" style="display:none">
+          <span class="pred-label" id="pred-sleep-label">下次小觉</span>
+          <span class="pred-time" id="pred-sleep-time">—</span>
+        </div>
+      </div>
     </div>
 
     <!-- INSIGHT -->
@@ -727,6 +767,22 @@
         </div>
       </div>
       <div id="mixed-timeline"></div>
+    </div>
+
+    <!-- ── AI NATURAL LANGUAGE INPUT ── -->
+    <div class="card ai-input-card">
+      <div class="card-header">
+        <div class="card-icon" style="font-size:20px">✨</div>
+        <div>
+          <div class="card-title" id="ai-card-title">AI 快速录入</div>
+          <div class="card-title-cn" id="ai-card-sub">用中文描述刚发生的事</div>
+        </div>
+      </div>
+      <textarea id="ai-input-text" class="input-field" rows="2" style="width:100%;resize:vertical" placeholder="例如：刚喂了180ml，他吃完睡着了 / Just fed 180ml, he fell asleep after"></textarea>
+      <div style="display:flex;gap:8px;margin-top:8px">
+        <button class="ai-send-btn" onclick="parseNaturalInput()" id="btn-ai-send">✨ AI 解析并添加</button>
+      </div>
+      <div class="ai-feedback" id="ai-feedback"></div>
     </div>
 
     <!-- ── TABBED ADD FORMS ── -->
@@ -980,6 +1036,24 @@
 </nav>
 
 <script>
+// ── GEMINI AI CONFIG ────────────────────────────────────
+const GEMINI_API_KEY = 'AIzaSyCWlTtm9Dzk7xtohdbW7hJIjhW79n8s5Fc';
+const GEMINI_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' + GEMINI_API_KEY;
+
+async function callGemini(prompt) {
+  const res = await fetch(GEMINI_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      contents: [{ parts: [{ text: prompt }] }],
+      generationConfig: { temperature: 0.4, maxOutputTokens: 1024 }
+    })
+  });
+  if (!res.ok) throw new Error('Gemini error ' + res.status);
+  const json = await res.json();
+  return json.candidates?.[0]?.content?.parts?.[0]?.text || '';
+}
+
 // ── I18N ───────────────────────────────────────────────
 let currentLang = 'zh';
 
@@ -1004,6 +1078,9 @@ const i18n = {
     'activity-type-Bath 洗澡': '洗澡', 'activity-type-Massage 抚触': '抚触',
     'count-unit': '次', 'feeds-unit': '次',
     'milestone-badge-achieved': '已达成', 'milestone-badge-upcoming': '即将到来',
+    'ai-card-title': 'AI 快速录入', 'ai-card-sub': '用中文描述刚发生的事',
+    'btn-ai-send': '✨ AI 解析并添加',
+    'pred-feed-label': '下次喂奶', 'pred-sleep-label': '下次小觉',
   },
   en: {
     'topbar-age-unit': ' days',
@@ -1025,6 +1102,9 @@ const i18n = {
     'activity-type-Bath 洗澡': 'Bath', 'activity-type-Massage 抚触': 'Massage',
     'count-unit': '', 'feeds-unit': 'x',
     'milestone-badge-achieved': 'Achieved', 'milestone-badge-upcoming': 'Coming Soon',
+    'ai-card-title': 'AI Quick Log', 'ai-card-sub': 'Describe what just happened',
+    'btn-ai-send': '✨ Parse & Add',
+    'pred-feed-label': 'Next Feed', 'pred-sleep-label': 'Next Nap',
   }
 };
 
@@ -1059,6 +1139,8 @@ function applyLang() {
     'growth-header': 'growth-header-text', 'growth-add': 'growth-add-title',
     'growth-date-label': 'growth-date-label', 'growth-history': 'growth-history-title',
     'notes-header': 'notes-header-text', 'notes-new': 'notes-new-title', 'btn-save-note2': 'btn-save-note2',
+    'ai-card-title': 'ai-card-title', 'ai-card-sub': 'ai-card-sub', 'btn-ai-send': 'btn-ai-send',
+    'pred-feed-label': 'pred-feed-label', 'pred-sleep-label': 'pred-sleep-label',
   };
   Object.entries(map).forEach(([key, id]) => {
     const el = document.getElementById(id);
@@ -1074,6 +1156,7 @@ function applyLang() {
   // Re-render dynamic content
   renderTimeline();
   renderDailySummary();
+  renderPredictions();
   renderInsight();
   renderMilestones();
 }
@@ -1167,7 +1250,8 @@ const DEFAULT_DATA = {
     { date: '2026-03-16', category: '💡 Insight', content: 'Kian says "哎" after sneezing — startled by his own sneeze, then vocalizes. Also uses fake cough to get attention. Very communicative for 3 months. · Kian打喷嚏后说"哎"——被自己的喷嚏吓到了，然后发声。也会用假咳嗽吸引注意力。3个月能有这样的表达能力很厉害。', id: 301 },
     { date: '2026-03-15', category: '🌟 Observation', content: 'During tummy time, Kian actively tries to move toward the mirror — early goal-directed movement. Also intentionally grasped the gym bar handle. Bone structure already visible in profile shots — good nasal bridge definition. · 趴着的时候，Kian会主动尝试往镜子方向移动——早期目标导向行为。也有意识地抓了健身架把手。侧脸照片已经可以看出骨相——鼻梁轮廓很好。', id: 302 },
     { date: '2026-03-14', category: '❤️ Memory', content: 'Kian loves looking at mom and lights up every single time. When mom enters his field of view he smiles immediately and starts "talking." Today outside he was alert and happy the whole time. · Kian喜欢看妈妈，每次看到都会立刻发光。妈妈进入视野他马上笑并开始"说话"。今天外出全程都很警觉开心。', id: 303 },
-  ]
+  ],
+  aiInsights: {}
 };
 
 // ── STORAGE ────────────────────────────────────────────
@@ -1178,7 +1262,7 @@ function saveData() {
     window.fbSet('kian_data', {
       feeds: data.feeds, sleeps: data.sleeps, activities: data.activities,
       dailyNotes: data.dailyNotes, milestones: data.milestones,
-      growth: data.growth, notes: data.notes
+      growth: data.growth, notes: data.notes, aiInsights: data.aiInsights || {}
     }).then(() => showSyncStatus('synced')).catch(err => {
       console.warn('Firebase save failed:', err);
       showSyncStatus('offline');
@@ -1254,6 +1338,7 @@ function updateDateDisplay() {
 function renderAll() {
   renderTimeline();
   renderDailySummary();
+  renderPredictions();
   renderInsight();
   renderDailyNote();
   renderMilestones();
@@ -1348,6 +1433,7 @@ function addFeed() {
   saveData();
   renderTimeline();
   renderDailySummary();
+  renderPredictions();
   renderInsight();
 }
 
@@ -1356,6 +1442,7 @@ function deleteFeed(key, id) {
   saveData();
   renderTimeline();
   renderDailySummary();
+  renderPredictions();
   renderInsight();
 }
 
@@ -1372,6 +1459,7 @@ function addSleep() {
   saveData();
   renderTimeline();
   renderDailySummary();
+  renderPredictions();
 }
 
 function deleteSleep(key, id) {
@@ -1379,6 +1467,7 @@ function deleteSleep(key, id) {
   saveData();
   renderTimeline();
   renderDailySummary();
+  renderPredictions();
 }
 
 // ── ACTIVITIES ─────────────────────────────────────────
@@ -1422,21 +1511,236 @@ function renderDailySummary() {
   }
 }
 
-// ── INSIGHT ────────────────────────────────────────────
+// ── AI INSIGHT ─────────────────────────────────────────
+let _aiInsightPending = false;
+
 function renderInsight() {
   const key = dateKey(currentDate);
-  const feeds = data.feeds[key] || [];
-  const total = feeds.reduce((s, f) => s + f.amount, 0);
-  const insights = [];
-  if (total > 0 && total < 700) insights.push(currentLang === 'zh' ? '今日总奶量偏低，可以适当增加喂奶次数。' : 'Total formula is below 700ml. Consider offering feeds more frequently.');
-  if (total >= 700 && total <= 950) insights.push(currentLang === 'zh' ? '今日奶量很理想！' : 'Feeding amount looks great today!');
-  if (total > 950) insights.push(currentLang === 'zh' ? '今日奶量偏高，注意观察是否有过度喂养的迹象。' : 'Total formula is above 950ml — watch for signs of overfeeding.');
-  const avgFeed = feeds.length ? Math.round(total / feeds.length) : 0;
-  if (avgFeed > 0 && avgFeed < 150) insights.push(currentLang === 'zh' ? '单次奶量偏少，可尝试在更安静的环境喂奶。' : 'Average feed size is small. Try feeding in a quieter environment.');
   const el = document.getElementById('daily-insight');
   const textEl = document.getElementById('insight-text');
-  if (insights.length) { el.style.display = 'block'; textEl.textContent = insights.join(' '); }
-  else el.style.display = 'none';
+  if (!el || !textEl) return;
+
+  // Show cached result
+  if (data.aiInsights && data.aiInsights[key]) {
+    const cached = data.aiInsights[key];
+    el.style.display = 'block';
+    textEl.innerHTML = (cached[currentLang] || cached.zh || '').replace(/\n/g, '<br>');
+    return;
+  }
+
+  // No data → hide
+  const feeds = data.feeds[key] || [];
+  const sleeps = data.sleeps[key] || [];
+  const activities = data.activities[key] || [];
+  if (!feeds.length && !sleeps.length && !activities.length) {
+    el.style.display = 'none';
+    return;
+  }
+
+  // Auto-generate (once)
+  if (_aiInsightPending) return;
+  el.style.display = 'block';
+  textEl.innerHTML = '<span class="insight-loading">✨ AI 正在分析今日数据…</span>';
+  _generateAIInsight(key, feeds, sleeps, activities);
+}
+
+async function _generateAIInsight(key, feeds, sleeps, activities) {
+  _aiInsightPending = true;
+  try {
+    const age = getDayAge();
+    const total = feeds.reduce((s, f) => s + f.amount, 0);
+    const naps = sleeps.filter(s => s.type === 'Nap' || s.type === 'Catnap').length;
+    const nightSleep = sleeps.find(s => s.type === 'Night');
+    const now = new Date().toTimeString().slice(0, 5);
+    const feedSummary = feeds.map(f => `${f.time}: ${f.amount}ml (${f.type})`).join(', ') || 'none';
+    const sleepSummary = sleeps.map(s => `${s.start}-${s.end} ${s.type} (${s.duration})`).join(', ') || 'none';
+    const actSummary = activities.map(a => `${a.time} ${a.type}${a.note ? ': ' + a.note : ''}`).join(', ') || 'none';
+
+    const prompt = `You are a warm, expert baby care advisor for Kian (born 2025-12-02, age ${age} days, ~${Math.floor(age / 30)} months old).
+Today: ${key}. Current time: ${now}.
+Today's data:
+- Feeds: ${feedSummary} | Total: ${total}ml (${feeds.length} feeds)
+- Sleep: ${sleepSummary} | Naps: ${naps}${nightSleep ? ', Night: ' + nightSleep.duration : ''}
+- Activities: ${actSummary}
+
+Provide exactly 3 warm, specific, actionable observations or suggestions based on this data. Reference specific numbers. Keep each point to 1-2 sentences.
+Return ONLY a JSON object (no markdown, no extra text):
+{"zh":"1. [中文建议1]\n2. [中文建议2]\n3. [中文建议3]","en":"1. [English point 1]\n2. [English point 2]\n3. [English point 3]"}`;
+
+    const result = await callGemini(prompt);
+    const jsonMatch = result.match(/\{[\s\S]*?\}/);
+    if (!jsonMatch) throw new Error('No JSON');
+    const parsed = JSON.parse(jsonMatch[0]);
+
+    if (!data.aiInsights) data.aiInsights = {};
+    data.aiInsights[key] = parsed;
+    saveData();
+
+    const textEl = document.getElementById('insight-text');
+    if (textEl) textEl.innerHTML = (parsed[currentLang] || parsed.zh || '').replace(/\n/g, '<br>');
+  } catch (err) {
+    console.warn('AI insight failed:', err);
+    // Fallback to simple insight
+    const key2 = dateKey(currentDate);
+    const feeds2 = data.feeds[key2] || [];
+    const total2 = feeds2.reduce((s, f) => s + f.amount, 0);
+    const el = document.getElementById('daily-insight');
+    const textEl = document.getElementById('insight-text');
+    let msg = '';
+    if (total2 >= 700 && total2 <= 950) msg = currentLang === 'zh' ? '今日奶量很理想！' : 'Feeding amount looks great today!';
+    else if (total2 > 0) msg = currentLang === 'zh' ? `今日总奶量 ${total2}ml。` : `Total formula today: ${total2}ml.`;
+    if (msg && textEl) textEl.textContent = msg;
+    else if (el) el.style.display = 'none';
+  } finally {
+    _aiInsightPending = false;
+  }
+}
+
+// ── PREDICTIONS ────────────────────────────────────────
+function renderPredictions() {
+  const key = dateKey(currentDate);
+  const todayFeeds = (data.feeds[key] || []).slice().sort((a, b) => a.time.localeCompare(b.time));
+  const todaySleeps = (data.sleeps[key] || []).filter(s => s.type !== 'Night').slice().sort((a, b) => a.start.localeCompare(b.start));
+
+  const predRow = document.getElementById('prediction-row');
+  const feedItem = document.getElementById('pred-feed-item');
+  const sleepItem = document.getElementById('pred-sleep-item');
+  const feedTimeEl = document.getElementById('pred-feed-time');
+  const sleepTimeEl = document.getElementById('pred-sleep-time');
+  if (!predRow) return;
+
+  let hasPred = false;
+
+  // Next feed: avg interval from today's feeds
+  if (todayFeeds.length >= 1) {
+    let avgInterval = 180; // default 3h
+    if (todayFeeds.length >= 2) {
+      const intervals = [];
+      for (let i = 1; i < todayFeeds.length; i++) {
+        const [h1, m1] = todayFeeds[i-1].time.split(':').map(Number);
+        const [h2, m2] = todayFeeds[i].time.split(':').map(Number);
+        const diff = (h2 * 60 + m2) - (h1 * 60 + m1);
+        if (diff > 0) intervals.push(diff);
+      }
+      if (intervals.length) avgInterval = Math.round(intervals.reduce((a, b) => a + b, 0) / intervals.length);
+    }
+    const last = todayFeeds[todayFeeds.length - 1];
+    const [lh, lm] = last.time.split(':').map(Number);
+    const nextMin = (lh * 60 + lm + avgInterval) % (24 * 60);
+    feedTimeEl.textContent = String(Math.floor(nextMin / 60)).padStart(2, '0') + ':' + String(nextMin % 60).padStart(2, '0');
+    feedItem.style.display = 'flex';
+    hasPred = true;
+  } else {
+    feedItem.style.display = 'none';
+  }
+
+  // Next nap: last nap end + avg wake window (~105 min for ~3mo)
+  if (todaySleeps.length >= 1) {
+    const last = todaySleeps[todaySleeps.length - 1];
+    const [lh, lm] = last.end.split(':').map(Number);
+    const nextMin = (lh * 60 + lm + 105) % (24 * 60);
+    sleepTimeEl.textContent = '~' + String(Math.floor(nextMin / 60)).padStart(2, '0') + ':' + String(nextMin % 60).padStart(2, '0');
+    sleepItem.style.display = 'flex';
+    hasPred = true;
+  } else {
+    sleepItem.style.display = 'none';
+  }
+
+  predRow.style.display = hasPred ? 'flex' : 'none';
+}
+
+// ── NATURAL LANGUAGE AI INPUT ──────────────────────────
+async function parseNaturalInput() {
+  const textEl = document.getElementById('ai-input-text');
+  const feedbackEl = document.getElementById('ai-feedback');
+  const btnEl = document.getElementById('btn-ai-send');
+  const text = (textEl && textEl.value.trim()) || '';
+  if (!text) return;
+
+  btnEl.disabled = true;
+  btnEl.textContent = '⏳ 解析中…';
+  feedbackEl.style.display = 'block';
+  feedbackEl.style.color = 'var(--mid)';
+  feedbackEl.textContent = '正在解析…';
+
+  const now = new Date().toTimeString().slice(0, 5);
+  const age = getDayAge();
+  const prompt = `You are a baby journal assistant for Kian (age: ${age} days, born 2025-12-02).
+Current time: ${now}. Today's date: ${dateKey(currentDate)}.
+
+Parse the following text describing baby events. Extract ALL events mentioned.
+Return ONLY valid JSON (no markdown, no explanation):
+{"events":[
+  {"type":"feed","time":"HH:MM","amount":180,"feedType":"Formula"},
+  {"type":"sleep","start":"HH:MM","end":"HH:MM","sleepType":"Nap"},
+  {"type":"activity","time":"HH:MM","activityType":"Play 玩耍","note":"description"}
+]}
+
+Rules:
+- feedType options: "Formula","Dream Feed","Night Feed"
+- sleepType options: "Nap","Night","Catnap"
+- activityType options: "Tummy Time 趴趴时间","Outing 外出","Swimming 游泳","Play 玩耍","Bath 洗澡","Massage 抚触"
+- If no time mentioned, use current time ${now}
+- If sleep end not mentioned, estimate based on context or omit (use start=end)
+- Return empty events array if nothing clear found
+
+Text: "${text}"`;
+
+  try {
+    const result = await callGemini(prompt);
+    const jsonMatch = result.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) throw new Error('No JSON in response');
+    const parsed = JSON.parse(jsonMatch[0]);
+    const events = parsed.events || [];
+
+    if (!events.length) {
+      feedbackEl.textContent = '未识别到事件，请重新描述。';
+      return;
+    }
+
+    const key = dateKey(currentDate);
+    const added = [];
+
+    for (const e of events) {
+      if (e.type === 'feed' && e.time && e.amount) {
+        if (!data.feeds[key]) data.feeds[key] = [];
+        data.feeds[key].push({ time: e.time, amount: parseInt(e.amount), type: e.feedType || 'Formula', id: Date.now() + Math.random() });
+        data.feeds[key].sort((a, b) => a.time.localeCompare(b.time));
+        added.push('🍼 ' + e.amount + 'ml @' + e.time);
+      } else if (e.type === 'sleep' && e.start) {
+        if (!data.sleeps[key]) data.sleeps[key] = [];
+        const end = e.end || e.start;
+        data.sleeps[key].push({ start: e.start, end, type: e.sleepType || 'Nap', duration: calcSleepDuration(e.start, end), id: Date.now() + Math.random() });
+        data.sleeps[key].sort((a, b) => a.start.localeCompare(b.start));
+        added.push('😴 ' + (e.sleepType || 'Nap') + ' @' + e.start);
+      } else if (e.type === 'activity' && e.time) {
+        if (!data.activities[key]) data.activities[key] = [];
+        data.activities[key].push({ time: e.time, type: e.activityType || 'Play 玩耍', note: e.note || '', id: Date.now() + Math.random() });
+        data.activities[key].sort((a, b) => a.time.localeCompare(b.time));
+        added.push('🎯 ' + (e.activityType || 'Activity') + ' @' + e.time);
+      }
+    }
+
+    if (added.length) {
+      saveData();
+      renderTimeline();
+      renderDailySummary();
+      renderPredictions();
+      feedbackEl.style.color = 'var(--sage-dark)';
+      feedbackEl.textContent = '✅ 已添加：' + added.join(' · ');
+      textEl.value = '';
+      setTimeout(() => { feedbackEl.style.display = 'none'; feedbackEl.style.color = 'var(--mid)'; }, 4000);
+    } else {
+      feedbackEl.textContent = '解析成功但无法提取有效数据，请更具体描述。';
+    }
+  } catch (err) {
+    feedbackEl.style.color = '#C62828';
+    feedbackEl.textContent = '解析失败，请检查网络连接。';
+    console.warn('parseNaturalInput error:', err);
+  } finally {
+    btnEl.disabled = false;
+    btnEl.textContent = t('btn-ai-send');
+  }
 }
 
 // ── DAILY NOTE ─────────────────────────────────────────
