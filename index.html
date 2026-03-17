@@ -999,6 +999,9 @@ const i18n = {
     'empty-timeline': '今日暂无记录，快来添加吧 ↑',
     'feed-type-Formula': '配方奶', 'feed-type-Dream Feed': '梦中喂', 'feed-type-Night Feed': '夜间喂',
     'sleep-type-Nap': '小觉', 'sleep-type-Night': '夜间', 'sleep-type-Catnap': '打盹',
+    'activity-type-Tummy Time 趴趴时间': '趴趴时间', 'activity-type-Outing 外出': '外出',
+    'activity-type-Swimming 游泳': '游泳', 'activity-type-Play 玩耍': '玩耍',
+    'activity-type-Bath 洗澡': '洗澡', 'activity-type-Massage 抚触': '抚触',
     'count-unit': '次', 'feeds-unit': '次',
     'milestone-badge-achieved': '已达成', 'milestone-badge-upcoming': '即将到来',
   },
@@ -1017,6 +1020,9 @@ const i18n = {
     'empty-timeline': 'No entries today. Start logging! ↑',
     'feed-type-Formula': 'Formula', 'feed-type-Dream Feed': 'Dream Feed', 'feed-type-Night Feed': 'Night Feed',
     'sleep-type-Nap': 'Nap', 'sleep-type-Night': 'Night', 'sleep-type-Catnap': 'Catnap',
+    'activity-type-Tummy Time 趴趴时间': 'Tummy Time', 'activity-type-Outing 外出': 'Outing',
+    'activity-type-Swimming 游泳': 'Swimming', 'activity-type-Play 玩耍': 'Play',
+    'activity-type-Bath 洗澡': 'Bath', 'activity-type-Massage 抚触': 'Massage',
     'count-unit': '', 'feeds-unit': 'x',
     'milestone-badge-achieved': 'Achieved', 'milestone-badge-upcoming': 'Coming Soon',
   }
@@ -1068,6 +1074,7 @@ function applyLang() {
   // Re-render dynamic content
   renderTimeline();
   renderDailySummary();
+  renderInsight();
   renderMilestones();
 }
 
@@ -1304,11 +1311,12 @@ function renderTimeline() {
         <button class="btn-delete" onclick="deleteSleep('${key}', ${d.id})">×</button>
       </div>`;
     } else {
+      const actLabel = t('activity-type-' + d.type) || d.type;
       return `<div class="timeline-entry">
         <span class="timeline-emoji">🎯</span>
         <span class="timeline-time">${d.time}</span>
         <div class="timeline-body">
-          <div class="timeline-main">${d.type}</div>
+          <div class="timeline-main">${actLabel}</div>
           ${d.note ? `<div class="timeline-sub">${d.note}</div>` : ''}
         </div>
         <button class="btn-delete" onclick="deleteActivity('${key}', ${d.id})">×</button>
