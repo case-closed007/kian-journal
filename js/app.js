@@ -12,8 +12,8 @@ function formatAge(ageDays) {
   const years = Math.floor(totalMonths / 12);
   const months = totalMonths % 12;
   const remDays = ageDays - Math.floor(totalMonths * 30.44);
-  if (years >= 1) return `${years}岁${months}月`;
-  if (totalMonths >= 3) return `${totalMonths}月${remDays}天`;
+  if (years >= 1) return `${years}岁${months}个月`;
+  if (totalMonths >= 3) return `${totalMonths}个月${remDays}天`;
   return `${ageDays}天`;
 }
 
@@ -46,8 +46,8 @@ function init() {
   if (ageEl) {
     const formatted = formatAge(age);
     // Split into num + unit parts for display
-    const mMatch = formatted.match(/^(\d+月\d+)天$/);
-    const yMatch = formatted.match(/^(\d+岁\d+)月$/);
+    const mMatch = formatted.match(/^(\d+个月\d+)天$/);
+    const yMatch = formatted.match(/^(\d+岁\d+)个月$/);
     if (mMatch || yMatch) {
       ageEl.textContent = formatted;
       if (ageUnitEl) ageUnitEl.textContent = '';
@@ -95,6 +95,7 @@ function renderAll() {
 function changeDate(dir) {
   if (dir === 0) { currentDate = new Date(); currentDate.setHours(0,0,0,0); }
   else currentDate.setDate(currentDate.getDate() + dir);
+  _aiInsightPending = false;
   updateDateDisplay();
   renderAll();
 }
@@ -139,6 +140,7 @@ function addFeed() {
   data.feeds[key].push({ time, amount, type, id: Date.now() });
   data.feeds[key].sort((a, b) => a.time.localeCompare(b.time));
   document.getElementById('feed-amount').value = '';
+  document.getElementById('feed-time').value = new Date().toTimeString().slice(0, 5);
   saveData();
   renderTimeline();
   renderDailySummary();
@@ -165,6 +167,9 @@ function addSleep() {
   if (!data.sleeps[key]) data.sleeps[key] = [];
   data.sleeps[key].push({ start, end, type, duration: calcSleepDuration(start, end), id: Date.now() });
   data.sleeps[key].sort((a, b) => a.start.localeCompare(b.start));
+  const nowTime = new Date().toTimeString().slice(0, 5);
+  document.getElementById('sleep-start').value = nowTime;
+  document.getElementById('sleep-end').value = '';
   saveData();
   renderTimeline();
   renderDailySummary();
@@ -190,6 +195,7 @@ function addActivity() {
   data.activities[key].push({ time, type, note, id: Date.now() });
   data.activities[key].sort((a, b) => a.time.localeCompare(b.time));
   document.getElementById('activity-note').value = '';
+  document.getElementById('activity-time').value = new Date().toTimeString().slice(0, 5);
   saveData();
   renderTimeline();
 }
@@ -254,6 +260,58 @@ function switchTab(tab, el) {
   document.getElementById('tab-' + tab).classList.add('active');
   const tabEl = el || document.querySelector(`[data-tab="${tab}"]`);
   if (tabEl) tabEl.classList.add('active');
+}
+
+// ── MINI CALENDAR MODAL ────────────────────────────────
+let calModalYear, calModalMonth;
+
+function openCalModal() {
+  const d = new Date();
+  calModalYear = d.getFullYear();
+  calModalMonth = d.getMonth();
+  renderCalModal();
+  document.getElementById('cal-modal').classList.add('open');
+}
+
+function closeCalModal() {
+  document.getElementById('cal-modal').classList.remove('open');
+}
+
+function calModalNav(dir) {
+  calModalMonth += dir;
+  if (calModalMonth < 0) { calModalMonth = 11; calModalYear--; }
+  if (calModalMonth > 11) { calModalMonth = 0; calModalYear++; }
+  renderCalModal();
+}
+
+function renderCalModal() {
+  document.getElementById('cal-modal-title').textContent = `${calModalYear}年${calModalMonth + 1}月`;
+  const grid = document.getElementById('cal-modal-grid');
+  const today = new Date(); today.setHours(0,0,0,0);
+  const todayStr = dateKey(today);
+  const firstDay = new Date(calModalYear, calModalMonth, 1).getDay();
+  const daysInMonth = new Date(calModalYear, calModalMonth + 1, 0).getDate();
+  let html = '';
+  for (let i = 0; i < firstDay; i++) html += '<div class="cal-modal-day empty"></div>';
+  for (let d = 1; d <= daysInMonth; d++) {
+    const ds = `${calModalYear}-${String(calModalMonth + 1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const isToday = ds === todayStr;
+    const hasData = !!(
+      (data.feeds[ds] && data.feeds[ds].length) ||
+      (data.sleeps[ds] && data.sleeps[ds].length) ||
+      (data.activities[ds] && data.activities[ds].length)
+    );
+    html += `<div class="cal-modal-day${isToday?' today':''}${hasData?' has-data':''}" onclick="selectCalDay('${ds}')">${d}</div>`;
+  }
+  grid.innerHTML = html;
+}
+
+function selectCalDay(dateStr) {
+  closeCalModal();
+  currentDate = new Date(dateStr + 'T00:00:00');
+  _aiInsightPending = false;
+  updateDateDisplay();
+  renderAll();
 }
 
 // ── SET DEFAULT DATES ──────────────────────────────────

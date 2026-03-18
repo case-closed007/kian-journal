@@ -26,7 +26,7 @@ let currentLang = 'zh';
 const i18n = {
   zh: {
     'topbar-age-unit': '天',
-    'tab-daily': '今日', 'tab-calendar': '日历', 'tab-milestones': '里程碑', 'tab-growth': '成长', 'tab-notes': '笔记',
+    'tab-daily': '今日', 'tab-milestones': '里程碑', 'tab-growth': '成长', 'tab-notes': '笔记',
     'summary-title': '今日概览', 'label-total-feed': '总奶量', 'label-feedings': '喂奶次数', 'label-naps': '小觉', 'label-night': '夜间',
     'insight-title': '💡 今日观察',
     'timeline-title': '今日时间线', 'timeline-sub': '喂奶 · 睡眠 · 活动',
@@ -50,7 +50,7 @@ const i18n = {
   },
   en: {
     'topbar-age-unit': ' days',
-    'tab-daily': 'Today', 'tab-calendar': 'Calendar', 'tab-milestones': 'Milestones', 'tab-growth': 'Growth', 'tab-notes': 'Notes',
+    'tab-daily': 'Today', 'tab-milestones': 'Milestones', 'tab-growth': 'Growth', 'tab-notes': 'Notes',
     'summary-title': "Today's Overview", 'label-total-feed': 'Total Formula', 'label-feedings': 'Feedings', 'label-naps': 'Naps', 'label-night': 'Night Sleep',
     'insight-title': "💡 Today's Insight",
     'timeline-title': 'Daily Timeline', 'timeline-sub': 'Feeds · Sleep · Activities',
@@ -80,15 +80,18 @@ function t(key) {
 
 function toggleLang() {
   currentLang = currentLang === 'zh' ? 'en' : 'zh';
-  // Invalidate today's insight so it regenerates in new language
-  const todayKey = dateKey(new Date());
-  const slot = getTimeSlot();
-  const cacheKey = todayKey + '_' + slot;
+  // Invalidate current date's insight so it regenerates in new language
+  const key = dateKey(currentDate);
+  const today = new Date(); today.setHours(0,0,0,0);
+  const isToday = currentDate.getTime() === today.getTime();
+  const slot = isToday ? getTimeSlot() : 'summary';
+  const cacheKey = key + '_' + slot;
   if (data.aiInsights && data.aiInsights[cacheKey]) {
     delete data.aiInsights[cacheKey];
-    _aiInsightPending = false;
   }
+  _aiInsightPending = false;
   applyLang();
+  renderInsight();
 }
 
 function applyLang() {

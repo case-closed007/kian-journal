@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Kian's Daily Journal · 安砚临成长日记</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&family=Noto+Serif+SC:wght@400;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=3">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&family=Noto+Serif+SC:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css?v=4">
 
   <!-- Firebase SDK -->
   <script type="module">
@@ -77,10 +77,11 @@
   <div class="section active" id="tab-daily">
     <div class="date-bar">
       <button class="date-btn" onclick="changeDate(-1)">←</button>
-      <div class="date-center" onclick="openDatePicker()" title="选择日期">
+      <div class="date-center">
         <div class="date-display" id="current-date-display"></div>
         <div class="date-cn" id="current-date-cn"></div>
       </div>
+      <button class="date-cal-btn" onclick="openCalModal()" title="月历">📅</button>
       <button class="date-btn" onclick="changeDate(1)">→</button>
       <input type="date" id="date-picker-input" style="position:absolute;opacity:0;pointer-events:none;width:0;height:0" onchange="onDatePickerChange(this.value)">
     </div>
@@ -389,15 +390,24 @@
 
 </div><!-- end .main -->
 
+<!-- ── MINI CALENDAR MODAL ── -->
+<div id="cal-modal" class="cal-modal-overlay" onclick="closeCalModal()">
+  <div class="cal-modal-box" onclick="event.stopPropagation()">
+    <div class="cal-modal-header">
+      <button class="cal-modal-nav" onclick="calModalNav(-1)">‹</button>
+      <span id="cal-modal-title"></span>
+      <button class="cal-modal-nav" onclick="calModalNav(1)">›</button>
+    </div>
+    <div class="cal-modal-weekdays"><span>日</span><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span></div>
+    <div id="cal-modal-grid" class="cal-modal-grid"></div>
+  </div>
+</div>
+
 <!-- ── BOTTOM TAB BAR ── -->
 <nav class="bottom-tabbar">
   <div class="tab-item active" onclick="switchTab('daily',this)" data-tab="daily">
-    <span class="tab-icon">📅</span>
+    <span class="tab-icon">🍼</span>
     <span class="tab-label" id="tab-label-daily">今日</span>
-  </div>
-  <div class="tab-item" onclick="switchTab('calendar',this)" data-tab="calendar">
-    <span class="tab-icon">🗓</span>
-    <span class="tab-label" id="tab-label-calendar">日历</span>
   </div>
   <div class="tab-item" onclick="switchTab('milestones',this)" data-tab="milestones">
     <span class="tab-icon">🌟</span>
@@ -413,9 +423,9 @@
   </div>
 </nav>
 
-<script src="js/data.js?v=3"></script>
-<script src="js/ai.js?v=3"></script>
-<script src="js/render.js?v=3"></script>
-<script src="js/app.js?v=3"></script>
+<script src="js/data.js?v=4"></script>
+<script src="js/ai.js?v=4"></script>
+<script src="js/render.js?v=4"></script>
+<script src="js/app.js?v=4"></script>
 </body>
 </html>
