@@ -397,6 +397,7 @@ async function parseNaturalInput() {
   if (!text) return;
 
   btnEl.disabled = true;
+  btnEl.classList.add('parsing');
   btnEl.textContent = '⏳ 解析中…';
   feedbackEl.style.display = 'block';
   feedbackEl.style.color = 'var(--mid)';
@@ -490,6 +491,7 @@ Text: "${text}"`;
     console.warn('parseNaturalInput error:', err);
   } finally {
     btnEl.disabled = false;
+    btnEl.classList.remove('parsing');
     btnEl.textContent = t('btn-ai-send');
   }
 }
