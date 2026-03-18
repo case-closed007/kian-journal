@@ -40,11 +40,8 @@
           }
           if (val.growth) data.growth = Array.isArray(val.growth) ? val.growth : Object.values(val.growth);
           if (val.notes) data.notes = Array.isArray(val.notes) ? val.notes : Object.values(val.notes);
-          if (val.aiInsights) {
-            // Migrate old dot keys → underscore (Firebase forbids dots in keys)
-            data.aiInsights = {};
-            Object.keys(val.aiInsights).forEach(k => { data.aiInsights[k.replace(/\./g,'_')] = val.aiInsights[k]; });
-          }
+          if (val.aiInsights) data.aiInsights = val.aiInsights;
+          _normalizeData(); // sanitize keys + normalize arrays from Firebase
           renderAll();
           showSyncStatus('synced');
         } else {

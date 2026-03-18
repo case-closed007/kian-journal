@@ -92,17 +92,35 @@ const DEFAULT_DATA = {
 };
 
 // ── STORAGE ────────────────────────────────────────────
+// Normalize all data arrays/keys after any load (Firebase converts arrays→objects)
+function _normalizeData() {
+  const toArr = v => Array.isArray(v) ? v : (v ? Object.values(v) : []);
+  // Sanitize aiInsights dot keys — update IN MEMORY so localStorage stays clean too
+  if (data.aiInsights) {
+    const clean = {};
+    Object.keys(data.aiInsights).forEach(k => { clean[k.replace(/\./g,'_')] = data.aiInsights[k]; });
+    data.aiInsights = clean;
+  }
+  // Normalize array fields that Firebase may return as objects
+  if (data.milestones && data.milestones.achieved) data.milestones.achieved = toArr(data.milestones.achieved);
+  if (data.growth) data.growth = toArr(data.growth);
+  if (data.notes) data.notes = toArr(data.notes);
+  ['feeds','sleeps','activities'].forEach(field => {
+    Object.keys(data[field] || {}).forEach(k => {
+      if (!Array.isArray(data[field][k])) data[field][k] = Object.values(data[field][k] || {});
+    });
+  });
+}
+
 function saveData() {
+  _normalizeData(); // sanitize in-memory first (so localStorage is always clean)
   try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch(e) {}
   if (window.firebaseReady) {
     showSyncStatus('syncing');
-    // Sanitize aiInsights keys — Firebase forbids dots
-    const safeInsights = {};
-    Object.keys(data.aiInsights || {}).forEach(k => { safeInsights[k.replace(/\./g,'_')] = data.aiInsights[k]; });
     window.fbSet('kian_data', {
       feeds: data.feeds, sleeps: data.sleeps, activities: data.activities,
       dailyNotes: data.dailyNotes, milestones: data.milestones,
-      growth: data.growth, notes: data.notes, aiInsights: safeInsights
+      growth: data.growth, notes: data.notes, aiInsights: data.aiInsights
     }).then(() => showSyncStatus('synced')).catch(err => {
       console.warn('Firebase save failed:', err);
       showSyncStatus('offline');
@@ -123,7 +141,7 @@ function showSyncStatus(status) {
 function loadData() {
   try {
     const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) { Object.assign(data, JSON.parse(saved)); return true; }
+    if (saved) { Object.assign(data, JSON.parse(saved)); _normalizeData(); return true; }
   } catch(e) {}
   return false;
 }

@@ -302,7 +302,7 @@ async function renderMilestoneInsight() {
     const result = await callGemini(prompt);
     if (!data.aiInsights) data.aiInsights = {};
     data.aiInsights[cacheKey] = result;
-    window.fbSet && window.fbSet('kian_data/aiInsights', data.aiInsights);
+    saveData(); // use saveData() which sanitizes keys properly
     textEl.innerHTML = `<div class="insight-slot-text">${result.replace(/\n/g,'<br>')}</div>`;
   } catch(e) {
     textEl.innerHTML = `<div class="insight-slot-text" style="color:var(--light)">暂时无法获取AI分析</div>`;
@@ -342,7 +342,7 @@ async function renderGrowthInsight(latestRecord) {
     const result = await callGemini(prompt);
     if (!data.aiInsights) data.aiInsights = {};
     data.aiInsights[cacheKey] = result;
-    window.fbSet && window.fbSet('kian_data/aiInsights', data.aiInsights);
+    saveData(); // use saveData() which sanitizes keys properly
     textEl.innerHTML = `<div class="insight-slot-text">${result.replace(/\n/g,'<br>')}</div>`;
   } catch(e) {
     textEl.innerHTML = `<div class="insight-slot-text" style="color:var(--light)">暂时无法获取AI分析</div>`;

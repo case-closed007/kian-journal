@@ -89,9 +89,10 @@ function renderTimeline() {
 // ── DAY VIEW ───────────────────────────────────────────
 function renderDayView() {
   const key = dateKey(currentDate);
-  const feeds = data.feeds[key] || [];
-  const sleeps = data.sleeps[key] || [];
-  const acts = data.activities[key] || [];
+  const toArr = v => Array.isArray(v) ? v : (v ? Object.values(v) : []);
+  const feeds = toArr(data.feeds[key]);
+  const sleeps = toArr(data.sleeps[key]);
+  const acts = toArr(data.activities[key]);
   const el = document.getElementById('day-view-container');
   if (!el) return;
 
@@ -253,10 +254,14 @@ function deleteMilestone(idx) {
 
 function renderMilestones() {
   const el = document.getElementById('achieved-milestones');
-  if (!data.milestones.achieved.length) {
+  if (!el) return;
+  // Defensive: Firebase may return array as object
+  const toArr = v => Array.isArray(v) ? v : (v ? Object.values(v) : []);
+  const achieved = toArr(data.milestones && data.milestones.achieved);
+  if (!achieved.length) {
     el.innerHTML = '<div class="empty-state"><div class="empty-icon">🌟</div><div class="empty-text">还没有达成的里程碑</div></div>';
   } else {
-    el.innerHTML = data.milestones.achieved.map((m, i) => `
+    el.innerHTML = achieved.map((m, i) => `
       <div class="ms-card">
         <button class="ms-card-delete" onclick="deleteMilestone(${i})">×</button>
         <div class="ms-card-icon">${m.icon}</div>
