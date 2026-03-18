@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Kian's Daily Journal · 安砚临成长日记</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&family=Noto+Serif+SC:wght@400;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=4">
+<link rel="stylesheet" href="css/style.css?v=5">
 
   <!-- Firebase SDK -->
   <script type="module">
@@ -67,7 +67,6 @@
   </div>
   <div class="topbar-right">
     <button class="topbar-langbtn" onclick="toggleLang()" id="lang-btn">EN</button>
-    <button class="topbar-iconbtn" onclick="openSettings()" title="Settings">⚙️</button>
   </div>
 </header>
 
@@ -81,7 +80,8 @@
         <div class="date-display" id="current-date-display"></div>
         <div class="date-cn" id="current-date-cn"></div>
       </div>
-      <button class="date-cal-btn" onclick="openCalModal()" title="月历">📅</button>
+      <span id="today-tag" class="today-pill" style="display:none">今天</span>
+      <button class="date-cal-btn" onclick="switchTab('calendar')" title="月历">📅</button>
       <button class="date-btn" onclick="changeDate(1)">→</button>
       <input type="date" id="date-picker-input" style="position:absolute;opacity:0;pointer-events:none;width:0;height:0" onchange="onDatePickerChange(this.value)">
     </div>
@@ -266,35 +266,29 @@
     <div class="section-header" id="milestone-header-text">Milestones</div>
     <div class="section-header-cn">发育里程碑</div>
 
-    <div class="card">
-      <div class="card-header">
-        <div class="card-icon icon-activity">✅</div>
-        <div>
-          <div class="card-title" id="milestone-achieved-title">已达成</div>
-          <div class="card-title-cn">Kian's milestones so far</div>
-        </div>
-      </div>
-      <div id="achieved-milestones"></div>
-      <div class="add-section">
-        <div class="add-row">
-          <input type="text" class="input-field" id="milestone-title" placeholder="Milestone · 里程碑">
-          <input type="date" class="input-field" id="milestone-date" style="max-width:150px">
-        </div>
-        <input type="text" class="input-field" id="milestone-title-cn" placeholder="中文描述 (optional)" style="width:100%;margin-bottom:8px">
-        <button class="btn-add" onclick="addMilestone()">+ 添加里程碑</button>
-      </div>
+    <!-- AI insight -->
+    <div class="insight-card" id="milestone-insight-card">
+      <div class="insight-card-title">🧠 发育观察</div>
+      <div id="milestone-insight-text" class="insight-slot-text"><span style="color:var(--light)">✨ AI 正在分析...</span></div>
     </div>
 
-    <div class="card">
-      <div class="card-header">
-        <div class="card-icon icon-sleep">🔜</div>
-        <div>
-          <div class="card-title" id="milestone-upcoming-title">即将到来</div>
-          <div class="card-title-cn">Next milestones to watch for</div>
-        </div>
+    <!-- Achieved card wall -->
+    <div class="ms-section-label">✅ 已达成</div>
+    <div id="achieved-milestones" class="ms-card-wall"></div>
+
+    <!-- Add milestone -->
+    <div class="card" style="margin-top:12px">
+      <div class="add-row">
+        <input type="text" class="input-field" id="milestone-title" placeholder="Milestone · 里程碑">
+        <input type="date" class="input-field" id="milestone-date" style="max-width:150px">
       </div>
-      <div id="upcoming-milestones"></div>
+      <input type="text" class="input-field" id="milestone-title-cn" placeholder="中文描述 (optional)" style="width:100%;margin-bottom:8px">
+      <button class="btn-add" onclick="addMilestone()">+ 添加里程碑</button>
     </div>
+
+    <!-- Upcoming -->
+    <div class="ms-section-label" style="margin-top:16px">⏰ 即将到来</div>
+    <div id="upcoming-milestones"></div>
   </div>
 
   <!-- ── GROWTH TAB ── -->
@@ -350,6 +344,11 @@
         头围 Head: 38 – 43 cm (avg 40 cm)
       </div>
     </div>
+
+    <div class="insight-card" id="growth-insight-card" style="display:none">
+      <div class="insight-card-title">📈 生长发育评估</div>
+      <div id="growth-insight-text" class="insight-slot-text"></div>
+    </div>
   </div>
 
   <!-- ── NOTES TAB ── -->
@@ -357,13 +356,17 @@
     <div class="section-header" id="notes-header-text">Journal Notes</div>
     <div class="section-header-cn">日记备忘</div>
 
-    <div class="card">
-      <div class="card-header">
-        <div class="card-icon icon-note">✍️</div>
-        <div>
-          <div class="card-title" id="notes-new-title">新建备忘</div>
-        </div>
-      </div>
+    <!-- Month filter -->
+    <div id="notes-month-filter" class="notes-month-filter"></div>
+
+    <!-- Action row -->
+    <div class="notes-action-row">
+      <button class="btn-notes-action" onclick="toggleNoteForm()">＋ 新建备忘</button>
+      <button class="btn-notes-action btn-notes-ai" onclick="generateAIDiary()">✨ AI生成日记</button>
+    </div>
+
+    <!-- Collapsed add form -->
+    <div id="note-form-panel" class="note-form-panel" style="display:none">
       <div class="add-row">
         <input type="date" class="input-field" id="note-date" style="max-width:160px">
         <select class="input-field" id="note-category">
@@ -409,6 +412,10 @@
     <span class="tab-icon">🍼</span>
     <span class="tab-label" id="tab-label-daily">今日</span>
   </div>
+  <div class="tab-item" onclick="switchTab('calendar',this)" data-tab="calendar">
+    <span class="tab-icon">🗓</span>
+    <span class="tab-label" id="tab-label-calendar">日历</span>
+  </div>
   <div class="tab-item" onclick="switchTab('milestones',this)" data-tab="milestones">
     <span class="tab-icon">🌟</span>
     <span class="tab-label" id="tab-label-milestones">里程碑</span>
@@ -423,9 +430,9 @@
   </div>
 </nav>
 
-<script src="js/data.js?v=4"></script>
-<script src="js/ai.js?v=4"></script>
-<script src="js/render.js?v=4"></script>
-<script src="js/app.js?v=4"></script>
+<script src="js/data.js?v=5"></script>
+<script src="js/ai.js?v=5"></script>
+<script src="js/render.js?v=5"></script>
+<script src="js/app.js?v=5"></script>
 </body>
 </html>

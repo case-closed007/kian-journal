@@ -20,63 +20,55 @@ function renderTimeline() {
     return;
   }
 
-  el.innerHTML = all.map(entry => {
+  el.innerHTML = '<div class="vtl-list">' + all.map((entry, idx) => {
     const { kind, data: d } = entry;
-    let inner = '';
+    const isLast = idx === all.length - 1;
+    const dotClass = kind === 'feed' ? 'vtl-dot-feed' : kind === 'sleep' ? 'vtl-dot-sleep' : 'vtl-dot-act';
+    let timeStr, mainHtml, subHtml, deleteCall;
     if (kind === 'feed') {
-      const typeLabel = t('feed-type-' + d.type) || d.type;
-      inner = `<div class="timeline-entry">
-        <span class="timeline-emoji">🍼</span>
-        <span class="timeline-time">${d.time}</span>
-        <div class="timeline-body">
-          <div class="timeline-main">${typeLabel}<span class="timeline-badge badge-feed">${d.amount}ml</span></div>
-        </div>
-      </div>
-      <div class="tl-swipe-bg" onclick="deleteFeed('${key}', ${d.id})">🗑️</div>`;
+      timeStr = d.time;
+      const lbl = t('feed-type-' + d.type) || d.type;
+      mainHtml = `🍼 <strong>${lbl}</strong>`;
+      subHtml = `${d.amount}ml`;
+      deleteCall = `deleteFeed('${key}', ${d.id})`;
     } else if (kind === 'sleep') {
-      const typeLabel = t('sleep-type-' + d.type) || d.type;
-      inner = `<div class="timeline-entry">
-        <span class="timeline-emoji">😴</span>
-        <span class="timeline-time">${d.start}</span>
-        <div class="timeline-body">
-          <div class="timeline-main">${typeLabel}<span class="timeline-badge badge-sleep">${d.duration}</span></div>
-          <div class="timeline-sub">${d.start} → ${d.end}</div>
-        </div>
-      </div>
-      <div class="tl-swipe-bg" onclick="deleteSleep('${key}', ${d.id})">🗑️</div>`;
+      timeStr = d.start;
+      const lbl = t('sleep-type-' + d.type) || d.type;
+      mainHtml = `😴 <strong>${lbl}</strong>`;
+      subHtml = `${d.start} → ${d.end} · ${d.duration}`;
+      deleteCall = `deleteSleep('${key}', ${d.id})`;
     } else {
-      const actLabel = t('activity-type-' + d.type) || d.type;
-      inner = `<div class="timeline-entry">
-        <span class="timeline-emoji">🎯</span>
-        <span class="timeline-time">${d.time}</span>
-        <div class="timeline-body">
-          <div class="timeline-main">${actLabel}</div>
-          ${d.note ? `<div class="timeline-sub">${d.note}</div>` : ''}
-        </div>
-      </div>
-      <div class="tl-swipe-bg" onclick="${kind === 'activity' ? `deleteActivity('${key}', ${d.id})` : ''}">🗑️</div>`;
+      timeStr = d.time;
+      const lbl = t('activity-type-' + d.type) || d.type;
+      mainHtml = `🎯 <strong>${lbl}</strong>`;
+      subHtml = d.note || '';
+      deleteCall = `deleteActivity('${key}', ${d.id})`;
     }
-    return `<div class="tl-wrap" data-id="${d.id}">${inner}</div>`;
-  }).join('');
+    return `<div class="vtl-entry" data-id="${d.id}" data-kind="${kind}">
+      <div class="vtl-time">${timeStr}</div>
+      <div class="vtl-rail">
+        <div class="vtl-dot ${dotClass}"></div>
+        ${!isLast ? '<div class="vtl-line"></div>' : ''}
+      </div>
+      <div class="vtl-content">
+        <div class="vtl-main">${mainHtml}</div>
+        ${subHtml ? `<div class="vtl-sub">${subHtml}</div>` : ''}
+      </div>
+      <button class="vtl-delete" onclick="${deleteCall}">×</button>
+    </div>`;
+  }).join('') + '</div>';
 
-  // Attach swipe-to-delete touch handlers
-  el.querySelectorAll('.tl-wrap').forEach(wrap => {
-    let startX = 0, isDragging = false;
-    const entry = wrap.querySelector('.timeline-entry');
-    wrap.addEventListener('touchstart', e => { startX = e.touches[0].clientX; isDragging = true; }, { passive: true });
-    wrap.addEventListener('touchmove', e => {
-      if (!isDragging) return;
+  // Swipe-to-delete on mobile
+  el.querySelectorAll('.vtl-entry').forEach(entry => {
+    let startX = 0;
+    entry.addEventListener('touchstart', e => { startX = e.touches[0].clientX; }, { passive: true });
+    entry.addEventListener('touchmove', e => {
       const dx = e.touches[0].clientX - startX;
-      if (dx < 0) entry.style.transform = `translateX(${Math.max(dx, -72)}px)`;
+      if (dx < 0) entry.style.transform = `translateX(${Math.max(dx, -64)}px)`;
     }, { passive: true });
-    wrap.addEventListener('touchend', e => {
-      isDragging = false;
+    entry.addEventListener('touchend', e => {
       const dx = e.changedTouches[0].clientX - startX;
-      if (dx < -40) {
-        entry.style.transform = 'translateX(-72px)';
-      } else {
-        entry.style.transform = '';
-      }
+      entry.style.transform = dx < -40 ? 'translateX(-64px)' : '';
     });
   });
 }
@@ -190,34 +182,35 @@ function deleteMilestone(idx) {
 }
 
 function renderMilestones() {
-  const achievedBadge = t('milestone-badge-achieved');
-  const upcomingBadge = t('milestone-badge-upcoming');
   const el = document.getElementById('achieved-milestones');
-  el.innerHTML = data.milestones.achieved.map((m, i) => `
-    <div class="milestone-item">
-      <div class="milestone-icon">${m.icon}</div>
-      <div class="milestone-content">
-        <div class="milestone-title">${m.title}</div>
-        ${m.titleCn ? `<div class="milestone-title-cn">${m.titleCn}</div>` : ''}
-        <div class="milestone-date">📅 ${m.date}</div>
-        <span class="milestone-badge badge-achieved">✅ ${achievedBadge}</span>
+  if (!data.milestones.achieved.length) {
+    el.innerHTML = '<div class="empty-state"><div class="empty-icon">🌟</div><div class="empty-text">还没有达成的里程碑</div></div>';
+  } else {
+    el.innerHTML = data.milestones.achieved.map((m, i) => `
+      <div class="ms-card">
+        <button class="ms-card-delete" onclick="deleteMilestone(${i})">×</button>
+        <div class="ms-card-icon">${m.icon}</div>
+        <div class="ms-card-title">${m.title}</div>
+        ${m.titleCn ? `<div class="ms-card-cn">${m.titleCn}</div>` : ''}
+        <div class="ms-card-date">${m.date}</div>
       </div>
-      <button class="btn-delete" onclick="deleteMilestone(${i})">×</button>
-    </div>
-  `).join('');
+    `).join('');
+  }
 
   const upEl = document.getElementById('upcoming-milestones');
   upEl.innerHTML = upcomingMilestones.map(m => `
-    <div class="milestone-item">
-      <div class="milestone-icon">${m.icon}</div>
-      <div class="milestone-content">
-        <div class="milestone-title">${m.title}</div>
-        <div class="milestone-title-cn">${m.titleCn}</div>
-        <div class="milestone-date">⏰ ${m.eta}</div>
-        <span class="milestone-badge badge-upcoming">⏰ ${upcomingBadge}</span>
+    <div class="ms-upcoming-item">
+      <div class="ms-upcoming-icon">${m.icon}</div>
+      <div class="ms-upcoming-body">
+        <div class="ms-upcoming-title">${m.title}</div>
+        <div class="ms-upcoming-cn">${m.titleCn}</div>
+        <div class="ms-upcoming-eta">⏰ ${m.eta}</div>
       </div>
     </div>
   `).join('');
+
+  // Load AI milestone insight
+  renderMilestoneInsight();
 }
 
 // ── GROWTH ─────────────────────────────────────────────
@@ -236,22 +229,56 @@ function addGrowth() {
   renderGrowthHistory();
 }
 
+// WHO Boys weight/height percentile tables [p3, p15, p50, p85, p97]
+const WHO_W = {
+  0:[2.5,2.9,3.3,3.9,4.3], 1:[3.4,3.9,4.5,5.1,5.7], 2:[4.4,5.0,5.6,6.3,7.0],
+  3:[5.1,5.7,6.4,7.2,7.9], 4:[5.6,6.2,7.0,7.8,8.6], 5:[6.1,6.7,7.5,8.4,9.2],
+  6:[6.4,7.1,7.9,8.9,9.7], 9:[7.1,8.0,9.0,10.1,11.0], 12:[7.7,8.6,9.6,10.8,11.8]
+};
+const WHO_H = {
+  0:[46.1,48.0,49.9,51.8,53.7], 1:[50.8,52.8,54.7,56.7,58.6], 2:[54.4,56.4,58.4,60.4,62.4],
+  3:[57.3,59.4,61.4,63.5,65.5], 4:[59.7,61.8,63.9,66.0,68.0], 5:[61.7,63.8,65.9,68.0,70.1],
+  6:[63.3,65.5,67.6,69.8,71.9], 9:[68.0,70.1,72.3,74.5,76.5], 12:[71.7,73.9,76.1,78.3,80.5]
+};
+
+function whoPercentile(val, table, ageMonths) {
+  const keys = Object.keys(table).map(Number).sort((a,b)=>a-b);
+  let ageKey = keys[0];
+  for (const k of keys) { if (k <= ageMonths) ageKey = k; }
+  const [p3,p15,p50,p85,p97] = table[ageKey];
+  if (val < p3) return '<3';
+  if (val > p97) return '>97';
+  const segs = [[p3,p15,3,15],[p15,p50,15,50],[p50,p85,50,85],[p85,p97,85,97]];
+  for (const [lo,hi,plo,phi] of segs) {
+    if (val >= lo && val <= hi) return Math.round(plo + (val-lo)/(hi-lo)*(phi-plo)) + '';
+  }
+  return '50';
+}
+
 function renderGrowthHistory() {
   const el = document.getElementById('growth-history');
   if (!data.growth.length) {
     el.innerHTML = '<div class="empty-state"><div class="empty-icon">📏</div><div class="empty-text">No measurements yet</div></div>';
     return;
   }
-  el.innerHTML = [...data.growth].reverse().map(g => `
-    <div class="growth-entry">
-      <span class="growth-date">${g.date}${g.note ? ' · ' + g.note : ''}</span>
+  const ageDays = Math.floor((new Date() - BIRTH_DATE) / 86400000);
+  const ageMonths = Math.floor(ageDays / 30.44);
+  el.innerHTML = [...data.growth].reverse().map(g => {
+    const wPct = g.weight ? whoPercentile(g.weight, WHO_W, ageMonths) : null;
+    const hPct = g.height ? whoPercentile(g.height, WHO_H, ageMonths) : null;
+    return `<div class="growth-entry">
+      <span class="growth-date">${g.date}</span>
       <span class="growth-data">
-        ${g.weight ? `⚖️ ${g.weight}kg` : ''}
-        ${g.height ? `📏 ${g.height}cm` : ''}
-        ${g.head ? `⭕ ${g.head}cm` : ''}
+        ${g.weight ? `⚖️ ${g.weight}kg${wPct ? `<span class="growth-pct">P${wPct}</span>` : ''}` : ''}
+        ${g.height ? `<br>📏 ${g.height}cm${hPct ? `<span class="growth-pct">P${hPct}</span>` : ''}` : ''}
+        ${g.head ? `<br>⭕ ${g.head}cm` : ''}
       </span>
-    </div>
-  `).join('');
+    </div>`;
+  }).join('');
+
+  // Show AI insight if there's data
+  const latest = data.growth[data.growth.length - 1];
+  if (latest) renderGrowthInsight(latest);
 }
 
 // ── WEEKLY ─────────────────────────────────────────────
@@ -328,24 +355,47 @@ function deleteNote(id) {
   renderNotes();
 }
 
+let _notesMonthFilter = null;
+
 function renderNotes() {
+  renderNotesMonthFilter();
   const el = document.getElementById('notes-list');
-  if (!data.notes.length) {
-    el.innerHTML = '<div class="empty-state"><div class="empty-icon">📝</div><div class="empty-text">No notes yet · 还没有备注</div></div>';
+  let notes = data.notes;
+  if (_notesMonthFilter !== null) {
+    notes = notes.filter(n => {
+      const noteDate = new Date(n.date + 'T00:00:00');
+      const noteMonths = Math.floor((noteDate - BIRTH_DATE) / (86400000 * 30.44));
+      return noteMonths === _notesMonthFilter;
+    });
+  }
+  if (!notes.length) {
+    el.innerHTML = '<div class="empty-state"><div class="empty-icon">📝</div><div class="empty-text">暂无备忘 · No notes</div></div>';
     return;
   }
-  el.innerHTML = data.notes.map(n => `
-    <div class="card">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
-        <div>
-          <div style="font-size:13px;font-weight:500;color:var(--charcoal)">${n.category}</div>
-          <div style="font-size:11px;color:var(--light);margin-top:2px">${n.date}</div>
-        </div>
-        <button class="btn-delete" onclick="deleteNote(${n.id})">×</button>
+  el.innerHTML = notes.map(n => `
+    <div class="note-tl-item">
+      <div class="note-tl-left">
+        <div class="note-tl-date">${n.date}</div>
+        <div class="note-tl-cat">${(n.category || '').split(' ')[0]}</div>
       </div>
-      <div style="font-size:14px;color:var(--mid);line-height:1.7">${n.content}</div>
+      <div class="note-tl-body">
+        <div class="note-tl-content" onclick="this.classList.toggle('expanded')">${n.content}</div>
+      </div>
+      <button class="note-tl-delete" onclick="deleteNote(${n.id})">×</button>
     </div>
   `).join('');
+}
+
+function renderNotesMonthFilter() {
+  const el = document.getElementById('notes-month-filter');
+  if (!el) return;
+  const ageDays = Math.floor((new Date() - BIRTH_DATE) / 86400000);
+  const totalMonths = Math.floor(ageDays / 30.44);
+  let html = `<button class="notes-month-btn${_notesMonthFilter === null ? ' active' : ''}" onclick="setNotesMonthFilter(null)">全部</button>`;
+  for (let m = 0; m <= totalMonths; m++) {
+    html += `<button class="notes-month-btn${_notesMonthFilter === m ? ' active' : ''}" onclick="setNotesMonthFilter(${m})">${m}个月</button>`;
+  }
+  el.innerHTML = html;
 }
 
 // ── CALENDAR ───────────────────────────────────────────

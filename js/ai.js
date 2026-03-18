@@ -275,6 +275,119 @@ Write 2 today summary points + 1 tomorrow suggestion, warm tone, each starts wit
   }
 }
 
+// ── MILESTONE AI INSIGHT ────────────────────────────────
+let _milestoneInsightPending = false;
+
+async function renderMilestoneInsight() {
+  const textEl = document.getElementById('milestone-insight-text');
+  if (!textEl) return;
+  const ageDays = Math.floor((new Date() - BIRTH_DATE) / 86400000);
+  const ageMonths = Math.floor(ageDays / 30.44);
+  const cacheKey = 'milestone_insight_' + ageMonths;
+  if (data.aiInsights && data.aiInsights[cacheKey]) {
+    textEl.innerHTML = `<div class="insight-slot-text">${data.aiInsights[cacheKey].replace(/\n/g,'<br>')}</div>`;
+    return;
+  }
+  if (_milestoneInsightPending) return;
+  _milestoneInsightPending = true;
+  const achieved = data.milestones.achieved.map(m => m.title).join('、') || '无';
+  const lang = currentLang;
+  let prompt;
+  if (lang === 'en') {
+    prompt = `Kian is a ${ageMonths}-month-old baby boy. Achieved milestones: ${achieved}. Write 2-3 warm sentences in English: (1) current developmental highlights, (2) one upcoming milestone to watch. Be encouraging and specific.`;
+  } else {
+    prompt = `Kian是${ageMonths}个月大的男宝宝。已达成里程碑：${achieved}。请用温暖中文写2-3句话：(1)当前月龄发育亮点，(2)接下来值得关注的一个里程碑。语气温暖鼓励。`;
+  }
+  try {
+    const result = await callGemini(prompt);
+    if (!data.aiInsights) data.aiInsights = {};
+    data.aiInsights[cacheKey] = result;
+    window.fbSet && window.fbSet('kian_data/aiInsights', data.aiInsights);
+    textEl.innerHTML = `<div class="insight-slot-text">${result.replace(/\n/g,'<br>')}</div>`;
+  } catch(e) {
+    textEl.innerHTML = `<div class="insight-slot-text" style="color:var(--light)">暂时无法获取AI分析</div>`;
+  } finally {
+    _milestoneInsightPending = false;
+  }
+}
+
+// ── GROWTH AI INSIGHT ───────────────────────────────────
+let _growthInsightPending = false;
+
+async function renderGrowthInsight(latestRecord) {
+  const card = document.getElementById('growth-insight-card');
+  const textEl = document.getElementById('growth-insight-text');
+  if (!card || !textEl || !latestRecord) return;
+  card.style.display = 'block';
+  const ageDays = Math.floor((new Date() - BIRTH_DATE) / 86400000);
+  const ageMonths = Math.floor(ageDays / 30.44);
+  const cacheKey = `growth_insight_${ageMonths}_${latestRecord.weight}_${latestRecord.height}`;
+  if (data.aiInsights && data.aiInsights[cacheKey]) {
+    textEl.innerHTML = `<div class="insight-slot-text">${data.aiInsights[cacheKey].replace(/\n/g,'<br>')}</div>`;
+    return;
+  }
+  if (_growthInsightPending) return;
+  _growthInsightPending = true;
+  const w = latestRecord.weight ? latestRecord.weight + 'kg' : '未知';
+  const h = latestRecord.height ? latestRecord.height + 'cm' : '未知';
+  const hd = latestRecord.head ? latestRecord.head + 'cm' : '未知';
+  const lang = currentLang;
+  let prompt;
+  if (lang === 'en') {
+    prompt = `Kian is a ${ageMonths}-month-old baby boy. Weight: ${w}, Height: ${h}, Head: ${hd}. Write 2-3 warm sentences in English assessing his growth compared to WHO standards, and one practical tip.`;
+  } else {
+    prompt = `Kian是${ageMonths}个月大男宝宝。体重${w}，身高${h}，头围${hd}。请用温暖中文2-3句评估生长发育（对比WHO标准），并给一条实用建议。`;
+  }
+  try {
+    const result = await callGemini(prompt);
+    if (!data.aiInsights) data.aiInsights = {};
+    data.aiInsights[cacheKey] = result;
+    window.fbSet && window.fbSet('kian_data/aiInsights', data.aiInsights);
+    textEl.innerHTML = `<div class="insight-slot-text">${result.replace(/\n/g,'<br>')}</div>`;
+  } catch(e) {
+    textEl.innerHTML = `<div class="insight-slot-text" style="color:var(--light)">暂时无法获取AI分析</div>`;
+  } finally {
+    _growthInsightPending = false;
+  }
+}
+
+// ── AI DIARY GENERATOR ──────────────────────────────────
+let _diaryPending = false;
+
+async function generateAIDiary() {
+  if (_diaryPending) return;
+  const key = dateKey(currentDate);
+  const feeds = data.feeds[key] || [];
+  const sleeps = data.sleeps[key] || [];
+  const activities = data.activities[key] || [];
+  const ageDays = Math.floor((new Date() - BIRTH_DATE) / 86400000);
+  const ageMonths = Math.floor(ageDays / 30.44);
+  const feedStr = feeds.map(f => `${f.time} ${f.type} ${f.amount}ml`).join('、') || '无记录';
+  const sleepStr = sleeps.map(s => `${s.type} ${s.start}-${s.end}`).join('、') || '无记录';
+  const actStr = activities.map(a => `${a.time} ${a.type}${a.note ? ' ' + a.note : ''}`).join('、') || '无记录';
+  _diaryPending = true;
+  const formPanel = document.getElementById('note-form-panel');
+  const contentEl = document.getElementById('note-content');
+  if (formPanel) formPanel.style.display = 'block';
+  if (contentEl) contentEl.value = '✨ AI 正在生成日记...';
+  const lang = currentLang;
+  let prompt;
+  if (lang === 'en') {
+    prompt = `Write a warm, personal baby journal entry (150-200 words) from a parent's perspective for ${key}. Baby Kian is ${ageMonths} months old. Feeds: ${feedStr}. Sleep: ${sleepStr}. Activities: ${actStr}. Write naturally in English, focusing on small joys and observations. No title needed.`;
+  } else {
+    prompt = `请以妈妈视角，根据以下记录为${key}写一篇温暖感性的育儿日记（150-200字）。宝宝Kian ${ageMonths}个月大。喂奶：${feedStr}。睡眠：${sleepStr}。活动：${actStr}。文字温暖真实，关注细节和小惊喜，不需要标题，直接写正文。`;
+  }
+  try {
+    const result = await callGemini(prompt);
+    if (contentEl) contentEl.value = result;
+  } catch(e) {
+    if (contentEl) contentEl.value = '';
+    alert('AI生成失败，请重试');
+  } finally {
+    _diaryPending = false;
+  }
+}
+
 // ── NATURAL LANGUAGE AI INPUT ──────────────────────────
 async function parseNaturalInput() {
   const textEl = document.getElementById('ai-input-text');

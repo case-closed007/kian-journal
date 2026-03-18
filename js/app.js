@@ -64,6 +64,12 @@ function updateDateDisplay() {
   document.getElementById('current-date-cn').textContent = formatDateCn(currentDate);
   const picker = document.getElementById('date-picker-input');
   if (picker) picker.value = dateKey(currentDate);
+  const todayTag = document.getElementById('today-tag');
+  if (todayTag) {
+    const isToday = dateKey(currentDate) === dateKey(new Date());
+    todayTag.style.display = isToday ? 'inline-flex' : 'none';
+    todayTag.textContent = currentLang === 'en' ? 'Today' : '今天';
+  }
 }
 
 function openDatePicker() {
@@ -312,6 +318,18 @@ function selectCalDay(dateStr) {
   _aiInsightPending = false;
   updateDateDisplay();
   renderAll();
+}
+
+// ── NOTES HELPERS ──────────────────────────────────────
+function toggleNoteForm() {
+  const panel = document.getElementById('note-form-panel');
+  if (!panel) return;
+  panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+}
+
+function setNotesMonthFilter(month) {
+  _notesMonthFilter = month;
+  renderNotes();
 }
 
 // ── SET DEFAULT DATES ──────────────────────────────────
