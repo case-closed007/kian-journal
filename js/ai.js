@@ -321,7 +321,7 @@ async function renderGrowthInsight(latestRecord) {
   card.style.display = 'block';
   const ageDays = Math.floor((new Date() - BIRTH_DATE) / 86400000);
   const ageMonths = Math.floor(ageDays / 30.44);
-  const cacheKey = `growth_insight_${ageMonths}_${latestRecord.weight}_${latestRecord.height}`;
+  const cacheKey = `growth_insight_${ageMonths}_${String(latestRecord.weight||'').replace(/\./g,'_')}_${String(latestRecord.height||'').replace(/\./g,'_')}`;
   if (data.aiInsights && data.aiInsights[cacheKey]) {
     textEl.innerHTML = `<div class="insight-slot-text">${data.aiInsights[cacheKey].replace(/\n/g,'<br>')}</div>`;
     return;
@@ -442,9 +442,14 @@ Text: "${text}"`;
 
     for (const e of events) {
       if (e.type === 'feed' && e.time && e.amount) {
-        if (!data.feeds[key]) data.feeds[key] = [];
-        data.feeds[key].push({ time: e.time, amount: parseInt(e.amount), type: e.feedType || 'Formula', id: Date.now() + Math.random() });
-        data.feeds[key].sort((a, b) => a.time.localeCompare(b.time));
+        let feedKey = key;
+        if (e.feedType === 'Dream Feed' && e.time >= '19:00') {
+          const nextDay = new Date(currentDate); nextDay.setDate(nextDay.getDate() + 1);
+          feedKey = dateKey(nextDay);
+        }
+        if (!data.feeds[feedKey]) data.feeds[feedKey] = [];
+        data.feeds[feedKey].push({ time: e.time, amount: parseInt(e.amount), type: e.feedType || 'Formula', id: Date.now() + Math.random() });
+        data.feeds[feedKey].sort((a, b) => a.time.localeCompare(b.time));
         added.push('🍼 ' + e.amount + 'ml @' + e.time);
       } else if (e.type === 'sleep' && e.start) {
         if (!data.sleeps[key]) data.sleeps[key] = [];

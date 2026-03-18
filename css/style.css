@@ -518,3 +518,59 @@ textarea.input-field { width: 100%; min-height: 80px; resize: vertical; line-hei
 .growth-date { font-size: 12px; color: var(--light); flex-shrink: 0; margin-right: 8px; }
 .growth-data { font-size: 13px; color: var(--charcoal); text-align: right; line-height: 1.8; }
 .growth-pct { font-size: 11px; color: var(--sage-dark); background: var(--sage-light); padding: 1px 6px; border-radius: 8px; margin-left: 4px; }
+
+/* ── DATE CAL INLINE ── */
+.date-cal-btn-inline {
+  background: none; border: none; font-size: 14px; cursor: pointer;
+  padding: 2px 3px; border-radius: 6px; transition: background 0.15s; flex-shrink: 0; line-height: 1;
+}
+.date-cal-btn-inline:hover { background: rgba(0,0,0,0.06); }
+
+/* ── VIEW TOGGLE ── */
+.view-toggle { display: flex; border: 1px solid var(--border); border-radius: 20px; overflow: hidden; flex-shrink: 0; }
+.view-toggle-btn { padding: 5px 10px; font-size: 13px; border: none; background: white; color: var(--mid); cursor: pointer; transition: all 0.15s; white-space: nowrap; line-height: 1; }
+.view-toggle-btn.active { background: var(--charcoal); color: white; }
+
+/* ── TIMELINE DAY/NIGHT BG ── */
+.vtl-entry-day { background: #FAFAF5; }
+.vtl-entry-night { background: #EEF2F7; }
+.vtl-entry-day, .vtl-entry-night { border-radius: 8px; margin-bottom: 2px; }
+
+/* ── UNIFIED GRAY DOT ── */
+.vtl-dot { background: #C5C0BA !important; }
+
+/* ── DAY VIEW ── */
+.dv-scroll { overflow-y: auto; max-height: 500px; border-radius: 10px; border: 1px solid var(--border); }
+.dv-inner { position: relative; height: 1440px; }
+.dv-band { position: absolute; left: 0; right: 0; }
+.dv-band-night { background: #EEF2F7; }
+.dv-band-day { background: #FAF7F2; }
+.dv-rail { position: absolute; left: 52px; top: 0; bottom: 0; width: 1px; background: rgba(0,0,0,0.1); z-index: 1; }
+.dv-hour-label {
+  position: absolute; left: 0; width: 48px; font-size: 10px;
+  color: var(--light); text-align: right; padding-right: 6px;
+  transform: translateY(-6px); z-index: 2; pointer-events: none; line-height: 1;
+}
+.dv-hour-line {
+  position: absolute; left: 54px; right: 0; height: 1px;
+  background: rgba(0,0,0,0.06); z-index: 1; pointer-events: none;
+}
+.dv-event {
+  position: absolute; left: 58px; right: 6px; border-radius: 5px;
+  z-index: 3; display: flex; align-items: flex-start;
+  overflow: hidden; padding: 2px 6px; cursor: default; min-height: 18px;
+}
+.dv-event-sleep { background: rgba(124,92,191,0.22); border-left: 3px solid #7C5CBF; }
+.dv-event-feed { background: rgba(245,166,35,0.28); border-left: 3px solid #F5A623; align-items: center; }
+.dv-event-activity { background: rgba(76,175,125,0.22); border-left: 3px solid #4CAF7D; }
+.dv-event-label { font-size: 11px; color: var(--charcoal); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.4; }
+
+/* ── UPCOMING MILESTONE CARD ── */
+.ms-card-upcoming { background: #FFF9E6; border-color: #E8CC80; }
+.ms-card-upcoming .ms-card-title { color: #7A5A20; }
+.ms-card-upcoming .ms-card-cn { font-size: 10px; color: #9A7A40; }
+.ms-upcoming-eta { font-size: 10px; color: #8B6914; background: #FFF3D0; padding: 2px 7px; border-radius: 8px; margin-top: 4px; display: inline-block; }
+
+/* ── NOTE EXPAND ── */
+.note-expand-btn { font-size: 11px; color: var(--sage-dark); cursor: pointer; display: inline-block; margin-top: 3px; letter-spacing: 0.2px; }
+.note-expand-btn:hover { text-decoration: underline; }

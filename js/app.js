@@ -1,5 +1,10 @@
 // ── HELPERS ────────────────────────────────────────────
-function dateKey(d) { return d.toISOString().split('T')[0]; }
+function dateKey(d) {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
 
 function formatDate(d) { return d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }); }
 
@@ -126,6 +131,24 @@ function setTimelineFilter(type, btn) {
   renderTimeline();
 }
 
+// ── TIMELINE VIEW ──────────────────────────────────────
+let _timelineView = 'list';
+
+function setTimelineView(view, btn) {
+  _timelineView = view;
+  document.querySelectorAll('.view-toggle-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  renderTimeline();
+}
+
+// ── NOTE EXPAND ─────────────────────────────────────────
+function toggleNoteExpand(id, btn) {
+  const el = document.getElementById('note-cnt-' + id);
+  if (!el) return;
+  const expanded = el.classList.toggle('expanded');
+  btn.textContent = expanded ? (currentLang === 'zh' ? '收起' : 'Collapse') : (currentLang === 'zh' ? '展开' : 'Expand');
+}
+
 // ── ADD FORM TABS ───────────────────────────────────────
 function showAddForm(type, btn) {
   ['feed', 'sleep', 'activity'].forEach(t => {
@@ -141,13 +164,25 @@ function addFeed() {
   const amount = parseInt(document.getElementById('feed-amount').value);
   const type = document.getElementById('feed-type').value;
   if (!time || !amount) return;
-  const key = dateKey(currentDate);
-  if (!data.feeds[key]) data.feeds[key] = [];
-  data.feeds[key].push({ time, amount, type, id: Date.now() });
-  data.feeds[key].sort((a, b) => a.time.localeCompare(b.time));
+  // Dream Feed at 19:00+ belongs to next day (night window)
+  let targetKey = dateKey(currentDate);
+  let isNextDay = false;
+  if (type === 'Dream Feed' && time >= '19:00') {
+    const nextDay = new Date(currentDate);
+    nextDay.setDate(nextDay.getDate() + 1);
+    targetKey = dateKey(nextDay);
+    isNextDay = true;
+  }
+  if (!data.feeds[targetKey]) data.feeds[targetKey] = [];
+  data.feeds[targetKey].push({ time, amount, type, id: Date.now() });
+  data.feeds[targetKey].sort((a, b) => a.time.localeCompare(b.time));
   document.getElementById('feed-amount').value = '';
   document.getElementById('feed-time').value = new Date().toTimeString().slice(0, 5);
   saveData();
+  if (isNextDay) {
+    const hint = document.getElementById('dream-feed-hint');
+    if (hint) { hint.textContent = `⟳ 已归入 ${targetKey}（次日夜间记录）`; hint.style.display = 'block'; setTimeout(() => { hint.style.display = 'none'; }, 3500); }
+  }
   renderTimeline();
   renderDailySummary();
   renderPredictions();

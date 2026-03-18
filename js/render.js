@@ -1,5 +1,16 @@
 // ── MIXED TIMELINE ─────────────────────────────────────
 function renderTimeline() {
+  const listEl = document.getElementById('mixed-timeline');
+  const dayEl = document.getElementById('day-view-container');
+  if (_timelineView === 'day') {
+    if (listEl) listEl.style.display = 'none';
+    if (dayEl) dayEl.style.display = '';
+    renderDayView();
+    return;
+  }
+  if (listEl) listEl.style.display = '';
+  if (dayEl) dayEl.style.display = 'none';
+
   const key = dateKey(currentDate);
   let feeds = (data.feeds[key] || []).map(f => ({ sortTime: f.time, kind: 'feed', id: f.id, data: f }));
   let sleeps = (data.sleeps[key] || []).map(s => ({ sortTime: s.start, kind: 'sleep', id: s.id, data: s }));
@@ -10,32 +21,33 @@ function renderTimeline() {
   else if (_timelineFilter === 'sleep') all = sleeps;
   else if (_timelineFilter === 'activity') all = acts;
   else all = [...feeds, ...sleeps, ...acts];
-  all.sort((a, b) => a.sortTime.localeCompare(b.sortTime));
+  all.sort((a, b) => b.sortTime.localeCompare(a.sortTime)); // newest first
 
-  const el = document.getElementById('mixed-timeline');
-  if (!el) return;
+  if (!listEl) return;
 
   if (!all.length) {
-    el.innerHTML = `<div class="empty-state"><div class="empty-icon">📋</div><div class="empty-text">${t('empty-timeline')}</div></div>`;
+    listEl.innerHTML = `<div class="empty-state"><div class="empty-icon">📋</div><div class="empty-text">${t('empty-timeline')}</div></div>`;
     return;
   }
 
-  el.innerHTML = '<div class="vtl-list">' + all.map((entry, idx) => {
+  listEl.innerHTML = '<div class="vtl-list">' + all.map((entry, idx) => {
     const { kind, data: d } = entry;
     const isLast = idx === all.length - 1;
-    const dotClass = kind === 'feed' ? 'vtl-dot-feed' : kind === 'sleep' ? 'vtl-dot-sleep' : 'vtl-dot-act';
+    const hour = parseInt(entry.sortTime.split(':')[0]);
+    const isNight = hour < 7 || hour >= 19;
+    const entryBg = isNight ? 'vtl-entry-night' : 'vtl-entry-day';
     let timeStr, mainHtml, subHtml, deleteCall;
     if (kind === 'feed') {
       timeStr = d.time;
       const lbl = t('feed-type-' + d.type) || d.type;
-      mainHtml = `🍼 <strong>${lbl}</strong>`;
-      subHtml = `${d.amount}ml`;
+      mainHtml = `🍼 <strong>${lbl} · ${d.amount}ml</strong>`;
+      subHtml = '';
       deleteCall = `deleteFeed('${key}', ${d.id})`;
     } else if (kind === 'sleep') {
       timeStr = d.start;
       const lbl = t('sleep-type-' + d.type) || d.type;
-      mainHtml = `😴 <strong>${lbl}</strong>`;
-      subHtml = `${d.start} → ${d.end} · ${d.duration}`;
+      mainHtml = `😴 <strong>${lbl} · ${d.duration}</strong>`;
+      subHtml = `${d.start} → ${d.end}`;
       deleteCall = `deleteSleep('${key}', ${d.id})`;
     } else {
       timeStr = d.time;
@@ -44,10 +56,10 @@ function renderTimeline() {
       subHtml = d.note || '';
       deleteCall = `deleteActivity('${key}', ${d.id})`;
     }
-    return `<div class="vtl-entry" data-id="${d.id}" data-kind="${kind}">
+    return `<div class="vtl-entry ${entryBg}" data-id="${d.id}" data-kind="${kind}">
       <div class="vtl-time">${timeStr}</div>
       <div class="vtl-rail">
-        <div class="vtl-dot ${dotClass}"></div>
+        <div class="vtl-dot"></div>
         ${!isLast ? '<div class="vtl-line"></div>' : ''}
       </div>
       <div class="vtl-content">
@@ -59,7 +71,7 @@ function renderTimeline() {
   }).join('') + '</div>';
 
   // Swipe-to-delete on mobile
-  el.querySelectorAll('.vtl-entry').forEach(entry => {
+  listEl.querySelectorAll('.vtl-entry').forEach(entry => {
     let startX = 0;
     entry.addEventListener('touchstart', e => { startX = e.touches[0].clientX; }, { passive: true });
     entry.addEventListener('touchmove', e => {
@@ -71,6 +83,63 @@ function renderTimeline() {
       entry.style.transform = dx < -40 ? 'translateX(-64px)' : '';
     });
   });
+}
+
+// ── DAY VIEW ───────────────────────────────────────────
+function renderDayView() {
+  const key = dateKey(currentDate);
+  const feeds = data.feeds[key] || [];
+  const sleeps = data.sleeps[key] || [];
+  const acts = data.activities[key] || [];
+  const el = document.getElementById('day-view-container');
+  if (!el) return;
+
+  function toPx(timeStr) {
+    const [h, m] = timeStr.split(':').map(Number);
+    return h * 60 + m; // 1px per minute
+  }
+
+  const bgBands = `
+    <div class="dv-band dv-band-night" style="top:0;height:420px"></div>
+    <div class="dv-band dv-band-day" style="top:420px;height:720px"></div>
+    <div class="dv-band dv-band-night" style="top:1140px;height:300px"></div>`;
+
+  let hours = '';
+  for (let h = 0; h < 24; h++) {
+    hours += `<div class="dv-hour-label" style="top:${h*60}px">${String(h).padStart(2,'0')}:00</div>
+              <div class="dv-hour-line" style="top:${h*60}px"></div>`;
+  }
+
+  let events = '';
+  sleeps.forEach(s => {
+    const top = toPx(s.start);
+    const endPx = toPx(s.end);
+    const height = Math.max(20, endPx > top ? endPx - top : endPx + 1440 - top);
+    const lbl = t('sleep-type-' + s.type) || s.type;
+    events += `<div class="dv-event dv-event-sleep" style="top:${top}px;height:${Math.min(height, 1440 - top)}px" title="${lbl} ${s.start}–${s.end}">
+      <span class="dv-event-label">😴 ${lbl}${s.duration ? ' · ' + s.duration : ''}</span></div>`;
+  });
+  feeds.forEach(f => {
+    const top = toPx(f.time);
+    const lbl = t('feed-type-' + f.type) || f.type;
+    events += `<div class="dv-event dv-event-feed" style="top:${top}px;height:20px" title="${lbl} ${f.amount}ml">
+      <span class="dv-event-label">🍼 ${f.amount}ml</span></div>`;
+  });
+  acts.forEach(a => {
+    const top = toPx(a.time);
+    const lbl = t('activity-type-' + a.type) || a.type;
+    events += `<div class="dv-event dv-event-activity" style="top:${top}px;height:40px" title="${lbl}">
+      <span class="dv-event-label">🎯 ${lbl}</span></div>`;
+  });
+
+  el.innerHTML = `<div class="dv-scroll"><div class="dv-inner">${bgBands}<div class="dv-rail"></div>${hours}${events}</div></div>`;
+
+  const scrollEl = el.querySelector('.dv-scroll');
+  if (scrollEl) {
+    const isToday = key === dateKey(new Date());
+    const scrollTo = isToday ? Math.max(0, new Date().getHours() * 60 + new Date().getMinutes() - 60) : 7 * 60 - 30;
+    setTimeout(() => { scrollEl.scrollTop = scrollTo; }, 50);
+  }
 }
 
 // ── SUMMARY ────────────────────────────────────────────
@@ -198,16 +267,14 @@ function renderMilestones() {
   }
 
   const upEl = document.getElementById('upcoming-milestones');
-  upEl.innerHTML = upcomingMilestones.map(m => `
-    <div class="ms-upcoming-item">
-      <div class="ms-upcoming-icon">${m.icon}</div>
-      <div class="ms-upcoming-body">
-        <div class="ms-upcoming-title">${m.title}</div>
-        <div class="ms-upcoming-cn">${m.titleCn}</div>
-        <div class="ms-upcoming-eta">⏰ ${m.eta}</div>
-      </div>
+  upEl.innerHTML = '<div class="ms-card-wall">' + upcomingMilestones.map(m => `
+    <div class="ms-card ms-card-upcoming">
+      <div class="ms-card-icon">${m.icon}</div>
+      <div class="ms-card-title">${currentLang === 'en' ? m.title : m.titleCn}</div>
+      ${currentLang === 'zh' ? `<div class="ms-card-cn">${m.title}</div>` : ''}
+      <div class="ms-upcoming-eta">⏰ ${m.eta}</div>
     </div>
-  `).join('');
+  `).join('') + '</div>';
 
   // Load AI milestone insight
   renderMilestoneInsight();
@@ -372,18 +439,21 @@ function renderNotes() {
     el.innerHTML = '<div class="empty-state"><div class="empty-icon">📝</div><div class="empty-text">暂无备忘 · No notes</div></div>';
     return;
   }
-  el.innerHTML = notes.map(n => `
+  el.innerHTML = notes.map(n => {
+    const isLong = n.content.length > 60;
+    return `
     <div class="note-tl-item">
       <div class="note-tl-left">
         <div class="note-tl-date">${n.date}</div>
         <div class="note-tl-cat">${(n.category || '').split(' ')[0]}</div>
       </div>
       <div class="note-tl-body">
-        <div class="note-tl-content" onclick="this.classList.toggle('expanded')">${n.content}</div>
+        <div class="note-tl-content" id="note-cnt-${n.id}">${n.content}</div>
+        ${isLong ? `<span class="note-expand-btn" onclick="toggleNoteExpand(${n.id}, this)">${currentLang === 'zh' ? '展开' : 'Expand'}</span>` : ''}
       </div>
       <button class="note-tl-delete" onclick="deleteNote(${n.id})">×</button>
-    </div>
-  `).join('');
+    </div>`;
+  }).join('');
 }
 
 function renderNotesMonthFilter() {

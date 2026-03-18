@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Kian's Daily Journal · 安砚临成长日记</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&family=Noto+Serif+SC:wght@400;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=5">
+<link rel="stylesheet" href="css/style.css?v=6">
 
   <!-- Firebase SDK -->
   <script type="module">
@@ -77,11 +77,13 @@
     <div class="date-bar">
       <button class="date-btn" onclick="changeDate(-1)">←</button>
       <div class="date-center">
-        <div class="date-display" id="current-date-display"></div>
+        <div style="display:inline-flex;align-items:center;justify-content:center;gap:4px">
+          <span class="date-display" id="current-date-display"></span>
+          <button class="date-cal-btn-inline" onclick="switchTab('calendar')" title="月历">📅</button>
+        </div>
         <div class="date-cn" id="current-date-cn"></div>
       </div>
       <span id="today-tag" class="today-pill" style="display:none">今天</span>
-      <button class="date-cal-btn" onclick="switchTab('calendar')" title="月历">📅</button>
       <button class="date-btn" onclick="changeDate(1)">→</button>
       <input type="date" id="date-picker-input" style="position:absolute;opacity:0;pointer-events:none;width:0;height:0" onchange="onDatePickerChange(this.value)">
     </div>
@@ -155,13 +157,20 @@
           <div class="card-title" id="timeline-title-text">今日时间线</div>
         </div>
       </div>
-      <div class="filter-tabs" id="timeline-filter-tabs">
-        <button class="filter-tab active" onclick="setTimelineFilter('all',this)" id="filter-all">全部</button>
-        <button class="filter-tab" onclick="setTimelineFilter('feed',this)" id="filter-feed">🍼 喂奶</button>
-        <button class="filter-tab" onclick="setTimelineFilter('sleep',this)" id="filter-sleep">😴 睡眠</button>
-        <button class="filter-tab" onclick="setTimelineFilter('activity',this)" id="filter-activity">🎯 活动</button>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
+        <div class="filter-tabs" id="timeline-filter-tabs" style="margin-bottom:0;flex:1">
+          <button class="filter-tab active" onclick="setTimelineFilter('all',this)" id="filter-all">全部</button>
+          <button class="filter-tab" onclick="setTimelineFilter('feed',this)" id="filter-feed">🍼 喂奶</button>
+          <button class="filter-tab" onclick="setTimelineFilter('sleep',this)" id="filter-sleep">😴 睡眠</button>
+          <button class="filter-tab" onclick="setTimelineFilter('activity',this)" id="filter-activity">🎯 活动</button>
+        </div>
+        <div class="view-toggle">
+          <button class="view-toggle-btn active" id="vtoggle-list" onclick="setTimelineView('list',this)" title="列表视图">≡</button>
+          <button class="view-toggle-btn" id="vtoggle-day" onclick="setTimelineView('day',this)" title="日视图">⏱</button>
+        </div>
       </div>
       <div id="mixed-timeline"></div>
+      <div id="day-view-container" style="display:none"></div>
     </div>
 
     <!-- ── TABBED ADD FORMS ── -->
@@ -184,6 +193,7 @@
           </select>
         </div>
         <button class="btn-add" onclick="addFeed()" id="btn-add-feed">+ 添加喂奶</button>
+        <div id="dream-feed-hint" style="display:none;font-size:12px;color:var(--sage-dark);margin-top:6px;padding:6px 10px;background:var(--sage-light);border-radius:8px"></div>
       </div>
 
       <!-- Sleep form -->
@@ -430,9 +440,9 @@
   </div>
 </nav>
 
-<script src="js/data.js?v=5"></script>
-<script src="js/ai.js?v=5"></script>
-<script src="js/render.js?v=5"></script>
-<script src="js/app.js?v=5"></script>
+<script src="js/data.js?v=6"></script>
+<script src="js/ai.js?v=6"></script>
+<script src="js/render.js?v=6"></script>
+<script src="js/app.js?v=6"></script>
 </body>
 </html>
