@@ -52,19 +52,22 @@ body {
   min-height: 100dvh;
   font-family: var(--font-body);
   color: var(--ink);
-  background:
-    linear-gradient(160deg, rgba(255,220,235,0.30) 0%, rgba(220,200,255,0.20) 50%, rgba(200,215,255,0.25) 100%),
-    url('../bg.jpg') center center / cover no-repeat;
+  background: linear-gradient(160deg, rgba(255,220,235,0.25) 0%, rgba(220,200,255,0.15) 50%, rgba(200,215,255,0.20) 100%);
   overflow-x: hidden;
   padding-bottom: 90px;
 }
 
+/* bg.jpg 放在 ::before，渐变叠在上面 */
 body::before {
   content: '';
   position: fixed;
   inset: 0;
   z-index: -1;
-  background: linear-gradient(140deg, #fce4ec 0%, #ede7f6 40%, #e8eaf6 70%, #fce4ec 100%);
+  background:
+    linear-gradient(160deg, rgba(255,220,235,0.25) 0%, rgba(220,200,255,0.15) 50%, rgba(200,215,255,0.20) 100%),
+    url('../bg.jpg') center center / cover no-repeat;
+  /* 无 bg.jpg 时兜底渐变 */
+  background-color: #fce4ec;
 }
 
 /* ── SYNC STATUS ── */
