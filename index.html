@@ -32,10 +32,19 @@
           if (val.sleeps) data.sleeps = val.sleeps;
           if (val.activities) data.activities = val.activities;
           if (val.dailyNotes) data.dailyNotes = val.dailyNotes;
-          if (val.milestones) data.milestones = val.milestones;
-          if (val.growth) data.growth = val.growth;
-          if (val.notes) data.notes = val.notes;
-          if (val.aiInsights) data.aiInsights = val.aiInsights;
+          if (val.milestones) {
+            data.milestones = val.milestones;
+            // Firebase converts arrays → objects; normalize back
+            if (data.milestones.achieved && !Array.isArray(data.milestones.achieved))
+              data.milestones.achieved = Object.values(data.milestones.achieved);
+          }
+          if (val.growth) data.growth = Array.isArray(val.growth) ? val.growth : Object.values(val.growth);
+          if (val.notes) data.notes = Array.isArray(val.notes) ? val.notes : Object.values(val.notes);
+          if (val.aiInsights) {
+            // Migrate old dot keys → underscore (Firebase forbids dots in keys)
+            data.aiInsights = {};
+            Object.keys(val.aiInsights).forEach(k => { data.aiInsights[k.replace(/\./g,'_')] = val.aiInsights[k]; });
+          }
           renderAll();
           showSyncStatus('synced');
         } else {
@@ -80,10 +89,10 @@
         <div style="display:inline-flex;align-items:center;justify-content:center;gap:4px">
           <span class="date-display" id="current-date-display"></span>
           <button class="date-cal-btn-inline" onclick="switchTab('calendar')" title="月历">📅</button>
+          <span id="today-tag" class="today-pill" style="display:none">今天</span>
         </div>
         <div class="date-cn" id="current-date-cn"></div>
       </div>
-      <span id="today-tag" class="today-pill" style="display:none">今天</span>
       <button class="date-btn" onclick="changeDate(1)">→</button>
       <input type="date" id="date-picker-input" style="position:absolute;opacity:0;pointer-events:none;width:0;height:0" onchange="onDatePickerChange(this.value)">
     </div>

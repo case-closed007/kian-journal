@@ -96,10 +96,13 @@ function saveData() {
   try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch(e) {}
   if (window.firebaseReady) {
     showSyncStatus('syncing');
+    // Sanitize aiInsights keys — Firebase forbids dots
+    const safeInsights = {};
+    Object.keys(data.aiInsights || {}).forEach(k => { safeInsights[k.replace(/\./g,'_')] = data.aiInsights[k]; });
     window.fbSet('kian_data', {
       feeds: data.feeds, sleeps: data.sleeps, activities: data.activities,
       dailyNotes: data.dailyNotes, milestones: data.milestones,
-      growth: data.growth, notes: data.notes, aiInsights: data.aiInsights || {}
+      growth: data.growth, notes: data.notes, aiInsights: safeInsights
     }).then(() => showSyncStatus('synced')).catch(err => {
       console.warn('Firebase save failed:', err);
       showSyncStatus('offline');

@@ -4,7 +4,7 @@ function renderTimeline() {
   const dayEl = document.getElementById('day-view-container');
   if (_timelineView === 'day') {
     if (listEl) listEl.style.display = 'none';
-    if (dayEl) dayEl.style.display = '';
+    if (dayEl) dayEl.style.display = 'block';
     renderDayView();
     return;
   }
@@ -46,8 +46,9 @@ function renderTimeline() {
     } else if (kind === 'sleep') {
       timeStr = d.start;
       const lbl = t('sleep-type-' + d.type) || d.type;
-      mainHtml = `😴 <strong>${lbl} · ${d.duration}</strong>`;
-      subHtml = `${d.start} → ${d.end}`;
+      const durStr = (d.duration && d.duration !== 'undefined') ? ' · ' + d.duration : (currentLang === 'zh' ? ' · 进行中' : ' · Ongoing');
+      mainHtml = `😴 <strong>${lbl}${durStr}</strong>`;
+      subHtml = `${d.start} → ${d.end || '?'}`;
       deleteCall = `deleteSleep('${key}', ${d.id})`;
     } else {
       timeStr = d.time;
