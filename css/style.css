@@ -54,7 +54,7 @@ body {
   color: var(--ink);
   background:
     linear-gradient(160deg, rgba(255,220,235,0.30) 0%, rgba(220,200,255,0.20) 50%, rgba(200,215,255,0.25) 100%),
-    url('../bg.jpg') center center / cover fixed no-repeat;
+    url('../bg.jpg') center center / cover no-repeat;
   overflow-x: hidden;
   padding-bottom: 90px;
 }
