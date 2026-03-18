@@ -12,16 +12,34 @@ function renderTimeline() {
   if (dayEl) dayEl.style.display = 'none';
 
   const key = dateKey(currentDate);
-  let feeds = (data.feeds[key] || []).map(f => ({ sortTime: f.time, kind: 'feed', id: f.id, data: f }));
-  let sleeps = (data.sleeps[key] || []).map(s => ({ sortTime: s.start, kind: 'sleep', id: s.id, data: s }));
-  let acts = (data.activities[key] || []).map(a => ({ sortTime: a.time, kind: 'activity', id: a.id, data: a }));
+
+  // Night feeds/sleeps (19:00-23:59) belong to the previous night window.
+  // Subtract 1440 from their minutes so they sort BELOW all daytime entries.
+  function toSortMin(timeStr, isNightType) {
+    const [h, m] = timeStr.split(':').map(Number);
+    const mins = h * 60 + m;
+    return (isNightType && mins >= 19 * 60) ? mins - 1440 : mins;
+  }
+
+  let feeds = (data.feeds[key] || []).map(f => ({
+    sortMin: toSortMin(f.time, f.type === 'Dream Feed' || f.type === 'Night Feed'),
+    sortTime: f.time, kind: 'feed', id: f.id, data: f
+  }));
+  let sleeps = (data.sleeps[key] || []).map(s => ({
+    sortMin: toSortMin(s.start, s.type === 'Night'),
+    sortTime: s.start, kind: 'sleep', id: s.id, data: s
+  }));
+  let acts = (data.activities[key] || []).map(a => ({
+    sortMin: toSortMin(a.time, false),
+    sortTime: a.time, kind: 'activity', id: a.id, data: a
+  }));
 
   let all;
   if (_timelineFilter === 'feed') all = feeds;
   else if (_timelineFilter === 'sleep') all = sleeps;
   else if (_timelineFilter === 'activity') all = acts;
   else all = [...feeds, ...sleeps, ...acts];
-  all.sort((a, b) => b.sortTime.localeCompare(a.sortTime)); // newest first
+  all.sort((a, b) => b.sortMin - a.sortMin); // newest first; night feeds (negative) at bottom
 
   if (!listEl) return;
 
@@ -177,7 +195,10 @@ function renderPredictions() {
   // Only show predictions for today
   if (!isToday) { predRow.style.display = 'none'; return; }
 
-  const todayFeeds = (data.feeds[key] || []).slice().sort((a, b) => a.time.localeCompare(b.time));
+  // Exclude Dream Feed / Night Feed from prediction (distorts daytime interval)
+  const todayFeeds = (data.feeds[key] || [])
+    .filter(f => f.type !== 'Dream Feed' && f.type !== 'Night Feed' && f.time < '19:00')
+    .slice().sort((a, b) => a.time.localeCompare(b.time));
   const todaySleeps = (data.sleeps[key] || []).filter(s => s.type !== 'Night').slice().sort((a, b) => a.start.localeCompare(b.start));
   const feedCard = document.getElementById('pred-feed-card');
   const sleepCard = document.getElementById('pred-sleep-card');
