@@ -16,11 +16,17 @@
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
-body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'DM Sans', sans-serif;
+/* Aurora lives on html (scroll root) — body inherits transparent */
+html {
   background: linear-gradient(-45deg, #e8f4f0, #fde8e0, #e8eef8, #f0e8f4, #e8f4e8);
   background-size: 400% 400%;
   animation: aurora 20s ease infinite;
+  min-height: 100%;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: transparent;
   color: var(--charcoal);
   min-height: 100vh;
 }
@@ -33,16 +39,17 @@ body {
 }
 @keyframes springIn {
   0%   { opacity: 0; transform: scale(0.94) translateY(8px); }
-  65%  { transform: scale(1.02) translateY(-2px); }
+  65%  { opacity: 1; transform: scale(1.02) translateY(-2px); }
   100% { opacity: 1; transform: scale(1) translateY(0); }
 }
 @keyframes shimmer {
   0%   { background-position: -200% center; }
   100% { background-position: 200% center; }
 }
+/* expandDown: transform-origin must be on the element, not inside keyframe */
 @keyframes expandDown {
-  from { opacity: 0; transform: scaleY(0.88); transform-origin: top; }
-  to   { opacity: 1; transform: scaleY(1);    transform-origin: top; }
+  from { opacity: 0; transform: scaleY(0.88); }
+  to   { opacity: 1; transform: scaleY(1); }
 }
 
 /* ── COMPACT TOPBAR ── */
@@ -233,12 +240,12 @@ select.input-field { cursor: pointer; }
 .summary-title { font-family: 'Playfair Display', serif; font-size: 16px; margin-bottom: 16px; color: var(--gold-light); }
 .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 .summary-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--light); margin-bottom: 4px; }
-.summary-value { font-family: 'Inter', sans-serif; font-size: 2rem; font-weight: 700; color: var(--gold-light); line-height: 1.1; }
-/* Big milk number */
-#total-feed { font-size: 3.2rem; font-weight: 800; }
-/* Slightly smaller for counts */
-#total-feeds-count, #night-sleep { font-size: 2rem; font-weight: 700; }
-#total-naps { font-size: 2rem; font-weight: 700; }
+.summary-value { font-family: 'Inter', -apple-system, sans-serif; font-size: 2rem; font-weight: 700; color: var(--gold-light); line-height: 1.1; }
+/* ID overrides — must come after .summary-value in source order */
+div#total-feed { font-size: 3.2rem !important; font-weight: 800 !important; font-family: 'Inter', -apple-system, sans-serif !important; }
+div#total-naps { font-size: 2rem !important; font-weight: 700 !important; font-family: 'Inter', -apple-system, sans-serif !important; }
+div#total-feeds-count { font-size: 2rem !important; font-weight: 700 !important; font-family: 'Inter', -apple-system, sans-serif !important; }
+div#night-sleep { font-size: 2rem !important; font-weight: 700 !important; font-family: 'Inter', -apple-system, sans-serif !important; }
 .summary-unit { font-size: 11px; color: var(--mid); margin-left: 3px; font-weight: 400; }
 .summary-goal { font-size: 10px; color: var(--mid); margin-top: 2px; line-height: 1.4; }
 
@@ -249,7 +256,7 @@ select.input-field { cursor: pointer; }
 .pred-card-sleep { background: rgba(200,210,240,0.2); border: 1px solid rgba(200,210,240,0.4); }
 .pred-card-icon { font-size: 20px; }
 .pred-card-label { font-size: 10px; color: var(--gold-light); letter-spacing: 0.5px; font-weight: 500; }
-.pred-card-time { font-size: 2.8rem; font-weight: 800; font-family: 'Inter', sans-serif; color: white; line-height: 1; }
+.pred-card-time { font-size: 2.8rem !important; font-weight: 800 !important; font-family: 'Inter', -apple-system, sans-serif !important; color: white; line-height: 1; }
 
 /* ── INSIGHT BOX ── */
 .insight-box {
@@ -298,7 +305,7 @@ select.input-field { cursor: pointer; }
 .ai-quick-hint { flex: 1; font-size: 14px; color: var(--light); font-style: italic; }
 .ai-quick-arrow { font-size: 12px; color: var(--light); transition: transform 0.2s; }
 .ai-quick-arrow.open { transform: rotate(180deg); }
-.ai-expanded-body { display: none; padding: 0 16px 16px; }
+.ai-expanded-body { display: none; padding: 0 16px 16px; transform-origin: top; }
 .ai-expanded-body.open { display: block; animation: expandDown 0.32s cubic-bezier(0.34,1.56,0.64,1) both; }
 #ai-input-text:focus { border-color: var(--sage); box-shadow: 0 0 0 3px rgba(143,175,143,0.22); outline: none; }
 .ai-send-btn {
@@ -616,6 +623,7 @@ textarea.input-field { width: 100%; min-height: 80px; resize: vertical; line-hei
   -webkit-backdrop-filter: blur(20px);
   border-radius: 14px; padding: 14px; margin-bottom: 12px;
   border: 1px solid rgba(255,255,255,0.52);
+  transform-origin: top;
   animation: expandDown 0.3s cubic-bezier(0.34,1.56,0.64,1) both;
 }
 
