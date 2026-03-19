@@ -75,10 +75,15 @@ function renderTimeline() {
       subHtml = d.note || '';
       deleteCall = `deleteActivity('${key}', ${d.id})`;
     }
+    const dotIcons = {
+      feed:     `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#c9547a" stroke-width="1.8" stroke-linecap="round"><path d="M9 2v6l-2 4v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-8l-2-4V2"/><line x1="9" y1="2" x2="15" y2="2"/></svg>`,
+      sleep:    `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#7e22ce" stroke-width="1.8" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`,
+      activity: `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#2a9d8f" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4"/></svg>`
+    };
     return `<div class="vtl-entry ${entryBg}" data-id="${d.id}" data-kind="${kind}">
       <div class="vtl-time">${timeStr}</div>
       <div class="vtl-rail">
-        <div class="vtl-dot"></div>
+        <div class="vtl-dot">${dotIcons[kind] || ''}</div>
         ${!isLast ? '<div class="vtl-line"></div>' : ''}
       </div>
       <div class="vtl-content">

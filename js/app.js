@@ -149,6 +149,30 @@ function toggleNoteExpand(id, btn) {
   btn.textContent = expanded ? (currentLang === 'zh' ? '收起' : 'Collapse') : (currentLang === 'zh' ? '展开' : 'Expand');
 }
 
+// ── I18N HELPERS ───────────────────────────────────────
+function updateFilterTabsLang(lang) {
+  const labels = {
+    zh: { all: '全部', feed: '🍼 喂奶', sleep: '😴 睡眠', activity: '🎯 活动' },
+    en: { all: 'All',  feed: 'Feed',    sleep: 'Sleep',    activity: 'Activity' }
+  };
+  document.querySelectorAll('.filter-tab').forEach(tab => {
+    const filter = tab.dataset.filter;
+    if (filter && labels[lang] && labels[lang][filter] !== undefined)
+      tab.textContent = labels[lang][filter];
+  });
+}
+
+function updateAddTabsLang(lang) {
+  const map = {
+    zh: { feed: '🍼 喂奶', sleep: '😴 睡眠', activity: '🎯 活动' },
+    en: { feed: '🍼 Feed', sleep: '😴 Sleep', activity: '🎯 Activity' }
+  };
+  ['feed', 'sleep', 'activity'].forEach(kind => {
+    const btn = document.getElementById('tab-btn-' + kind);
+    if (btn && map[lang] && map[lang][kind]) btn.textContent = map[lang][kind];
+  });
+}
+
 // ── ADD FORM TABS ───────────────────────────────────────
 function showAddForm(type, btn) {
   ['feed', 'sleep', 'activity'].forEach(t => {

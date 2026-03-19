@@ -130,6 +130,10 @@ function applyLang() {
   const noteContentEl = document.getElementById('note-content');
   if (noteContentEl) noteContentEl.placeholder = currentLang === 'zh' ? '在这里写下你的备忘...' : 'Write your note here...';
 
+  // Update filter tabs and add tabs text
+  updateFilterTabsLang(currentLang);
+  updateAddTabsLang(currentLang);
+
   // Re-render dynamic content
   renderTimeline();
   renderDailySummary();
