@@ -17,6 +17,12 @@ function formatAge(ageDays) {
   const years = Math.floor(totalMonths / 12);
   const months = totalMonths % 12;
   const remDays = ageDays - Math.floor(totalMonths * 30.44);
+  const lang = (typeof currentLang !== 'undefined') ? currentLang : 'zh';
+  if (lang === 'en') {
+    if (years >= 1) return `${years}y ${months}mo`;
+    if (totalMonths >= 3) return `${totalMonths}mo ${remDays}d`;
+    return `${ageDays}d`;
+  }
   if (years >= 1) return `${years}岁${months}个月`;
   if (totalMonths >= 3) return `${totalMonths}个月${remDays}天`;
   return `${ageDays}天`;
@@ -33,10 +39,13 @@ function parseDuration(dur) {
 }
 
 function calcSleepDuration(start, end) {
+  if (!start || !end || !end.includes(':')) return undefined;
   const [sh, sm] = start.split(':').map(Number);
-  let [eh, em] = end.split(':').map(Number);
+  const [eh, em] = end.split(':').map(Number);
+  if (isNaN(sh) || isNaN(eh)) return undefined;
   let startMin = sh * 60 + sm, endMin = eh * 60 + em;
-  if (endMin <= startMin) endMin += 24 * 60;
+  if (endMin < startMin) endMin += 24 * 60;
+  if (endMin === startMin) return undefined; // same time = likely error
   const diff = endMin - startMin;
   const h = Math.floor(diff / 60), m = diff % 60;
   return h > 0 ? `${h}h ${m}m` : `${m}m`;
@@ -50,15 +59,8 @@ function init() {
   const ageUnitEl = document.getElementById('topbar-age-unit');
   if (ageEl) {
     const formatted = formatAge(age);
-    // Split into num + unit parts for display
-    const mMatch = formatted.match(/^(\d+个月\d+)天$/);
-    const yMatch = formatted.match(/^(\d+岁\d+)个月$/);
-    if (mMatch || yMatch) {
-      ageEl.textContent = formatted;
-      if (ageUnitEl) ageUnitEl.textContent = '';
-    } else {
-      ageEl.textContent = age;
-    }
+    ageEl.textContent = formatted;
+    if (ageUnitEl) ageUnitEl.textContent = '';
   }
   updateDateDisplay();
   renderAll();
@@ -107,8 +109,18 @@ function changeDate(dir) {
   if (dir === 0) { currentDate = new Date(); currentDate.setHours(0,0,0,0); }
   else currentDate.setDate(currentDate.getDate() + dir);
   _aiInsightPending = false;
+  clearTodayInsightCache();
   updateDateDisplay();
   renderAll();
+}
+
+function clearTodayInsightCache() {
+  const key = dateKey(currentDate);
+  if (!data.aiInsights) return;
+  ['morning','afternoon','evening','summary'].forEach(slot => {
+    delete data.aiInsights[key + '_' + slot];
+  });
+  _aiInsightPending = false;
 }
 
 // ── AI COLLAPSIBLE ─────────────────────────────────────
@@ -203,6 +215,7 @@ function addFeed() {
   document.getElementById('feed-amount').value = '';
   document.getElementById('feed-time').value = new Date().toTimeString().slice(0, 5);
   saveData();
+  clearTodayInsightCache();
   if (isNextDay) {
     const hint = document.getElementById('dream-feed-hint');
     if (hint) { hint.textContent = `⟳ 已归入 ${targetKey}（次日夜间记录）`; hint.style.display = 'block'; setTimeout(() => { hint.style.display = 'none'; }, 3500); }
@@ -216,6 +229,7 @@ function addFeed() {
 function deleteFeed(key, id) {
   data.feeds[key] = data.feeds[key].filter(f => f.id !== id);
   saveData();
+  clearTodayInsightCache();
   renderTimeline();
   renderDailySummary();
   renderPredictions();

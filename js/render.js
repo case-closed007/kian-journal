@@ -58,26 +58,26 @@ function renderTimeline() {
     if (kind === 'feed') {
       timeStr = d.time;
       const lbl = t('feed-type-' + d.type) || d.type;
-      mainHtml = `🍼 <strong>${lbl} · ${d.amount}ml</strong>`;
+      mainHtml = `<span class="vtl-type">${lbl}</span><span class="vtl-detail"> · ${d.amount}ml</span>`;
       subHtml = '';
       deleteCall = `deleteFeed('${key}', ${d.id})`;
     } else if (kind === 'sleep') {
       timeStr = d.start;
       const lbl = t('sleep-type-' + d.type) || d.type;
-      const durStr = (d.duration && d.duration !== 'undefined') ? ' · ' + d.duration : (currentLang === 'zh' ? ' · 进行中' : ' · Ongoing');
-      mainHtml = `😴 <strong>${lbl}${durStr}</strong>`;
+      const durStr = (d.duration && d.duration !== 'undefined') ? d.duration : (currentLang === 'zh' ? '进行中' : 'Ongoing');
+      mainHtml = `<span class="vtl-type">${lbl}</span><span class="vtl-detail"> · ${durStr}</span>`;
       subHtml = `${d.start} → ${d.end || '?'}`;
       deleteCall = `deleteSleep('${key}', ${d.id})`;
     } else {
       timeStr = d.time;
       const lbl = t('activity-type-' + d.type) || d.type;
-      mainHtml = `🎯 <strong>${lbl}</strong>`;
+      mainHtml = `<span class="vtl-type">${lbl}</span>`;
       subHtml = d.note || '';
       deleteCall = `deleteActivity('${key}', ${d.id})`;
     }
     const dotIcons = {
       feed:     `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#c9547a" stroke-width="1.8" stroke-linecap="round"><path d="M9 2v6l-2 4v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-8l-2-4V2"/><line x1="9" y1="2" x2="15" y2="2"/></svg>`,
-      sleep:    `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#7e22ce" stroke-width="1.8" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`,
+      sleep:    `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#7c5cbf" stroke-width="1.8" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`,
       activity: `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#2a9d8f" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4"/></svg>`
     };
     return `<div class="vtl-entry ${entryBg}" data-id="${d.id}" data-kind="${kind}">
@@ -360,18 +360,30 @@ function renderGrowthHistory() {
     el.innerHTML = '<div class="empty-state"><div class="empty-icon">📏</div><div class="empty-text">No measurements yet</div></div>';
     return;
   }
-  const ageDays = Math.floor((new Date() - BIRTH_DATE) / 86400000);
-  const ageMonths = Math.floor(ageDays / 30.44);
+  const weightLabel = currentLang === 'zh' ? '体重' : 'Weight';
+  const heightLabel = currentLang === 'zh' ? '身高' : 'Height';
+  const headLabel   = currentLang === 'zh' ? '头围' : 'Head';
   el.innerHTML = [...data.growth].reverse().map(g => {
+    const entryDate = new Date(g.date);
+    const ageMonths = Math.floor((entryDate - BIRTH_DATE) / (30.44 * 86400000));
     const wPct = g.weight ? whoPercentile(g.weight, WHO_W, ageMonths) : null;
     const hPct = g.height ? whoPercentile(g.height, WHO_H, ageMonths) : null;
+    const rows = [];
+    if (g.weight) rows.push(`<div class="growth-row">
+      <span class="growth-label">${weightLabel}</span>
+      <span class="growth-data">${g.weight}<span class="growth-unit"> kg</span>${wPct ? `<span class="growth-pct">P${wPct}</span>` : ''}</span>
+    </div>`);
+    if (g.height) rows.push(`<div class="growth-row">
+      <span class="growth-label">${heightLabel}</span>
+      <span class="growth-data">${g.height}<span class="growth-unit"> cm</span>${hPct ? `<span class="growth-pct">P${hPct}</span>` : ''}</span>
+    </div>`);
+    if (g.head) rows.push(`<div class="growth-row">
+      <span class="growth-label">${headLabel}</span>
+      <span class="growth-data">${g.head}<span class="growth-unit"> cm</span></span>
+    </div>`);
     return `<div class="growth-entry">
-      <span class="growth-date">${g.date}</span>
-      <span class="growth-data">
-        ${g.weight ? `⚖️ ${g.weight}kg${wPct ? `<span class="growth-pct">P${wPct}</span>` : ''}` : ''}
-        ${g.height ? `<br>📏 ${g.height}cm${hPct ? `<span class="growth-pct">P${hPct}</span>` : ''}` : ''}
-        ${g.head ? `<br>⭕ ${g.head}cm` : ''}
-      </span>
+      <div class="growth-date">${g.date}</div>
+      ${rows.join('')}
     </div>`;
   }).join('');
 
