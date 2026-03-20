@@ -565,15 +565,16 @@ function renderCalendar() {
     var slps = data.sleeps[key] || [];
     var totalMl = feeds.reduce((s, f) => s + f.amount, 0);
     var hasData = feeds.length > 0 || slps.length > 0;
+    var naps = slps.filter(function(s) { return s.type === 'Nap' || s.type === 'Catnap'; }).length;
     var isToday = td.getTime() === today.getTime();
     var isSel = dateKey(currentDate) === key;
     var hasMile = mDates.has(key);
     var timeClass = isToday ? 'cal-today' : (td < today ? 'cal-past' : 'cal-future');
-    var cls = 'cal-day ' + timeClass + (hasData ? ' has-data' : '') + (isToday ? ' is-today' : '') + (isSel ? ' is-selected' : '');
+    var cls = 'cal-day ' + timeClass + (hasData ? ' has-data' : '') + (hasMile ? ' has-milestone' : '') + (isToday ? ' is-today' : '') + (isSel ? ' is-selected' : '');
     html += '<div class="' + cls + '" onclick="jumpToDate(\'' + key + '\')">' +
-      (hasMile ? '<div class="cal-milestone-dot">⭐</div>' : '') +
       '<span class="cal-day-num">' + d + '</span>' +
       (totalMl ? '<span class="cal-day-data">' + totalMl + 'ml</span>' : '') +
+      (naps ? '<span class="cal-day-data">' + naps + ' nap' + (naps > 1 ? 's' : '') + '</span>' : '') +
       '</div>';
   }
   var rem = (7 - (startDow + lastDay.getDate()) % 7) % 7;
