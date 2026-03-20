@@ -142,6 +142,22 @@ function initCtaVisibility() {
       msBtn.style.display = msInput.value.trim() ? 'block' : 'none';
     });
   }
+
+  // Growth save CTA: show when any measurement filled
+  const growthBtn = document.getElementById('btn-add-growth');
+  const growthWeight = document.getElementById('growth-weight');
+  const growthHeight = document.getElementById('growth-height');
+  const growthHead = document.getElementById('growth-head');
+  if (growthBtn && growthWeight) {
+    growthBtn.style.display = 'none';
+    const checkGrowth = () => {
+      const hasVal = (growthWeight.value || growthHeight.value || growthHead.value);
+      growthBtn.style.display = hasVal ? 'block' : 'none';
+    };
+    growthWeight.addEventListener('input', checkGrowth);
+    growthHeight.addEventListener('input', checkGrowth);
+    growthHead.addEventListener('input', checkGrowth);
+  }
 }
 
 function updateDateDisplay() {
