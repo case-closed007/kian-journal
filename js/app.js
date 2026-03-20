@@ -65,6 +65,7 @@ function init() {
   updateDateDisplay();
   renderAll();
   initAiCard();
+  initCtaVisibility();
 }
 
 function initAiCard() {
@@ -82,6 +83,65 @@ function initAiCard() {
       card.classList.add('collapsed');
     }
   });
+}
+
+function initCtaVisibility() {
+  // Feed CTA: show only when ml is filled
+  const feedBtn = document.getElementById('btn-add-feed');
+  const mlInput = document.getElementById('feed-amount');
+  if (feedBtn && mlInput) {
+    feedBtn.style.display = 'none';
+    mlInput.addEventListener('input', () => {
+      feedBtn.style.display = mlInput.value.trim() ? 'block' : 'none';
+    });
+  }
+
+  // Sleep CTA: show when both times filled
+  const sleepBtn = document.getElementById('btn-add-sleep');
+  const sleepStart = document.getElementById('sleep-start');
+  const sleepEnd = document.getElementById('sleep-end');
+  if (sleepBtn && sleepStart && sleepEnd) {
+    sleepBtn.style.display = 'none';
+    const checkSleep = () => {
+      sleepBtn.style.display = (sleepStart.value && sleepEnd.value) ? 'block' : 'none';
+    };
+    sleepStart.addEventListener('change', checkSleep);
+    sleepEnd.addEventListener('change', checkSleep);
+  }
+
+  // Activity CTA: show when note or type selected (always show since type always has value)
+  const actBtn = document.getElementById('btn-add-activity');
+  const actTime = document.getElementById('activity-time');
+  if (actBtn && actTime) {
+    actBtn.style.display = 'none';
+    actTime.addEventListener('change', () => {
+      actBtn.style.display = actTime.value ? 'block' : 'none';
+    });
+  }
+
+  // Daily note CTA: show when textarea has content
+  const noteBtn = document.getElementById('btn-save-note');
+  const noteInput = document.getElementById('daily-note');
+  if (noteBtn && noteInput) {
+    noteBtn.style.display = 'none';
+    noteInput.addEventListener('input', () => {
+      noteBtn.style.display = noteInput.value.trim() ? 'flex' : 'none';
+    });
+    // Show if already has content (after renderDailyNote)
+    setTimeout(() => {
+      if (noteInput.value.trim()) noteBtn.style.display = 'flex';
+    }, 100);
+  }
+
+  // Milestone CTA: show when title filled
+  const msBtn = document.querySelector('button[onclick="addMilestone()"]');
+  const msInput = document.getElementById('milestone-title');
+  if (msBtn && msInput) {
+    msBtn.style.display = 'none';
+    msInput.addEventListener('input', () => {
+      msBtn.style.display = msInput.value.trim() ? 'block' : 'none';
+    });
+  }
 }
 
 function updateDateDisplay() {

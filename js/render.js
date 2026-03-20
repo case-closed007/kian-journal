@@ -385,18 +385,15 @@ function renderGrowthHistory() {
     const metrics = [];
     if (g.weight) metrics.push(`<div class="growth-metric">
       <span class="growth-metric-label">${wLabel}</span>
-      <span class="growth-metric-value">${g.weight}<span class="growth-unit">kg</span></span>
-      <span class="growth-metric-pct">${wPct ? 'P' + wPct : '—'}</span>
+      <span class="growth-metric-value">${g.weight}<span class="growth-unit">kg</span>${wPct ? `<span class="growth-metric-pct">P${wPct}</span>` : ''}</span>
     </div>`);
     if (g.height) metrics.push(`<div class="growth-metric">
       <span class="growth-metric-label">${hLabel}</span>
-      <span class="growth-metric-value">${g.height}<span class="growth-unit">cm</span></span>
-      <span class="growth-metric-pct">${hPct ? 'P' + hPct : '—'}</span>
+      <span class="growth-metric-value">${g.height}<span class="growth-unit">cm</span>${hPct ? `<span class="growth-metric-pct">P${hPct}</span>` : ''}</span>
     </div>`);
     if (g.head) metrics.push(`<div class="growth-metric">
       <span class="growth-metric-label">${hdLabel}</span>
       <span class="growth-metric-value">${g.head}<span class="growth-unit">cm</span></span>
-      <span class="growth-metric-pct">—</span>
     </div>`);
     const whoRef = currentLang === 'zh'
       ? `WHO参考 · ${ageLabel}: 体重 ${wRef}kg · 身高 ${hRef}cm`
@@ -571,7 +568,8 @@ function renderCalendar() {
     var isToday = td.getTime() === today.getTime();
     var isSel = dateKey(currentDate) === key;
     var hasMile = mDates.has(key);
-    var cls = 'cal-day' + (hasData ? ' has-data' : '') + (isToday ? ' is-today' : '') + (isSel ? ' is-selected' : '');
+    var timeClass = isToday ? 'cal-today' : (td < today ? 'cal-past' : 'cal-future');
+    var cls = 'cal-day ' + timeClass + (hasData ? ' has-data' : '') + (isToday ? ' is-today' : '') + (isSel ? ' is-selected' : '');
     html += '<div class="' + cls + '" onclick="jumpToDate(\'' + key + '\')">' +
       (hasMile ? '<div class="cal-milestone-dot">⭐</div>' : '') +
       '<span class="cal-day-num">' + d + '</span>' +

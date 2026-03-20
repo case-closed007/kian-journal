@@ -265,7 +265,7 @@ body {
   box-shadow: 0 8px 32px rgba(80, 90, 160, 0.20), inset 0 1px 0 rgba(220, 230, 255, 0.25);
   overflow: hidden;
 }
-.insight-box, .insight-box * { color: rgba(255, 255, 255, 0.93); }
+.insight-box, .insight-box * { color: rgba(255, 255, 255, 0.93) !important; }
 .insight-title { font-family: var(--font-display); font-size: 14px; font-weight: 500; margin-bottom: 8px; }
 .insight-text { font-family: var(--font-body); font-size: 14px; line-height: 1.65; font-style: italic; }
 .insight-text strong { font-weight: 700; font-style: normal; }
@@ -302,6 +302,9 @@ body {
   66%  { box-shadow: 0 0 0 1px rgba(255,255,255,0.30), 0 0 8px rgba(255,200,80,0.44),  0 0 16px rgba(255,100,60,0.32), 0 0 26px rgba(255,80,180,0.22), 0 0 40px rgba(180,80,255,0.12); }
   100% { box-shadow: 0 0 0 1px rgba(255,255,255,0.28), 0 0 7px rgba(255,100,180,0.42), 0 0 14px rgba(160,80,255,0.32), 0 0 24px rgba(80,140,255,0.22), 0 0 38px rgba(60,200,220,0.12); }
 }
+/* Background: more opaque white */
+.ai-quick-card { background: rgba(255, 255, 255, 0.62) !important; }
+
 /* Collapsed: single-line pill */
 .ai-quick-card.collapsed {
   border-radius: 999px !important;
@@ -336,6 +339,12 @@ body {
 }
 .ai-send-btn:hover { opacity: 0.90; transform: translateY(-1px); }
 .ai-send-btn:active { transform: scale(0.96); }
+
+/* ── TIMELINE HEADER ── */
+.vtl-header {
+  display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;
+}
+.vtl-view-controls { display: flex; gap: 6px; margin-left: auto; }
 
 /* ── FILTER TABS ── */
 .filter-tabs { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; margin-bottom: 14px; }
@@ -426,17 +435,14 @@ body {
   background: rgba(255,255,255,0.10);
 }
 .add-tab-btn {
-  flex: 1; padding: 8px 6px; border: none;
+  flex: 1; padding: 12px 8px; border: none;
   border-right: 1px solid rgba(255,255,255,0.25);
   background: transparent;
   font-family: var(--font-ui); font-size: 13px; font-weight: 400;
   color: rgba(100,65,95,0.60); cursor: pointer; transition: all 0.2s ease;
+  position: relative; overflow: hidden;
 }
 .add-tab-btn:last-child { border-right: none; }
-.add-tab-btn {
-  position: relative;
-  overflow: hidden;
-}
 .add-tab-btn.active {
   background: transparent;
   color: var(--color-primary);
@@ -446,7 +452,7 @@ body {
   content: '';
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse at center, rgba(124, 92, 191, 0.20) 0%, rgba(124, 92, 191, 0.06) 65%, transparent 100%);
+  background: radial-gradient(ellipse 60% 80% at center, rgba(124, 92, 191, 0.22) 0%, rgba(124, 92, 191, 0.06) 55%, transparent 100%);
   border-radius: inherit;
 }
 .add-row { width: 100%; display: flex; gap: 8px; margin-bottom: 10px; }
@@ -525,9 +531,9 @@ textarea.input-field { resize: vertical; min-height: 80px; }
 }
 .ms-card:not(.ms-card-upcoming) { background: rgba(200,240,215,0.20); border-color: rgba(180,230,200,0.70); }
 .ms-card.ms-card-upcoming { background: rgba(255,245,200,0.20); border-color: rgba(240,220,150,0.60); }
-.ms-card-icon, .ms-card-emoji { font-size: 20px; margin-bottom: 2px; }
-.ms-card-title, .ms-card-en { font-family: var(--font-body); font-size: 13px; color: rgba(72,42,65,0.88); line-height: 1.3; }
-.ms-card-cn { font-family: var(--font-ui); font-size: 11px; color: rgba(100,65,95,0.60); }
+.ms-card-icon, .ms-card-emoji { font-size: 24px; margin-bottom: 4px; }
+.ms-card-title, .ms-card-en { font-family: 'Cormorant Garamond', serif; font-size: 15px; font-style: italic; font-weight: 400; color: rgba(72,42,65,0.90); line-height: 1.3; }
+.ms-card-cn { font-family: var(--font-ui); font-size: 12px; color: rgba(100,65,95,0.62); }
 .ms-card-date { font-family: var(--font-ui); font-size: 10px; color: rgba(80,160,110,0.80); font-weight: 600; margin-top: auto; padding-top: 8px; }
 .ms-card-age { font-family: var(--font-ui); font-size: 11px; color: var(--ink-muted); margin-top: 2px; }
 .ms-upcoming-eta { font-family: var(--font-ui); font-size: 10px; color: var(--ink-muted); margin-top: auto; padding-top: 8px; }
@@ -620,10 +626,11 @@ textarea.input-field { resize: vertical; min-height: 80px; }
 .growth-metric-value {
   font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 400;
   color: rgba(72, 42, 65, 0.90); line-height: 1;
+  display: inline-flex; align-items: baseline; gap: 2px;
 }
 .growth-metric-pct {
   font-family: 'Nunito', sans-serif; font-size: 10px; font-weight: 600;
-  color: rgba(124, 92, 191, 0.80); margin-top: 3px;
+  color: rgba(124, 92, 191, 0.80); align-self: flex-start; margin-top: 2px;
 }
 .growth-who-ref {
   font-family: 'Nunito', sans-serif; font-size: 10px; color: rgba(100, 65, 95, 0.45);
@@ -650,6 +657,27 @@ textarea.input-field { resize: vertical; min-height: 80px; }
 .notes-month-btn { flex-shrink:0; padding:5px 14px; border-radius:var(--r-pill); border:1px solid rgba(255,255,255,0.30); background:transparent; font-family:'Nunito',sans-serif; font-size:12px; color:rgba(100,65,95,0.55); cursor:pointer; transition:all 0.2s ease; }
 .notes-month-btn.active { background:rgba(124,92,191,0.15); color:var(--color-primary); border-color:rgba(124,92,191,0.35); }
 
+/* ⑩ Growth AI box: white text on dark bg */
+.growth-ai-box, .growth-ai-box * { color: rgba(255, 255, 255, 0.93) !important; }
+
+/* ⑪ Notes CTA buttons */
+.btn-new-note, .btn-ai-diary {
+  font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 500;
+  border-radius: 999px; padding: 12px 20px; border: none; cursor: pointer;
+  transition: opacity 0.2s; flex: 1; text-align: center;
+}
+.btn-new-note {
+  background: rgba(255, 255, 255, 0.55); color: rgba(72, 42, 65, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.75);
+}
+.btn-new-note:hover { opacity: 0.85; }
+.btn-ai-diary { background: var(--color-primary); color: white; }
+.btn-ai-diary:hover { opacity: 0.90; }
+.note-expand-btn {
+  font-family: 'Nunito', sans-serif; font-size: 12px; color: rgba(124, 92, 191, 0.75);
+  background: transparent; border: none; cursor: pointer; padding: 4px 0; margin-top: 4px; display: block;
+}
+
 /* ── CALENDAR ── */
 .cal-grid {
   display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-bottom: 4px;
@@ -665,10 +693,31 @@ textarea.input-field { resize: vertical; min-height: 80px; }
 .cal-day:hover { background: rgba(201,167,232,0.20); }
 .cal-day.today { background: var(--gradient-soft); border-color: rgba(201,167,232,0.40); color: var(--ink); font-weight: 600; }
 .cal-day.selected { background: var(--gradient-accent); color: white; font-weight: 600; box-shadow: 0 2px 10px rgba(180,100,200,0.35); }
-.cal-day-num { font-family: 'Cormorant Garamond', serif; font-size: 15px; font-weight: 400; color: rgba(72,42,65,0.85); display: block; line-height: 1.2; }
+.cal-day-num {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 26px; height: 26px; border-radius: 50%;
+  font-family: 'Cormorant Garamond', serif; font-size: 14px; font-weight: 400; line-height: 1;
+}
 .cal-day-data { font-family: 'Nunito', sans-serif; font-size: 10px; font-weight: 500; color: rgba(124,92,191,0.75); display: block; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* Today: solid purple circle */
+.cal-day.is-today .cal-day-num, .cal-day.today .cal-day-num {
+  background: var(--color-primary); color: rgba(255, 255, 255, 0.95);
+}
+/* Past with data: soft purple tint */
+.cal-day.cal-past.has-data .cal-day-num {
+  background: rgba(124, 92, 191, 0.14); color: rgba(72, 42, 65, 0.85);
+}
+/* Past no data: faded */
+.cal-day.cal-past:not(.has-data) .cal-day-num { color: rgba(100, 65, 95, 0.40); }
+/* Future: very faded */
+.cal-day.cal-future .cal-day-num { color: rgba(100, 65, 95, 0.30); }
+/* Selected override */
+.cal-day.is-selected .cal-day-num, .cal-day.selected .cal-day-num {
+  background: var(--gradient-accent); color: white;
+}
 .cal-day.selected .cal-day-data { color: rgba(255,255,255,0.88); }
-.cal-day.today .cal-day-data { color: rgba(124,92,191,0.65); }
+.cal-day.today .cal-day-data { color: rgba(255,255,255,0.80); }
 
 /* ── CALENDAR MODAL ── */
 .cal-modal-overlay {
