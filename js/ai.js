@@ -183,11 +183,15 @@ function renderInsight() {
   _generateAIInsight(key, cacheKey, slot, feeds, sleeps, activities, isToday);
 }
 
+function parseBold(text) {
+  return text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+}
+
 function renderInsightSlots(cached, slot) {
   const lang = currentLang;
   const text = (cached[lang] || cached.zh || '').trim();
   if (!text) return '';
-  return `<div class="insight-slot-text">${text.replace(/\n/g, '<br>')}</div>`;
+  return `<div class="insight-slot-text">${parseBold(text.replace(/\n/g, '<br>'))}</div>`;
 }
 
 async function _generateAIInsight(key, cacheKey, slot, feeds, sleeps, activities, isToday) {
@@ -289,7 +293,7 @@ async function renderMilestoneInsight() {
   const ageMonths = Math.floor(ageDays / 30.44);
   const cacheKey = 'milestone_insight_' + ageMonths;
   if (data.aiInsights && data.aiInsights[cacheKey]) {
-    textEl.innerHTML = `<div class="insight-slot-text">${data.aiInsights[cacheKey].replace(/\n/g,'<br>')}</div>`;
+    textEl.innerHTML = `<div class="insight-slot-text">${parseBold(data.aiInsights[cacheKey].replace(/\n/g,'<br>'))}</div>`;
     return;
   }
   if (_milestoneInsightPending) return;
@@ -307,7 +311,7 @@ async function renderMilestoneInsight() {
     if (!data.aiInsights) data.aiInsights = {};
     data.aiInsights[cacheKey] = result;
     saveData(); // use saveData() which sanitizes keys properly
-    textEl.innerHTML = `<div class="insight-slot-text">${result.replace(/\n/g,'<br>')}</div>`;
+    textEl.innerHTML = `<div class="insight-slot-text">${parseBold(result.replace(/\n/g,'<br>'))}</div>`;
   } catch(e) {
     textEl.innerHTML = `<div class="insight-slot-text" style="color:var(--light)">暂时无法获取AI分析</div>`;
   } finally {
@@ -327,7 +331,7 @@ async function renderGrowthInsight(latestRecord) {
   const ageMonths = Math.floor(ageDays / 30.44);
   const cacheKey = `growth_insight_${ageMonths}_${String(latestRecord.weight||'').replace(/\./g,'_')}_${String(latestRecord.height||'').replace(/\./g,'_')}`;
   if (data.aiInsights && data.aiInsights[cacheKey]) {
-    textEl.innerHTML = `<div class="insight-slot-text">${data.aiInsights[cacheKey].replace(/\n/g,'<br>')}</div>`;
+    textEl.innerHTML = `<div class="insight-slot-text">${parseBold(data.aiInsights[cacheKey].replace(/\n/g,'<br>'))}</div>`;
     return;
   }
   if (_growthInsightPending) return;
@@ -347,7 +351,7 @@ async function renderGrowthInsight(latestRecord) {
     if (!data.aiInsights) data.aiInsights = {};
     data.aiInsights[cacheKey] = result;
     saveData(); // use saveData() which sanitizes keys properly
-    textEl.innerHTML = `<div class="insight-slot-text">${result.replace(/\n/g,'<br>')}</div>`;
+    textEl.innerHTML = `<div class="insight-slot-text">${parseBold(result.replace(/\n/g,'<br>'))}</div>`;
   } catch(e) {
     textEl.innerHTML = `<div class="insight-slot-text" style="color:var(--light)">暂时无法获取AI分析</div>`;
   } finally {

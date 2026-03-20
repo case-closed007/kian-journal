@@ -513,14 +513,14 @@ textarea.input-field { resize: vertical; min-height: 80px; }
   border-radius: 999px;
   margin-top: 10px;
 }
+.card:has(#growth-date) { display: flex; flex-direction: column; }
 #btn-add-growth {
-  display: block;
-  margin-left: auto;
+  align-self: flex-end;
   width: auto;
   padding: 8px 24px;
   font-size: 13px;
   border-radius: 999px;
-  margin-top: 8px;
+  margin-top: 10px;
 }
 
 /* ── DREAM FEED HINT ── */
@@ -528,13 +528,14 @@ textarea.input-field { resize: vertical; min-height: 80px; }
 
 /* ── MILESTONES ── */
 .ms-section-label {
-  display: flex; align-items: center; gap: 12px;
-  font-family: var(--font-ui); font-size: 10px; font-weight: 500;
-  letter-spacing: 1px; text-transform: uppercase; color: rgba(130,90,120,0.45);
-  padding: 8px 0;
+  font-family: 'Nunito', sans-serif;
+  font-size: 10px; font-weight: 600;
+  letter-spacing: 1.5px; text-transform: uppercase;
+  color: rgba(100,65,95,0.50);
+  display: flex; align-items: center; gap: 8px; margin: 16px 0 10px;
 }
 .ms-section-label::after {
-  content: ''; flex: 1; height: 1px; background: rgba(180,100,180,0.15);
+  content: ''; flex: 1; height: 1px; background: rgba(180,120,180,0.15);
 }
 .ms-card-wall, .milestones-achieved-list, .milestones-list {
   display: grid;
@@ -730,6 +731,11 @@ textarea.input-field { resize: vertical; min-height: 80px; }
 }
 .cal-day-data { font-family: 'Nunito', sans-serif; font-size: 9px; font-weight: 500; color: rgba(124,92,191,0.75); display: block; text-align: center; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
+/* Current month: normal opacity */
+.cal-day:not(.other-month) .cal-day-num { color: rgba(72,42,65,0.85); }
+/* Other month: faded, data hidden */
+.cal-day.other-month .cal-day-num { color: rgba(100,65,95,0.25); }
+.cal-day.other-month .cal-day-data { display: none; }
 /* Today: solid primary purple circle */
 .cal-day.cal-today .cal-day-num { background: var(--color-primary); color: rgba(255, 255, 255, 0.95); }
 /* Past with data: very light purple tint */
@@ -738,6 +744,8 @@ textarea.input-field { resize: vertical; min-height: 80px; }
 .cal-day.cal-past:not(.has-data) .cal-day-num { color: rgba(100, 65, 95, 0.35); }
 /* Future: very faded */
 .cal-day.cal-future .cal-day-num { color: rgba(100, 65, 95, 0.25); }
+/* Milestone icon hidden, dot via ::after */
+.cal-milestone-icon { display: none; }
 /* Selected override */
 .cal-day.is-selected .cal-day-num { background: var(--color-primary); color: white; box-shadow: 0 2px 8px rgba(124,92,191,0.40); }
 .cal-day.is-selected .cal-day-data { color: rgba(124,92,191,0.75); }
@@ -853,7 +861,6 @@ textarea.input-field { resize: vertical; min-height: 80px; }
 
 /* ── CALENDAR TITLE + LEGEND HIDE ── */
 .cal-page-title, .cal-page-subtitle, .cal-legend { display: none; }
-#tab-calendar .section-header, #tab-calendar .section-header-cn { display: none; }
 
 @media (min-width: 600px) {
   .main { padding: 20px 20px 0; background: transparent; }

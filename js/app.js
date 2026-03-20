@@ -99,23 +99,20 @@ function initCtaVisibility() {
   // Sleep CTA: show when both times filled
   const sleepBtn = document.getElementById('btn-add-sleep');
   const sleepStart = document.getElementById('sleep-start');
-  const sleepEnd = document.getElementById('sleep-end');
-  if (sleepBtn && sleepStart && sleepEnd) {
+  if (sleepBtn && sleepStart) {
     sleepBtn.style.display = 'none';
-    const checkSleep = () => {
-      sleepBtn.style.display = (sleepStart.value && sleepEnd.value) ? 'block' : 'none';
-    };
-    sleepStart.addEventListener('change', checkSleep);
-    sleepEnd.addEventListener('change', checkSleep);
+    sleepStart.addEventListener('change', () => {
+      sleepBtn.style.display = sleepStart.value ? 'block' : 'none';
+    });
   }
 
-  // Activity CTA: show when note or type selected (always show since type always has value)
+  // Activity CTA: show when type is selected (select always has a value, so show immediately)
   const actBtn = document.getElementById('btn-add-activity');
-  const actTime = document.getElementById('activity-time');
-  if (actBtn && actTime) {
-    actBtn.style.display = 'none';
-    actTime.addEventListener('change', () => {
-      actBtn.style.display = actTime.value ? 'block' : 'none';
+  const actType = document.getElementById('activity-type');
+  if (actBtn && actType) {
+    actBtn.style.display = actType.value ? 'block' : 'none';
+    actType.addEventListener('change', () => {
+      actBtn.style.display = actType.value ? 'block' : 'none';
     });
   }
 
