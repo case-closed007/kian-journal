@@ -290,8 +290,8 @@ function renderMilestones() {
     el.innerHTML = achieved.map((m, i) => `
       <div class="ms-card">
         <button class="ms-card-delete" onclick="deleteMilestone(${i})">×</button>
-        <div class="ms-card-icon">${m.icon}</div>
-        <div class="ms-card-title">${m.title}</div>
+        <div class="ms-card-emoji">${m.icon}</div>
+        <div class="ms-card-en">${m.title}</div>
         ${m.titleCn ? `<div class="ms-card-cn">${m.titleCn}</div>` : ''}
         <div class="ms-card-date">${m.date}</div>
       </div>
@@ -301,8 +301,8 @@ function renderMilestones() {
   const upEl = document.getElementById('upcoming-milestones');
   upEl.innerHTML = '<div class="ms-card-wall">' + upcomingMilestones.map(m => `
     <div class="ms-card ms-card-upcoming">
-      <div class="ms-card-icon">${m.icon}</div>
-      <div class="ms-card-title">${currentLang === 'en' ? m.title : m.titleCn}</div>
+      <div class="ms-card-emoji">${m.icon}</div>
+      <div class="ms-card-en">${currentLang === 'en' ? m.title : m.titleCn}</div>
       ${currentLang === 'zh' ? `<div class="ms-card-cn">${m.title}</div>` : ''}
       <div class="ms-upcoming-eta">⏰ ${m.eta}</div>
     </div>
@@ -360,34 +360,54 @@ function renderGrowthHistory() {
     el.innerHTML = '<div class="empty-state"><div class="empty-icon">📏</div><div class="empty-text">No measurements yet</div></div>';
     return;
   }
-  const weightLabel = currentLang === 'zh' ? '体重' : 'Weight';
-  const heightLabel = currentLang === 'zh' ? '身高' : 'Height';
-  const headLabel   = currentLang === 'zh' ? '头围' : 'Head';
+  const wLabel = currentLang === 'zh' ? '体重' : 'Weight';
+  const hLabel = currentLang === 'zh' ? '身高' : 'Height';
+  const hdLabel = currentLang === 'zh' ? '头围' : 'Head';
+  // WHO ranges lookup (p3–p97)
+  const whoKeys = Object.keys(WHO_W).map(Number).sort((a,b)=>a-b);
+  function getAgeKey(months) {
+    let k = whoKeys[0];
+    for (const wk of whoKeys) { if (wk <= months) k = wk; }
+    return k;
+  }
   el.innerHTML = [...data.growth].reverse().map(g => {
     const entryDate = new Date(g.date);
     const ageMonths = Math.floor((entryDate - BIRTH_DATE) / (30.44 * 86400000));
+    const ageDays = Math.round((entryDate - BIRTH_DATE) / 86400000);
+    const ageKey = getAgeKey(ageMonths);
+    const wRef = `${WHO_W[ageKey][0]}–${WHO_W[ageKey][4]}`;
+    const hRef = `${WHO_H[ageKey][0]}–${WHO_H[ageKey][4]}`;
+    const ageLabel = ageMonths > 0
+      ? `${ageMonths}${currentLang === 'zh' ? '个月' : 'mo'}`
+      : `${ageDays}${currentLang === 'zh' ? '天' : 'd'}`;
     const wPct = g.weight ? whoPercentile(g.weight, WHO_W, ageMonths) : null;
     const hPct = g.height ? whoPercentile(g.height, WHO_H, ageMonths) : null;
-    const rows = [];
-    if (g.weight) rows.push(`<div class="growth-row">
-      <span class="growth-label">${weightLabel}</span>
-      <span class="growth-data">${g.weight}<span class="growth-unit"> kg</span>${wPct ? `<span class="growth-pct">P${wPct}</span>` : ''}</span>
+    const metrics = [];
+    if (g.weight) metrics.push(`<div class="growth-metric">
+      <span class="growth-metric-label">${wLabel}</span>
+      <span class="growth-metric-value">${g.weight}<span class="growth-unit">kg</span></span>
+      <span class="growth-metric-pct">${wPct ? 'P' + wPct : '—'}</span>
     </div>`);
-    if (g.height) rows.push(`<div class="growth-row">
-      <span class="growth-label">${heightLabel}</span>
-      <span class="growth-data">${g.height}<span class="growth-unit"> cm</span>${hPct ? `<span class="growth-pct">P${hPct}</span>` : ''}</span>
+    if (g.height) metrics.push(`<div class="growth-metric">
+      <span class="growth-metric-label">${hLabel}</span>
+      <span class="growth-metric-value">${g.height}<span class="growth-unit">cm</span></span>
+      <span class="growth-metric-pct">${hPct ? 'P' + hPct : '—'}</span>
     </div>`);
-    if (g.head) rows.push(`<div class="growth-row">
-      <span class="growth-label">${headLabel}</span>
-      <span class="growth-data">${g.head}<span class="growth-unit"> cm</span></span>
+    if (g.head) metrics.push(`<div class="growth-metric">
+      <span class="growth-metric-label">${hdLabel}</span>
+      <span class="growth-metric-value">${g.head}<span class="growth-unit">cm</span></span>
+      <span class="growth-metric-pct">—</span>
     </div>`);
+    const whoRef = currentLang === 'zh'
+      ? `WHO参考 · ${ageLabel}: 体重 ${wRef}kg · 身高 ${hRef}cm`
+      : `WHO ref · ${ageLabel}: weight ${wRef}kg · height ${hRef}cm`;
     return `<div class="growth-entry">
       <div class="growth-date">${g.date}</div>
-      ${rows.join('')}
+      <div class="growth-metrics-row">${metrics.join('')}</div>
+      <div class="growth-who-ref">${whoRef}</div>
     </div>`;
   }).join('');
 
-  // Show AI insight if there's data
   const latest = data.growth[data.growth.length - 1];
   if (latest) renderGrowthInsight(latest);
 }
@@ -547,17 +567,16 @@ function renderCalendar() {
     var feeds = data.feeds[key] || [];
     var slps = data.sleeps[key] || [];
     var totalMl = feeds.reduce((s, f) => s + f.amount, 0);
-    var naps = slps.filter(s => s.type === 'Nap' || s.type === 'Catnap').length;
     var hasData = feeds.length > 0 || slps.length > 0;
     var isToday = td.getTime() === today.getTime();
     var isSel = dateKey(currentDate) === key;
     var hasMile = mDates.has(key);
     var cls = 'cal-day' + (hasData ? ' has-data' : '') + (isToday ? ' is-today' : '') + (isSel ? ' is-selected' : '');
-    var info = (totalMl ? 'Feed:' + totalMl + 'ml' : '') + (naps ? (totalMl ? '<br>' : '') + 'Naps:' + naps : '');
     html += '<div class="' + cls + '" onclick="jumpToDate(\'' + key + '\')">' +
       (hasMile ? '<div class="cal-milestone-dot">⭐</div>' : '') +
-      '<div class="cal-day-num">' + d + '</div>' +
-      '<div class="cal-day-info">' + info + '</div></div>';
+      '<span class="cal-day-num">' + d + '</span>' +
+      (totalMl ? '<span class="cal-day-data">' + totalMl + 'ml</span>' : '') +
+      '</div>';
   }
   var rem = (7 - (startDow + lastDay.getDate()) % 7) % 7;
   for (var j = 1; j <= rem; j++) html += '<div class="cal-day other-month"><div class="cal-day-num">' + j + '</div></div>';

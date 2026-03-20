@@ -64,6 +64,24 @@ function init() {
   }
   updateDateDisplay();
   renderAll();
+  initAiCard();
+}
+
+function initAiCard() {
+  const card = document.getElementById('ai-quick-card');
+  if (!card) return;
+  card.addEventListener('click', () => {
+    if (card.classList.contains('collapsed')) {
+      card.classList.remove('collapsed');
+      const ta = document.getElementById('ai-input-text');
+      if (ta) setTimeout(() => ta.focus(), 50);
+    }
+  });
+  document.addEventListener('click', e => {
+    if (!card.contains(e.target)) {
+      card.classList.add('collapsed');
+    }
+  });
 }
 
 function updateDateDisplay() {
