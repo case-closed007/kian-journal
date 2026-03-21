@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Lora:ital,wght@0,400;0,500;1,400&family=Nunito:wght@300;400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=14">
+<link rel="stylesheet" href="css/style.css?v=16">
 
   <!-- Firebase SDK -->
   <script type="module">
@@ -26,26 +26,29 @@
     window.fbListen = (path, cb) => onValue(ref(db, 'kian_data'), snap => cb(snap.val()));
     window.firebaseReady = true;
 
-    window.addEventListener('load', () => {
+    function applyFirebaseData(val) {
+      if (val.feeds) data.feeds = val.feeds;
+      if (val.sleeps) data.sleeps = val.sleeps;
+      if (val.activities) data.activities = val.activities;
+      if (val.dailyNotes) data.dailyNotes = val.dailyNotes;
+      if (val.milestones) {
+        data.milestones = val.milestones;
+        if (data.milestones.achieved && !Array.isArray(data.milestones.achieved))
+          data.milestones.achieved = Object.values(data.milestones.achieved);
+      }
+      if (val.growth) data.growth = Array.isArray(val.growth) ? val.growth : Object.values(val.growth);
+      if (val.notes) data.notes = Array.isArray(val.notes) ? val.notes : Object.values(val.notes);
+      if (val.aiInsights) data.aiInsights = val.aiInsights;
+      _normalizeData();
+      renderAll();
+      showSyncStatus('synced');
+    }
+
+    function loadFromFirebase(retryCount) {
       get(ref(db, 'kian_data')).then(snap => {
         const val = snap.val();
         if (val) {
-          if (val.feeds) data.feeds = val.feeds;
-          if (val.sleeps) data.sleeps = val.sleeps;
-          if (val.activities) data.activities = val.activities;
-          if (val.dailyNotes) data.dailyNotes = val.dailyNotes;
-          if (val.milestones) {
-            data.milestones = val.milestones;
-            // Firebase converts arrays → objects; normalize back
-            if (data.milestones.achieved && !Array.isArray(data.milestones.achieved))
-              data.milestones.achieved = Object.values(data.milestones.achieved);
-          }
-          if (val.growth) data.growth = Array.isArray(val.growth) ? val.growth : Object.values(val.growth);
-          if (val.notes) data.notes = Array.isArray(val.notes) ? val.notes : Object.values(val.notes);
-          if (val.aiInsights) data.aiInsights = val.aiInsights;
-          _normalizeData(); // sanitize keys + normalize arrays from Firebase
-          renderAll();
-          showSyncStatus('synced');
+          applyFirebaseData(val);
         } else {
           window.fbSet('kian_data', {
             feeds: data.feeds, sleeps: data.sleeps, activities: data.activities,
@@ -54,10 +57,16 @@
           }).then(() => showSyncStatus('synced'));
         }
       }).catch(err => {
-        console.warn('Firebase load failed, using localStorage:', err);
-        showSyncStatus('offline');
+        console.warn('Firebase load failed (attempt ' + (retryCount + 1) + '):', err);
+        if (retryCount < 2) {
+          setTimeout(() => loadFromFirebase(retryCount + 1), 3000);
+        } else {
+          showSyncStatus('offline');
+        }
       });
-    });
+    }
+
+    window.addEventListener('load', () => { loadFromFirebase(0); });
   </script>
 </head>
 <body>
@@ -292,7 +301,7 @@
     </div>
 
     <!-- Achieved card wall -->
-    <div class="ms-section-label">✅ 已达成</div>
+    <div class="ms-section-label">已达成</div>
     <div id="achieved-milestones" class="ms-card-wall"></div>
 
     <!-- Add milestone -->

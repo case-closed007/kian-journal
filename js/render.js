@@ -54,24 +54,27 @@ function renderTimeline() {
     const hour = parseInt(entry.sortTime.split(':')[0]);
     const isNight = hour < 7 || hour >= 19;
     const entryBg = isNight ? 'vtl-entry-night' : 'vtl-entry-day';
-    let timeStr, mainHtml, subHtml, deleteCall;
+    let timeStr, labelHtml, amountHtml, subHtml, deleteCall;
     if (kind === 'feed') {
       timeStr = d.time;
       const lbl = t('feed-type-' + d.type) || d.type;
-      mainHtml = `<span class="vtl-type">${lbl}</span><span class="vtl-detail"> · ${d.amount}ml</span>`;
+      labelHtml = lbl;
+      amountHtml = `${d.amount}ml`;
       subHtml = '';
       deleteCall = `deleteFeed('${key}', ${d.id})`;
     } else if (kind === 'sleep') {
       timeStr = d.start;
       const lbl = t('sleep-type-' + d.type) || d.type;
       const durStr = (d.duration && d.duration !== 'undefined') ? d.duration : (currentLang === 'zh' ? '进行中' : 'Ongoing');
-      mainHtml = `<span class="vtl-type">${lbl}</span><span class="vtl-detail"> · ${durStr}</span>`;
+      labelHtml = lbl;
+      amountHtml = durStr;
       subHtml = `${d.start} → ${d.end || '?'}`;
       deleteCall = `deleteSleep('${key}', ${d.id})`;
     } else {
       timeStr = d.time;
       const lbl = t('activity-type-' + d.type) || d.type;
-      mainHtml = `<span class="vtl-type">${lbl}</span>`;
+      labelHtml = lbl;
+      amountHtml = '';
       subHtml = d.note || '';
       deleteCall = `deleteActivity('${key}', ${d.id})`;
     }
@@ -87,7 +90,10 @@ function renderTimeline() {
         ${!isLast ? '<div class="vtl-line"></div>' : ''}
       </div>
       <div class="vtl-content">
-        <div class="vtl-main">${mainHtml}</div>
+        <div class="vtl-row">
+          <span class="vtl-label">${labelHtml}</span>
+          ${amountHtml ? `<span class="vtl-amount">${amountHtml}</span>` : ''}
+        </div>
         ${subHtml ? `<div class="vtl-sub">${subHtml}</div>` : ''}
       </div>
       <button class="vtl-delete" onclick="${deleteCall}">×</button>
@@ -324,6 +330,8 @@ function addGrowth() {
   document.getElementById('growth-weight').value = '';
   document.getElementById('growth-height').value = '';
   document.getElementById('growth-head').value = '';
+  const growthBtn = document.getElementById('btn-add-growth');
+  if (growthBtn) growthBtn.style.display = 'none';
   saveData();
   renderGrowthHistory();
 }

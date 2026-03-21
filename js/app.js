@@ -145,15 +145,17 @@ function initCtaVisibility() {
   const growthWeight = document.getElementById('growth-weight');
   const growthHeight = document.getElementById('growth-height');
   const growthHead = document.getElementById('growth-head');
-  if (growthBtn && growthWeight) {
+  if (growthBtn && growthWeight && growthHeight && growthHead) {
     growthBtn.style.display = 'none';
-    const checkGrowth = () => {
-      const hasVal = (growthWeight.value || growthHeight.value || growthHead.value);
+    window._checkGrowthBtn = () => {
+      const hasVal = growthWeight.value.trim() || growthHeight.value.trim() || growthHead.value.trim();
       growthBtn.style.display = hasVal ? 'block' : 'none';
     };
-    growthWeight.addEventListener('input', checkGrowth);
-    growthHeight.addEventListener('input', checkGrowth);
-    growthHead.addEventListener('input', checkGrowth);
+    ['input', 'change'].forEach(evt => {
+      growthWeight.addEventListener(evt, window._checkGrowthBtn);
+      growthHeight.addEventListener(evt, window._checkGrowthBtn);
+      growthHead.addEventListener(evt, window._checkGrowthBtn);
+    });
   }
 }
 
