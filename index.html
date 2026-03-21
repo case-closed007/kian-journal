@@ -58,10 +58,13 @@
         }
       }).catch(err => {
         console.warn('Firebase load failed (attempt ' + (retryCount + 1) + '):', err);
-        if (retryCount < 2) {
-          setTimeout(() => loadFromFirebase(retryCount + 1), 3000);
+        if (retryCount < 1) {
+          setTimeout(() => loadFromFirebase(retryCount + 1), 4000);
         } else {
-          showSyncStatus('offline');
+          // Only show offline banner if no local data exists
+          const hasLocal = !!localStorage.getItem('kian_journal_v1');
+          if (!hasLocal) showSyncStatus('offline');
+          // else: silently use localStorage, no disruptive banner
         }
       });
     }
@@ -449,9 +452,9 @@
   </div>
 </nav>
 
-<script src="js/data.js?v=9"></script>
+<script src="js/data.js?v=10"></script>
 <script src="js/ai.js?v=14"></script>
-<script src="js/render.js?v=14"></script>
-<script src="js/app.js?v=14"></script>
+<script src="js/render.js?v=15"></script>
+<script src="js/app.js?v=15"></script>
 </body>
 </html>
